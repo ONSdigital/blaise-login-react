@@ -20,7 +20,6 @@
     "@babel/preset-env": "^7.14.7",
     "axios": "^0.21.1",
     "blaise-api-node-client": "https://github.com/ONSdigital/blaise-api-node-client",
-    "blaise-design-system-react-components": "https://github.com/ONSdigital/blaise-design-system-react-components",
     "express": "^4.17.2",
     "react": "^17.0.2",
     "typescript": "~4.2.2"
@@ -39,7 +38,6 @@
     "yarn": "^1.22.10"
   },
   "files": [
-    "/lib",
-    "/mocks"
+    "/lib"
   ]
 }
