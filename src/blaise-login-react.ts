@@ -7,5 +7,5 @@ export {
   getUser,
   validatePassword,
   newLoginHandler,
-  LoginHandler
+  LoginHandler,
 }
