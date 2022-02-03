@@ -1,6 +1,6 @@
 {
   "name": "blaise-login-react-server",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "module": "lib/esm/blaise-login-react-server.js",
   "main": "lib/cjs/blaise-login-react-server.js",
   "types": "lib/esm/blaise-login-react-server.d.ts",
