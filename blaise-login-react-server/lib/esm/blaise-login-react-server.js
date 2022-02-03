@@ -1,3 +1,3 @@
-import { LoginHandler } from "./handlers/loginHandler";
+import newLoginHandler, { LoginHandler } from "./handlers/loginHandler";
 import { Auth } from "./auth/auth";
-export { LoginHandler, Auth };
+export { newLoginHandler, LoginHandler, Auth };
