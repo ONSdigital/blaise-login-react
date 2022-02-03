@@ -18,7 +18,11 @@ export async function validatePassword(username: string, password: string): Prom
     formData.append("password", password);
     const response = await axios.post("/api/login/users/password/validate", formData);
 
-    return response.data;
+    if (response.status === 200) {
+      return response.data;
+    }
+    console.log(`Did not get the expected response from password validate: ${response.status} - ${response.data}`)
+    return false
   } catch (error: unknown) {
     console.log(`Failed to validate password: ${error}`)
     return false

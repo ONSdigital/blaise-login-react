@@ -7167,7 +7167,11 @@ function validatePassword(username, password) {
                     return [4 /*yield*/, axios.post("/api/login/users/password/validate", formData)];
                 case 1:
                     response = _a.sent();
-                    return [2 /*return*/, response.data];
+                    if (response.status === 200) {
+                        return [2 /*return*/, response.data];
+                    }
+                    console.log("Did not get the expected response from password validate: ".concat(response.status, " - ").concat(response.data));
+                    return [2 /*return*/, false];
                 case 2:
                     error_2 = _a.sent();
                     console.log("Failed to validate password: ".concat(error_2));
