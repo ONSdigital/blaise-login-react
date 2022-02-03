@@ -7161,12 +7161,19 @@ function validatePassword(username, password) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
+                    console.debug("EXCESSIVE DEBUG");
+                    console.log(username);
                     formData = new FormData();
+                    console.debug("EXCESSIVE DEBUG 2");
                     formData.append("username", username);
+                    console.debug("EXCESSIVE DEBUG 3");
                     formData.append("password", password);
+                    console.debug("EXCESSIVE DEBUG 4");
                     return [4 /*yield*/, axios.post("/api/login/users/password/validate", formData)];
                 case 1:
                     response = _a.sent();
+                    console.log(response.status);
+                    console.log(response.data);
                     if (response.status === 200) {
                         return [2 /*return*/, response.data];
                     }
