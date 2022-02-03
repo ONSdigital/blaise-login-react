@@ -13,17 +13,10 @@ export async function getUser(username: string): Promise<User | undefined> {
 
 export async function validatePassword(username: string, password: string): Promise<boolean> {
   try {
-    console.log("EXCESSIVE DEBUG")
-    console.log(username)
     const formData = new FormData();
-    console.log("EXCESSIVE DEBUG 2")
     formData.append("username", username);
-    console.log("EXCESSIVE DEBUG 3")
     formData.append("password", password);
-    console.log("EXCESSIVE DEBUG 4")
     const response = await axios.post("/api/login/users/password/validate", formData);
-    console.log(response.status);
-    console.log(response.data)
 
     if (response.status === 200) {
       return response.data;
