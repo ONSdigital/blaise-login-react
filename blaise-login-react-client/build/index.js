@@ -7157,20 +7157,27 @@ function getUser(username) {
         var response;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, axios.get("/api/login/users/".concat(username))];
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, axios.get("/api/login/users/".concat(username))];
                 case 1:
                     response = _a.sent();
                     return [2 /*return*/, response.data];
+                case 2:
+                    _a.sent();
+                    return [2 /*return*/, undefined];
+                case 3: return [2 /*return*/];
             }
         });
     });
 }
 function validatePassword(username, password) {
     return __awaiter(this, void 0, void 0, function () {
-        var formData, response;
+        var formData, response, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    _a.trys.push([0, 2, , 3]);
                     formData = new FormData();
                     formData.append("username", username);
                     formData.append("password", password);
@@ -7178,6 +7185,11 @@ function validatePassword(username, password) {
                 case 1:
                     response = _a.sent();
                     return [2 /*return*/, response.data];
+                case 2:
+                    error_2 = _a.sent();
+                    console.log("Failed to validate password: ".concat(error_2));
+                    return [2 /*return*/, false];
+                case 3: return [2 /*return*/];
             }
         });
     });

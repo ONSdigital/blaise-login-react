@@ -1,19 +1,28 @@
 import axios from "axios";
 import { User } from "blaise-api-node-client";
 
-export async function getUser(username: string): Promise<User> {
-  const response = await axios.get(`/api/login/users/${username}`);
+export async function getUser(username: string): Promise<User | undefined> {
+  try {
+    const response = await axios.get(`/api/login/users/${username}`);
 
-  return response.data;
+    return response.data;
+  } catch (error: unknown) {
+    return undefined
+  }
 }
 
 export async function validatePassword(username: string, password: string): Promise<boolean> {
-  const formData = new FormData();
-  formData.append("username", username);
-  formData.append("password", password);
-  const response = await axios.post("/api/login/users/password/validate", formData);
+  try {
+    const formData = new FormData();
+    formData.append("username", username);
+    formData.append("password", password);
+    const response = await axios.post("/api/login/users/password/validate", formData);
 
-  return response.data;
+    return response.data;
+  } catch (error: unknown) {
+    console.log(`Failed to validate password: ${error}`)
+    return false
+  }
 }
 
 export async function validateUserPermissions(username: string): Promise<[boolean, string | null]> {
