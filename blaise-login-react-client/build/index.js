@@ -7134,6 +7134,21 @@ axios_1.default = default_1;
 
 var axios = axios_1;
 
+function getCurrentUser(authManager) {
+    return __awaiter(this, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, axios.get("/api/login/current-user", {
+                        headers: authManager.authHeader()
+                    })];
+                case 1:
+                    response = _a.sent();
+                    return [2 /*return*/, response.data];
+            }
+        });
+    });
+}
 function getUser(username) {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -7687,6 +7702,7 @@ var AuthManager = /** @class */ (function () {
 
 exports.AuthManager = AuthManager;
 exports.LoginForm = LoginForm;
+exports.getCurrentUser = getCurrentUser;
 exports.getUser = getUser;
 exports.validatePassword = validatePassword;
 exports.validateToken = validateToken;
