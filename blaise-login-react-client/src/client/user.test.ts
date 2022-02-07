@@ -1,8 +1,20 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { getUser, validatePassword, validateToken, validateUserPermissions } from "./user";
+import { AuthManager } from "./token";
+import { getCurrentUser, getUser, validatePassword, validateToken, validateUserPermissions } from "./user";
 
 const mock = new MockAdapter(axios);
+
+
+describe("Get current", () => {
+  it("returns the user details", async () => {
+    const authManager = new AuthManager()
+    mock.onGet("/api/login/current-user").reply(200, { "role": "test" });
+
+    expect(await getCurrentUser(authManager)).toEqual({ "role": "test" });
+  });
+});
+
 
 describe("Get user", () => {
   it("returns the user details", async () => {

@@ -63,15 +63,24 @@ var Auth = /** @class */ (function () {
     Auth.prototype.UserHasRole = function (user) {
         return this.config.Roles.includes(user.role);
     };
+    Auth.prototype.GetUser = function (token) {
+        if (!token) {
+            throw "Must provide a token to get a user";
+        }
+        var decodedToken = jwt.verify(token, this.config.SessionSecret);
+        return decodedToken["user"];
+    };
+    Auth.prototype.GetToken = function (request) {
+        var token = request.get("authorization");
+        if (!token) {
+            token = request.get("Authorization");
+        }
+        return token;
+    };
     Auth.prototype.Middleware = function (request, response, next) {
         return __awaiter(this, void 0, void 0, function () {
-            var token;
             return __generator(this, function (_a) {
-                token = request.get("authorization");
-                if (!token) {
-                    token = request.get("Authorization");
-                }
-                if (!this.ValidateToken(token)) {
+                if (!this.ValidateToken(this.GetToken(request))) {
                     return [2 /*return*/, response.status(403).json()];
                 }
                 next();

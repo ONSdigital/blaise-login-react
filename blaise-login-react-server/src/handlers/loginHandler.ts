@@ -10,6 +10,7 @@ export default function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiCl
 
   const loginHandler = new LoginHandler(auth, blaiseApiClient);
   router.get("/api/login/users/:username", loginHandler.GetUser);
+  router.get("/api/login/current-user", loginHandler.GetCurrentUser);
   router.get("/api/login/users/:username/authorised", loginHandler.ValidateRoles);
   router.post("/api/login/token/validate", loginHandler.ValidateToken);
   router.post("/api/login/users/password/validate", loginHandler.ValidatePassword);
@@ -25,6 +26,7 @@ export class LoginHandler {
     this.blaiseApiClient = blaiseApiClient;
 
     this.GetUser = this.GetUser.bind(this);
+    this.GetCurrentUser = this.GetCurrentUser.bind(this);
     this.ValidatePassword = this.ValidatePassword.bind(this);
     this.ValidateRoles = this.ValidateRoles.bind(this);
     this.ValidateToken = this.ValidateToken.bind(this);
@@ -33,6 +35,10 @@ export class LoginHandler {
   async GetUser(req: Request, res: Response): Promise<Response> {
     console.log("Getting user");
     return res.status(200).json(await this.blaiseApiClient.getUser(req.params.username));
+  }
+
+  async GetCurrentUser(req: Request, res: Response): Promise<Response> {
+    return res.status(200).json(this.auth.GetUser(this.auth.GetToken(req)));
   }
 
   async ValidatePassword(req: Request, res: Response): Promise<Response> {

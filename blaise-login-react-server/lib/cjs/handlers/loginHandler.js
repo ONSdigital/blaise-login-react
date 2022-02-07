@@ -46,6 +46,7 @@ function newLoginHandler(auth, blaiseApiClient) {
     router.use(express_1.default.json());
     var loginHandler = new LoginHandler(auth, blaiseApiClient);
     router.get("/api/login/users/:username", loginHandler.GetUser);
+    router.get("/api/login/current-user", loginHandler.GetCurrentUser);
     router.get("/api/login/users/:username/authorised", loginHandler.ValidateRoles);
     router.post("/api/login/token/validate", loginHandler.ValidateToken);
     router.post("/api/login/users/password/validate", loginHandler.ValidatePassword);
@@ -57,6 +58,7 @@ var LoginHandler = /** @class */ (function () {
         this.auth = auth;
         this.blaiseApiClient = blaiseApiClient;
         this.GetUser = this.GetUser.bind(this);
+        this.GetCurrentUser = this.GetCurrentUser.bind(this);
         this.ValidatePassword = this.ValidatePassword.bind(this);
         this.ValidateRoles = this.ValidateRoles.bind(this);
         this.ValidateToken = this.ValidateToken.bind(this);
@@ -72,6 +74,13 @@ var LoginHandler = /** @class */ (function () {
                         return [4 /*yield*/, this.blaiseApiClient.getUser(req.params.username)];
                     case 1: return [2 /*return*/, _b.apply(_a, [_c.sent()])];
                 }
+            });
+        });
+    };
+    LoginHandler.prototype.GetCurrentUser = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, res.status(200).json(this.auth.GetUser(this.auth.GetToken(req)))];
             });
         });
     };

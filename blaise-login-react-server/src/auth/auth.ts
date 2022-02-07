@@ -37,12 +37,25 @@ export class Auth {
     return this.config.Roles.includes(user.role);
   }
 
-  async Middleware(request: Request, response: Response, next: NextFunction): Promise<Response | void> {
+  GetUser(token: string | undefined): User {
+    if (!token) {
+      throw "Must provide a token to get a user";
+    }
+    const decodedToken = jwt.verify(token, this.config.SessionSecret);
+    return decodedToken["user"];
+  }
+
+  GetToken(request: Request): string | undefined {
     let token = request.get("authorization");
     if (!token) {
       token = request.get("Authorization");
     }
-    if (!this.ValidateToken(token)) {
+    return token;
+  }
+
+  async Middleware(request: Request, response: Response, next: NextFunction): Promise<Response | void> {
+
+    if (!this.ValidateToken(this.GetToken(request))) {
       return response.status(403).json();
     }
     next();

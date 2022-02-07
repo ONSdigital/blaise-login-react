@@ -57,6 +57,27 @@ describe("LoginHandler", () => {
     });
   });
 
+  describe("Get current user", () => {
+    it("should return a 200 and the user details", async () => {
+      const token = auth.SignToken({
+        name: "test",
+        role: "DST",
+        defaultServerPark: "gusty",
+        serverParks: ["gusty"]
+      });
+      const response: Response = await request.get("/api/login/current-user").set("authorization", token);
+
+      expect(response.status).toEqual(200);
+      expect(response.body).toEqual({
+        name: "test",
+        role: "DST",
+        defaultServerPark: "gusty",
+        serverParks: ["gusty"]
+      });
+    });
+  });
+
+
   describe("Validate Password", () => {
     it("should return a 200 and true", async () => {
       mockValidatePassword.mockImplementation(async () => {

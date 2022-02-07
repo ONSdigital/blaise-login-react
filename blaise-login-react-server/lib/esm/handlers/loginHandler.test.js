@@ -96,6 +96,33 @@ describe("LoginHandler", function () {
             });
         }); });
     });
+    describe("Get current user", function () {
+        it("should return a 200 and the user details", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var token, response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        token = auth.SignToken({
+                            name: "test",
+                            role: "DST",
+                            defaultServerPark: "gusty",
+                            serverParks: ["gusty"]
+                        });
+                        return [4 /*yield*/, request.get("/api/login/current-user").set("authorization", token)];
+                    case 1:
+                        response = _a.sent();
+                        expect(response.status).toEqual(200);
+                        expect(response.body).toEqual({
+                            name: "test",
+                            role: "DST",
+                            defaultServerPark: "gusty",
+                            serverParks: ["gusty"]
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+    });
     describe("Validate Password", function () {
         it("should return a 200 and true", function () { return __awaiter(void 0, void 0, void 0, function () {
             var response;

@@ -7,6 +7,7 @@ export declare class LoginHandler {
     blaiseApiClient: BlaiseApiClient;
     constructor(auth: Auth, blaiseApiClient: BlaiseApiClient);
     GetUser(req: Request, res: Response): Promise<Response>;
+    GetCurrentUser(req: Request, res: Response): Promise<Response>;
     ValidatePassword(req: Request, res: Response): Promise<Response>;
     ValidateRoles(req: Request, res: Response): Promise<Response>;
     ValidateToken(req: Request, res: Response): Promise<Response>;
