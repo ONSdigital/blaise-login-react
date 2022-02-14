@@ -24,7 +24,7 @@ export default {
     ],
     plugins: [
         external(),
-        resolve(),
+        resolve({ browser: true }),
         json(),
         typescript({
             rollupCommonJSResolveHack: true,
@@ -39,7 +39,6 @@ export default {
             }
         }),
         commonjs({
-            include: ["node_modules/**"],
             namedExports: {
                 "node_modules/react/react.js": [
                     "Children",
