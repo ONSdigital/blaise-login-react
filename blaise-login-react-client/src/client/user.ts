@@ -22,10 +22,10 @@ export async function getUser(username: string): Promise<User | undefined> {
 
 export async function validatePassword(username: string, password: string): Promise<boolean> {
   try {
-    const formData = new FormData();
-    formData.append("username", username);
-    formData.append("password", password);
-    const response = await axios.post("/api/login/users/password/validate", formData);
+    const response = await axios.post("/api/login/users/password/validate", {
+      username: username,
+      password: password
+    });
 
     if (response.status === 200) {
       return response.data;

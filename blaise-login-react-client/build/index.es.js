@@ -3228,7 +3228,7 @@ unwrapExports(dist);
             return (React.createElement(ONSPanel, { status: "error" },
                 React.createElement("p", null, this.props.errorMessageText)));
         }
-        return this.props.children;
+        return React.createElement(React.Fragment, null, this.props.children);
     };
     return ErrorBoundary;
 })(React.Component));
@@ -3262,7 +3262,7 @@ unwrapExports(dist);
                     React.createElement("a", { href: "https://ons.service-now.com/" }, "Contact us"),
                     " if you need to speak to someone about your survey.")));
         }
-        return this.props.children;
+        return React.createElement(React.Fragment, null, this.props.children);
     };
     return DefaultErrorBoundary;
 })(React.Component));
@@ -7153,15 +7153,15 @@ function getUser(username) {
 }
 function validatePassword(username, password) {
     return __awaiter(this, void 0, void 0, function () {
-        var formData, response, error_2;
+        var response, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    formData = new FormData();
-                    formData.append("username", username);
-                    formData.append("password", password);
-                    return [4 /*yield*/, axios.post("/api/login/users/password/validate", formData)];
+                    return [4 /*yield*/, axios.post("/api/login/users/password/validate", {
+                            username: username,
+                            password: password
+                        })];
                 case 1:
                     response = _a.sent();
                     if (response.status === 200) {
