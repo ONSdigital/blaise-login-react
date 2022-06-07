@@ -1772,9 +1772,9 @@ bignumber.js@^9.0.0:
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.2.tgz#71c6c6bed38de64e24a65ebe16cfcf23ae693673"
   integrity sha512-GAcQvbpsM0pUb0zw1EI0KhQEZ+lRwR5fYaAp3vPOYuP7aDvGy6cVN6XHLauvF8SOga2y0dcLcjt3iQDTSEliyw==
 
-blaise-api-node-client@ONSDigital/blaise-api-node-client:
+blaise-api-node-client@ONSDigital/blaise-api-node-client#BLAIS5-3105:
   version "1.0.0"
-  resolved "https://codeload.github.com/ONSDigital/blaise-api-node-client/tar.gz/c14fa095dc178f494ec70801a28d370c3da7fbfa"
+  resolved "https://codeload.github.com/ONSDigital/blaise-api-node-client/tar.gz/93cad6b1a5cffc0dec7ba350f786b22ee89f71c9"
   dependencies:
     "@babel/preset-env" "^7.14.7"
     axios "^0.21.1"
