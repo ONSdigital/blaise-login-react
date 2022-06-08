@@ -15,7 +15,7 @@
   "dependencies": {
     "@babel/preset-env": "^7.14.7",
     "axios": "^0.21.1",
-    "blaise-api-node-client": "ONSDigital/blaise-api-node-client#BLAIS5-3105",
+    "blaise-api-node-client": "ONSDigital/blaise-api-node-client",
     "express": "^4.17.2",
     "jsonwebtoken": "^8.5.1",
     "typescript": "~4.2.2"
