@@ -341,6 +341,16 @@ function StyledFormErrorSummary() {
                 })))));
 }
 
+function isObjectWithProperty(value, propertyName) {
+    if (typeof value != "object") {
+        return false;
+    }
+    if (value == null) {
+        return false;
+    }
+    return propertyName in value;
+}
+
 function toUpperCase(string) {
     return string.trim().replace(/^\w/, function (c) { return c.toUpperCase(); });
 }
@@ -349,11 +359,11 @@ function RadioFieldset(_a) {
     return React__default["default"].createElement("fieldset", { className: "fieldset" },
         React__default["default"].createElement("legend", { className: "fieldset__legend" }, description),
         React__default["default"].createElement("div", { className: "radios__items", id: name }, (radioOptions && radioOptions.length > 0 &&
-            radioOptions.map(function (radioOption) {
+            radioOptions.map(function (radioOption, radioOptionIndex) {
                 return (React__default["default"].createElement(React.Fragment, { key: radioOption.id },
                     React__default["default"].createElement("p", { className: "radios__item" },
                         React__default["default"].createElement("span", { className: "radio" },
-                            React__default["default"].createElement(formik.Field, __assign$1({ type: "radio", id: radioOption.id, name: name, value: radioOption.value, className: "radio__input js-radio" }, props)),
+                            React__default["default"].createElement(formik.Field, __assign$1({ type: "radio", id: radioOption.id, name: name, value: radioOption.value, className: "radio__input js-radio" }, props, { autoFocus: props.autoFocus && radioOptionIndex === 0 })),
                             React__default["default"].createElement("label", { className: "radio__label " + (radioOption.description !== undefined ? "label--with-description" : ""), htmlFor: radioOption.id, id: radioOption.id + "-label" },
                                 radioOption.label,
                                 radioOption.description !== undefined &&
@@ -361,6 +371,53 @@ function RadioFieldset(_a) {
                             radioOption.specifyOption && (React__default["default"].createElement("span", { className: "radio__other radio__other--open", id: "other-radio-other-wrap" },
                                 React__default["default"].createElement("label", { className: "label u-fs-s--b ", htmlFor: radioOption.specifyOption.id, id: "other-textbox-label" }, radioOption.specifyOption.description),
                                 React__default["default"].createElement(formik.Field, { type: radioOption.specifyOption.type, id: radioOption.specifyOption.id, name: radioOption.specifyOption.name, validate: radioOption.specifyOption.validate, min: radioOption.specifyOption.min, className: "input input--text input-type__input input--w-auto" }))))),
+                    React__default["default"].createElement("br", null)));
+            }))));
+}
+function CheckboxesFieldset(_a) {
+    var description = _a.description, checkboxOptions = _a.checkboxOptions, name = _a.name, props = __rest(_a, ["description", "checkboxOptions", "name"]);
+    var _b = formik.useFormikContext(), values = _b.values, setFieldValue = _b.setFieldValue;
+    var allValues = (checkboxOptions || []).map(function (checkboxOption) { return checkboxOption.value; });
+    function areArraysEqual(array1, array2) {
+        if (array1.length != array2.length) {
+            return false;
+        }
+        else {
+            return array1.every(function (item) { return array2.includes(item); });
+        }
+    }
+    function isAllSelected() {
+        if (!isObjectWithProperty(values, name)) {
+            return [];
+        }
+        else {
+            return areArraysEqual(values[name] || [], allValues);
+        }
+    }
+    function handleSelectAll() {
+        if (isAllSelected()) {
+            setFieldValue(name, []);
+        }
+        else {
+            setFieldValue(name, allValues);
+        }
+    }
+    return React__default["default"].createElement("fieldset", { className: "fieldset" },
+        React__default["default"].createElement("legend", { className: "fieldset__legend" }, description),
+        React__default["default"].createElement("button", { type: "button", className: "btn u-mb-s js-auto-selector btn--small btn--secondary", onClick: handleSelectAll },
+            React__default["default"].createElement("span", { className: "btn__inner" },
+                React__default["default"].createElement("span", { className: "js-button-text" }, isAllSelected() ? "Unselect All" : "Select All"),
+                React__default["default"].createElement("span", { className: "u-vh" }, " following checkboxes"))),
+        React__default["default"].createElement("div", { className: "checkboxes__items", id: name }, (checkboxOptions && checkboxOptions.length > 0 &&
+            checkboxOptions.map(function (checkboxOption, checkboxIndex) {
+                return (React__default["default"].createElement(React.Fragment, { key: checkboxOption.id },
+                    React__default["default"].createElement("p", { className: "checkboxes__item" },
+                        React__default["default"].createElement("span", { className: "checkbox" },
+                            React__default["default"].createElement(formik.Field, __assign$1({ type: "checkbox", id: checkboxOption.id, name: name, value: checkboxOption.value, className: "checkbox__input js-checkbox" }, props, { autoFocus: props.autoFocus && checkboxIndex === 0 })),
+                            React__default["default"].createElement("label", { className: "checkbox__label " + (checkboxOption.description !== undefined ? "label--with-description" : ""), htmlFor: checkboxOption.id, id: checkboxOption.id + "-label" },
+                                checkboxOption.label,
+                                checkboxOption.description !== undefined &&
+                                    React__default["default"].createElement("span", { id: "white-label-description-hint", className: "label__description checkbox__label--with-description" }, checkboxOption.description)))),
                     React__default["default"].createElement("br", null)));
             }))));
 }
@@ -376,12 +433,16 @@ var ONSInputField = function (_a) {
 };
 
 var StyledFormField = function (_a) {
-    var name = _a.name, description = _a.description, _b = _a.radioOptions, radioOptions = _b === void 0 ? [] : _b, props = __rest(_a, ["name", "description", "radioOptions"]);
+    var name = _a.name, description = _a.description, _b = _a.radioOptions, radioOptions = _b === void 0 ? [] : _b, _c = _a.checkboxOptions, checkboxOptions = _c === void 0 ? [] : _c, props = __rest(_a, ["name", "description", "radioOptions", "checkboxOptions"]);
     var errors = formik.useFormikContext().errors;
     var newField;
     // @ts-ignore
     if (props.type === "radio") {
         newField = React__default["default"].createElement(RadioFieldset, __assign$1({ description: description, name: name, radioOptions: radioOptions }, props));
+    }
+    // @ts-ignore
+    else if (props.type === "checkbox") {
+        newField = React__default["default"].createElement(CheckboxesFieldset, __assign$1({ description: description, name: name, checkboxOptions: checkboxOptions }, props));
     }
     else {
         newField = React__default["default"].createElement(formik.Field, __assign$1({ name: name, description: description }, props, { component: ONSInputField }));
@@ -5230,7 +5291,7 @@ var LoginForm = /** @class */ (function (_super) {
     };
     LoginForm.prototype.render = function () {
         return (React__default["default"].createElement(React__default["default"].Fragment, null,
-            React__default["default"].createElement("h1", { className: "u-mt-m" }, "Sign in"),
+            React__default["default"].createElement("h1", { className: "ons-u-mt-m" }, "Sign in"),
             this.error(),
             React__default["default"].createElement(StyledForm, { fields: this.formFields(), onSubmitFunction: this.login, submitLabel: "Sign in" })));
     };
