@@ -6,7 +6,7 @@ Object {
   "baseElement": <body>
     <div>
       <h1
-        class="u-mt-m"
+        class="ons-u-mt-m"
       >
         Sign in
       </h1>
@@ -76,7 +76,7 @@ Object {
   </body>,
   "container": <div>
     <h1
-      class="u-mt-m"
+      class="ons-u-mt-m"
     >
       Sign in
     </h1>

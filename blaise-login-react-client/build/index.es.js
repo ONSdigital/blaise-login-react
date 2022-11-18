@@ -333,6 +333,16 @@ function StyledFormErrorSummary() {
                 })))));
 }
 
+function isObjectWithProperty(value, propertyName) {
+    if (typeof value != "object") {
+        return false;
+    }
+    if (value == null) {
+        return false;
+    }
+    return propertyName in value;
+}
+
 function toUpperCase(string) {
     return string.trim().replace(/^\w/, function (c) { return c.toUpperCase(); });
 }
@@ -341,11 +351,11 @@ function RadioFieldset(_a) {
     return React.createElement("fieldset", { className: "fieldset" },
         React.createElement("legend", { className: "fieldset__legend" }, description),
         React.createElement("div", { className: "radios__items", id: name }, (radioOptions && radioOptions.length > 0 &&
-            radioOptions.map(function (radioOption) {
+            radioOptions.map(function (radioOption, radioOptionIndex) {
                 return (React.createElement(Fragment$1, { key: radioOption.id },
                     React.createElement("p", { className: "radios__item" },
                         React.createElement("span", { className: "radio" },
-                            React.createElement(Field, __assign$1({ type: "radio", id: radioOption.id, name: name, value: radioOption.value, className: "radio__input js-radio" }, props)),
+                            React.createElement(Field, __assign$1({ type: "radio", id: radioOption.id, name: name, value: radioOption.value, className: "radio__input js-radio" }, props, { autoFocus: props.autoFocus && radioOptionIndex === 0 })),
                             React.createElement("label", { className: "radio__label " + (radioOption.description !== undefined ? "label--with-description" : ""), htmlFor: radioOption.id, id: radioOption.id + "-label" },
                                 radioOption.label,
                                 radioOption.description !== undefined &&
@@ -353,6 +363,53 @@ function RadioFieldset(_a) {
                             radioOption.specifyOption && (React.createElement("span", { className: "radio__other radio__other--open", id: "other-radio-other-wrap" },
                                 React.createElement("label", { className: "label u-fs-s--b ", htmlFor: radioOption.specifyOption.id, id: "other-textbox-label" }, radioOption.specifyOption.description),
                                 React.createElement(Field, { type: radioOption.specifyOption.type, id: radioOption.specifyOption.id, name: radioOption.specifyOption.name, validate: radioOption.specifyOption.validate, min: radioOption.specifyOption.min, className: "input input--text input-type__input input--w-auto" }))))),
+                    React.createElement("br", null)));
+            }))));
+}
+function CheckboxesFieldset(_a) {
+    var description = _a.description, checkboxOptions = _a.checkboxOptions, name = _a.name, props = __rest(_a, ["description", "checkboxOptions", "name"]);
+    var _b = useFormikContext(), values = _b.values, setFieldValue = _b.setFieldValue;
+    var allValues = (checkboxOptions || []).map(function (checkboxOption) { return checkboxOption.value; });
+    function areArraysEqual(array1, array2) {
+        if (array1.length != array2.length) {
+            return false;
+        }
+        else {
+            return array1.every(function (item) { return array2.includes(item); });
+        }
+    }
+    function isAllSelected() {
+        if (!isObjectWithProperty(values, name)) {
+            return [];
+        }
+        else {
+            return areArraysEqual(values[name] || [], allValues);
+        }
+    }
+    function handleSelectAll() {
+        if (isAllSelected()) {
+            setFieldValue(name, []);
+        }
+        else {
+            setFieldValue(name, allValues);
+        }
+    }
+    return React.createElement("fieldset", { className: "fieldset" },
+        React.createElement("legend", { className: "fieldset__legend" }, description),
+        React.createElement("button", { type: "button", className: "btn u-mb-s js-auto-selector btn--small btn--secondary", onClick: handleSelectAll },
+            React.createElement("span", { className: "btn__inner" },
+                React.createElement("span", { className: "js-button-text" }, isAllSelected() ? "Unselect All" : "Select All"),
+                React.createElement("span", { className: "u-vh" }, " following checkboxes"))),
+        React.createElement("div", { className: "checkboxes__items", id: name }, (checkboxOptions && checkboxOptions.length > 0 &&
+            checkboxOptions.map(function (checkboxOption, checkboxIndex) {
+                return (React.createElement(Fragment$1, { key: checkboxOption.id },
+                    React.createElement("p", { className: "checkboxes__item" },
+                        React.createElement("span", { className: "checkbox" },
+                            React.createElement(Field, __assign$1({ type: "checkbox", id: checkboxOption.id, name: name, value: checkboxOption.value, className: "checkbox__input js-checkbox" }, props, { autoFocus: props.autoFocus && checkboxIndex === 0 })),
+                            React.createElement("label", { className: "checkbox__label " + (checkboxOption.description !== undefined ? "label--with-description" : ""), htmlFor: checkboxOption.id, id: checkboxOption.id + "-label" },
+                                checkboxOption.label,
+                                checkboxOption.description !== undefined &&
+                                    React.createElement("span", { id: "white-label-description-hint", className: "label__description checkbox__label--with-description" }, checkboxOption.description)))),
                     React.createElement("br", null)));
             }))));
 }
@@ -368,12 +425,16 @@ var ONSInputField = function (_a) {
 };
 
 var StyledFormField = function (_a) {
-    var name = _a.name, description = _a.description, _b = _a.radioOptions, radioOptions = _b === void 0 ? [] : _b, props = __rest(_a, ["name", "description", "radioOptions"]);
+    var name = _a.name, description = _a.description, _b = _a.radioOptions, radioOptions = _b === void 0 ? [] : _b, _c = _a.checkboxOptions, checkboxOptions = _c === void 0 ? [] : _c, props = __rest(_a, ["name", "description", "radioOptions", "checkboxOptions"]);
     var errors = useFormikContext().errors;
     var newField;
     // @ts-ignore
     if (props.type === "radio") {
         newField = React.createElement(RadioFieldset, __assign$1({ description: description, name: name, radioOptions: radioOptions }, props));
+    }
+    // @ts-ignore
+    else if (props.type === "checkbox") {
+        newField = React.createElement(CheckboxesFieldset, __assign$1({ description: description, name: name, checkboxOptions: checkboxOptions }, props));
     }
     else {
         newField = React.createElement(Field, __assign$1({ name: name, description: description }, props, { component: ONSInputField }));
@@ -5222,7 +5283,7 @@ var LoginForm = /** @class */ (function (_super) {
     };
     LoginForm.prototype.render = function () {
         return (React.createElement(React.Fragment, null,
-            React.createElement("h1", { className: "u-mt-m" }, "Sign in"),
+            React.createElement("h1", { className: "ons-u-mt-m" }, "Sign in"),
             this.error(),
             React.createElement(StyledForm, { fields: this.formFields(), onSubmitFunction: this.login, submitLabel: "Sign in" })));
     };

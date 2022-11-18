@@ -70,7 +70,7 @@ export default class LoginForm extends Component<LoginFormProps, LoginFormState>
   render(): ReactElement {
     return (
       <>
-        <h1 className="u-mt-m">Sign in</h1>
+        <h1 className="ons-u-mt-m">Sign in</h1>
         {this.error()}
         <StyledForm fields={this.formFields()} onSubmitFunction={this.login} submitLabel="Sign in" />
       </>
