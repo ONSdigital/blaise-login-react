@@ -14,22 +14,22 @@ Object {
         action="#"
       >
         <div
-          class="field"
+          class="ons-field"
         >
           <label
-            class="label label--with-description"
+            class="ons-label ons-label--with-description"
             for="username"
           >
             Username
           </label>
           <span
-            class="label__description  input--with-description"
+            class="ons-label__description  ons-input--with-description"
             id="description-hint"
           >
             Your Blaise username
           </span>
           <input
-            class="input input--text input-type__input "
+            class="ons-input ons-input--text ons-input-type__input "
             id="username"
             name="Username"
             type="username"
@@ -37,22 +37,22 @@ Object {
           />
         </div>
         <div
-          class="field"
+          class="ons-field"
         >
           <label
-            class="label label--with-description"
+            class="ons-label ons-label--with-description"
             for="Password"
           >
             Password
           </label>
           <span
-            class="label__description  input--with-description"
+            class="ons-label__description  ons-input--with-description"
             id="description-hint"
           >
             Your Blaise password
           </span>
           <input
-            class="input input--text input-type__input "
+            class="ons-input ons-input--text ons-input-type__input "
             id="Password"
             name="Password"
             type="password"
@@ -61,12 +61,12 @@ Object {
         </div>
         <br />
         <button
-          class="btn "
+          class="ons-btn "
           data-testid="submit-button"
           type="submit"
         >
           <span
-            class="btn__inner"
+            class="ons-btn__inner"
           >
             Sign in
           </span>
@@ -84,22 +84,22 @@ Object {
       action="#"
     >
       <div
-        class="field"
+        class="ons-field"
       >
         <label
-          class="label label--with-description"
+          class="ons-label ons-label--with-description"
           for="username"
         >
           Username
         </label>
         <span
-          class="label__description  input--with-description"
+          class="ons-label__description  ons-input--with-description"
           id="description-hint"
         >
           Your Blaise username
         </span>
         <input
-          class="input input--text input-type__input "
+          class="ons-input ons-input--text ons-input-type__input "
           id="username"
           name="Username"
           type="username"
@@ -107,22 +107,22 @@ Object {
         />
       </div>
       <div
-        class="field"
+        class="ons-field"
       >
         <label
-          class="label label--with-description"
+          class="ons-label ons-label--with-description"
           for="Password"
         >
           Password
         </label>
         <span
-          class="label__description  input--with-description"
+          class="ons-label__description  ons-input--with-description"
           id="description-hint"
         >
           Your Blaise password
         </span>
         <input
-          class="input input--text input-type__input "
+          class="ons-input ons-input--text ons-input-type__input "
           id="Password"
           name="Password"
           type="password"
@@ -131,12 +131,12 @@ Object {
       </div>
       <br />
       <button
-        class="btn "
+        class="ons-btn "
         data-testid="submit-button"
         type="submit"
       >
         <span
-          class="btn__inner"
+          class="ons-btn__inner"
         >
           Sign in
         </span>
