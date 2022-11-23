@@ -75,66 +75,68 @@ var ONSButton = function (props) {
         if (props.hidden)
             return { display: "none" };
         return {
-            marginRight: String(props.marginRight) + "px"
+            marginRight: "".concat(String(props.marginRight), "px"),
         };
     };
-    var test_id = function () {
+    var testId = function () {
         if (props.testid) {
-            return props.testid + "-button";
+            return "".concat(props.testid, "-button");
         }
         return "button";
     };
-    var className = "btn " +
-        (props.action ? "btn--link " : "") +
-        (props.loading ? "btn--loader is-loading " : "") +
-        (props.field ? "field " : "") +
-        (props.primary ? "" : "btn--secondary ") +
-        (props.small ? "btn--small " : "") +
-        (props.disabled ? "btn--disabled " : "");
-    return (React.createElement("button", { id: props.id, style: spacing(), type: props.submit ? "submit" : "button", disabled: props.loading || props.disabled, className: className, onClick: props.onClick, "data-testid": test_id() },
-        React.createElement("span", { className: "btn__inner" },
+    var className = [
+        "ons-btn ",
+        props.action ? "ons-btn--link" : null,
+        props.loading ? "ons-btn--loader ons-is-loading" : null,
+        props.field ? "ons-field" : null,
+        props.primary ? null : "ons-btn--secondary",
+        props.small ? "ons-btn--small" : null,
+        props.disabled ? "ons-btn--disabled" : null,
+    ].filter(function (name) { return name !== null; }).join(" ");
+    return (React.createElement("button", { id: props.id, style: spacing(), type: props.submit ? "submit" : "button", disabled: props.loading || props.disabled, className: className, onClick: props.onClick, "data-testid": testId() },
+        React.createElement("span", { className: "ons-btn__inner" },
             props.label,
-            props.loading &&
-                React.createElement("svg", { className: "svg-icon uil-default", xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 100 100", preserveAspectRatio: "xMidYMid" },
+            props.loading
+                && (React.createElement("svg", { className: "ons-svg-icon uil-default", xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 100 100", preserveAspectRatio: "xMidYMid" },
                     React.createElement("rect", { x: "0", y: "0", width: "100", height: "100", fill: "none", className: "bk" }),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(0 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(30 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.08333333333333333s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(60 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.16666666666666666s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(90 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.25s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(120 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.3333333333333333s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(150 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.4166666666666667s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(180 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.5s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(210 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.5833333333333334s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(240 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.6666666666666666s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(270 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.75s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(300 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.8333333333333334s', repeatCount: 'indefinite' })),
-                    React.createElement("rect", { x: '46.5', y: '40', width: '7', height: '20', rx: '5', ry: '5', transform: 'rotate(330 50 50) translate(0 -30)' },
-                        React.createElement("animate", { attributeName: 'opacity', from: '1', to: '0', dur: '1s', begin: '0.9166666666666666s', repeatCount: 'indefinite' }))))));
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(0 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(30 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.08333333333333333s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(60 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.16666666666666666s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(90 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.25s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(120 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.3333333333333333s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(150 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.4166666666666667s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(180 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.5s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(210 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.5833333333333334s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(240 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.6666666666666666s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(270 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.75s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(300 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.8333333333333334s", repeatCount: "indefinite" })),
+                    React.createElement("rect", { x: "46.5", y: "40", width: "7", height: "20", rx: "5", ry: "5", transform: "rotate(330 50 50) translate(0 -30)" },
+                        React.createElement("animate", { attributeName: "opacity", from: "1", to: "0", dur: "1s", begin: "0.9166666666666666s", repeatCount: "indefinite" })))))));
 };
 
 var ONSPanel = function (props) {
-    var className = "panel panel--" + (props.status ? props.status : "info") + " panel--no-title " + (props.spacious ? "panel--spacious" : "") + " u-mt-m";
+    var className = "ons-panel ons-panel--".concat(props.status ? props.status : "info", " ons-panel--no-title ").concat(props.spacious ? "ons-panel--spacious" : "", " ons-u-mt-m");
     return (React.createElement("div", { "data-testid": props.testID, id: props.id, className: className, hidden: props.hidden },
-        props.status === "success" &&
-            React.createElement("span", { className: "panel__icon" },
-                React.createElement("svg", { className: "svg-icon " + (props.bigIcon === true ? "svg-icon--xl" : ""), viewBox: "0 0 13 10", xmlns: "http://www.w3.org/2000/svg" },
-                    React.createElement("path", { d: "M14.35,3.9l-.71-.71a.5.5,0,0,0-.71,0h0L5.79,10.34,3.07,7.61a.51.51,0,0,0-.71,0l-.71.71a.51.51,0,0,0,0,.71l3.78,3.78a.5.5,0,0,0,.71,0h0L14.35,4.6A.5.5,0,0,0,14.35,3.9Z", transform: "translate(-1.51 -3.04)" }))),
-        props.status === "warn" &&
-            React.createElement(React.Fragment, null,
-                React.createElement("span", { className: "panel__icon", "aria-hidden": "true" }, "!"),
-                React.createElement("span", { className: "u-vh" }, "Warning: ")),
-        React.createElement("div", { className: "panel__body " + (props.bigIcon === true ? "svg-icon-margin--xl" : "") }, props.children)));
+        props.status === "success"
+            && (React.createElement("span", { className: "ons-panel__icon" },
+                React.createElement("svg", { className: "ons-svg-icon ".concat(props.bigIcon === true ? "ons-svg-icon--xl" : ""), viewBox: "0 0 13 10", xmlns: "http://www.w3.org/2000/svg" },
+                    React.createElement("path", { d: "M14.35,3.9l-.71-.71a.5.5,0,0,0-.71,0h0L5.79,10.34,3.07,7.61a.51.51,0,0,0-.71,0l-.71.71a.51.51,0,0,0,0,.71l3.78,3.78a.5.5,0,0,0,.71,0h0L14.35,4.6A.5.5,0,0,0,14.35,3.9Z", transform: "translate(-1.51 -3.04)" })))),
+        props.status === "warn"
+            && (React.createElement(React.Fragment, null,
+                React.createElement("span", { className: "ons-panel__icon", "aria-hidden": "true" }, "!"),
+                React.createElement("span", { className: "ons-u-vh" }, "Warning: "))),
+        React.createElement("div", { className: "ons-panel__body ".concat(props.bigIcon === true ? "ons-svg-icon-margin--xl" : "") }, props.children)));
 };
 
 /*! *****************************************************************************
@@ -196,7 +198,7 @@ function __rest(s, e) {
     function ONSPasswordInput(props) {
         var _this = _super.call(this, props) || this;
         _this.togglePassword = function () {
-            _this.setState({ password: !_this.state.password });
+            _this.setState(function (prevState) { return ({ password: !prevState.password }); });
         };
         _this.handleChange = function (e) {
             if (_this.props.onChange !== undefined) {
@@ -205,7 +207,7 @@ function __rest(s, e) {
         };
         _this.spacing = function () {
             var buttonStyle = {
-                marginTop: String(_this.props.marginTop) + "px",
+                marginTop: "".concat(String(_this.props.marginTop), "px"),
             };
             return buttonStyle;
         };
@@ -214,12 +216,12 @@ function __rest(s, e) {
     }
     ONSPasswordInput.prototype.render = function () {
         var _this = this;
-        return (React.createElement("p", { className: "field" },
-            React.createElement("label", { className: "label", htmlFor: "password" }, this.props.label),
-            React.createElement("span", { className: "checkbox checkbox--toggle", style: this.spacing() },
-                React.createElement("input", { autoFocus: this.props.autoFocus, autoComplete: "new-password", type: "checkbox", id: "password-toggle", className: "checkbox__input", name: "show-password", onClick: this.togglePassword }),
-                React.createElement("label", { id: "password-toggle-label", className: "checkbox__label ", htmlFor: "password-toggle" }, "Show password")),
-            React.createElement("input", { type: this.state.password ? "password" : "text", id: "password", className: "input input--text input-type__input u-mt-xs", value: this.props.value, onChange: function (e) { return _this.handleChange(e); }, "data-testid": "login-password-input" })));
+        return (React.createElement("p", { className: "ons-field" },
+            React.createElement("label", { className: "ons-label", htmlFor: "password" }, this.props.label),
+            React.createElement("span", { className: "ons-checkbox ons-checkbox--toggle", style: this.spacing() },
+                React.createElement("input", { autoFocus: this.props.autoFocus, autoComplete: "new-password", type: "checkbox", id: "password-toggle", className: "ons-checkbox__input", name: "show-password", onClick: this.togglePassword }),
+                React.createElement("label", { id: "password-toggle-label", className: "ons-checkbox__label ", htmlFor: "password-toggle" }, "Show password")),
+            React.createElement("input", { type: this.state.password ? "password" : "text", id: "password", className: "ons-input ons-input--text ons-input-type__input ons-u-mt-xs", value: this.props.value, onChange: function (e) { return _this.handleChange(e); }, "data-testid": "login-password-input" })));
     };
     return ONSPasswordInput;
 })(Component));
@@ -247,15 +249,13 @@ function __rest(s, e) {
     ONSSelect.prototype.render = function () {
         var _this = this;
         return (React.createElement("div", null,
-            this.props.label !== undefined &&
-                React.createElement("label", { className: "label", htmlFor: this.props.id },
+            this.props.label !== undefined
+                && (React.createElement("label", { className: "ons-label", htmlFor: this.props.id },
                     this.props.label,
-                    " "),
-            React.createElement("select", { id: this.props.id, name: "select", defaultValue: this.defaultValue(), className: "input ", onChange: function (e) { return _this.handleChange(e); } },
-                React.createElement("option", { value: "", disabled: true, "data-testid": "select-" + this.props.id }, "Select an option"),
-                this.props.options.map(function (option, index) {
-                    return React.createElement("option", { value: option.value, key: index, id: option.id, "data-testid": "option-" + _this.props.id + "-" + option.value }, option.label);
-                }))));
+                    " ")),
+            React.createElement("select", { id: this.props.id, name: "select", defaultValue: this.defaultValue(), className: "ons-input ", onChange: function (e) { return _this.handleChange(e); } },
+                React.createElement("option", { value: "", disabled: true, "data-testid": "select-".concat(this.props.id) }, "Select an option"),
+                this.props.options.map(function (option, index) { return (React.createElement("option", { value: option.value, key: index, id: option.id, "data-testid": "option-".concat(_this.props.id, "-").concat(option.value) }, option.label)); }))));
     };
     return ONSSelect;
 })(Component));
@@ -272,10 +272,10 @@ function __rest(s, e) {
     }
     ONSTextInput.prototype.render = function () {
         var _this = this;
-        return (React.createElement("p", { className: "field" },
-            this.props.label !== undefined &&
-                React.createElement("label", { className: "label", htmlFor: this.props.id }, this.props.label),
-            React.createElement("input", { value: this.props.value, style: { width: this.props.fit === true ? "unset" : "", "zIndex": this.props.zIndex ? this.props.zIndex : 0 }, autoFocus: this.props.autoFocus === true, autoComplete: this.props.autoComplete, type: this.props.password === true ? "password" : "text", id: this.props.id, className: "input input--text input-type__input ", placeholder: this.props.placeholder, onChange: function (e) { return _this.handleChange(e); }, onClick: function (e) { return (_this.props.onClick !== undefined && _this.props.onClick(e)); }, "data-testid": "text-input" })));
+        return (React.createElement("p", { className: "ons-field" },
+            this.props.label !== undefined
+                && React.createElement("label", { className: "ons-label", htmlFor: this.props.id }, this.props.label),
+            React.createElement("input", { value: this.props.value, style: { width: this.props.fit === true ? "unset" : "", zIndex: this.props.zIndex ? this.props.zIndex : 0 }, autoFocus: this.props.autoFocus === true, autoComplete: this.props.autoComplete, type: this.props.password === true ? "password" : "text", id: this.props.id, className: "ons-input ons-input--text ons-input-type__input ", placeholder: this.props.placeholder, onChange: function (e) { return _this.handleChange(e); }, onClick: function (e) { return (_this.props.onClick !== undefined && _this.props.onClick(e)); }, "data-testid": "text-input" })));
     };
     return ONSTextInput;
 })(Component));
@@ -293,13 +293,13 @@ function __rest(s, e) {
     }
     ONSUpload.prototype.render = function () {
         var _this = this;
-        return (React.createElement("div", { className: "field" },
-            React.createElement("p", { className: "field" },
-                React.createElement("label", { className: "label", htmlFor: this.props.fileID },
+        return (React.createElement("div", { className: "ons-field" },
+            React.createElement("p", { className: "ons-field" },
+                React.createElement("label", { className: "ons-label", htmlFor: this.props.fileID },
                     this.props.label,
                     React.createElement("br", null),
-                    React.createElement("span", { className: "label__description" }, this.props.description)),
-                React.createElement("input", { style: { position: "static" }, type: "file", id: this.props.fileID, className: "input input--text input-type__input input--upload", name: this.props.fileName, accept: this.props.accept, onChange: function (e) { return _this.handleChange(e); }, disabled: (this.props.disabled) }))));
+                    React.createElement("span", { className: "ons-label__description" }, this.props.description)),
+                React.createElement("input", { style: { position: "static" }, type: "file", id: this.props.fileID, className: "ons-input ons-input--text ons-input-type__input ons-input--upload", name: this.props.fileName, accept: this.props.accept, onChange: function (e) { return _this.handleChange(e); }, disabled: (this.props.disabled) }))));
     };
     return ONSUpload;
 })(Component));
@@ -316,25 +316,23 @@ function StyledFormErrorSummary() {
     useEffect(function () {
         errorFocus === null || errorFocus === void 0 ? void 0 : errorFocus.focus();
     }, [errors, isValid]);
-    return React.createElement(React.Fragment, null, !isValid &&
-        React.createElement("div", { "aria-labelledby": "error-summary-title", role: "alert", tabIndex: -1, ref: function (inputEl) { return (errorFocus = inputEl); }, className: "panel panel--error" },
-            React.createElement("div", { className: "panel__header" },
-                React.createElement("h2", { id: "error-summary-title", "data-qa": "error-header", className: "panel__title u-fs-r--b" }, (Object.keys(errors).length === 1 ?
-                    "There is 1 problem with your answer"
-                    :
-                        "There are " + Object.keys(errors).length + " problems with your answer"))),
-            React.createElement("div", { className: "panel__body" },
-                React.createElement("ol", { className: "list" }, Object.keys(errors).map(function (field, index) {
-                    return React.createElement("li", { key: index, className: "list__item " },
-                        React.createElement("a", { href: "#" + field, className: "list__link js-inpagelink" }, 
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        errors[field]));
-                })))));
+    return (React.createElement(React.Fragment, null, !isValid
+        && (React.createElement("div", { "aria-labelledby": "error-summary-title", role: "alert", tabIndex: -1, ref: function (inputEl) { return (errorFocus = inputEl); }, className: "ons-panel ons-panel--error" },
+            React.createElement("div", { className: "ons-panel__header" },
+                React.createElement("h2", { id: "error-summary-title", "data-qa": "error-header", className: "ons-panel__title ons-u-fs-r--b" }, (Object.keys(errors).length === 1
+                    ? "There is 1 problem with your answer"
+                    : "There are ".concat(Object.keys(errors).length, " problems with your answer")))),
+            React.createElement("div", { className: "ons-panel__body" },
+                React.createElement("ol", { className: "ons-list" }, Object.keys(errors).map(function (field, index) { return (React.createElement("li", { key: index, className: "ons-list__item " },
+                    React.createElement("a", { href: "#".concat(field), className: "ons-list__link ons-js-inpagelink" }, 
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    errors[field]))); })))))));
 }
 
+// eslint-disable-next-line import/prefer-default-export
 function isObjectWithProperty(value, propertyName) {
-    if (typeof value != "object") {
+    if (typeof value !== "object") {
         return false;
     }
     if (value == null) {
@@ -348,43 +346,37 @@ function toUpperCase(string) {
 }
 function RadioFieldset(_a) {
     var description = _a.description, name = _a.name, radioOptions = _a.radioOptions, props = __rest(_a, ["description", "name", "radioOptions"]);
-    return React.createElement("fieldset", { className: "fieldset" },
-        React.createElement("legend", { className: "fieldset__legend" }, description),
-        React.createElement("div", { className: "radios__items", id: name }, (radioOptions && radioOptions.length > 0 &&
-            radioOptions.map(function (radioOption, radioOptionIndex) {
-                return (React.createElement(Fragment$1, { key: radioOption.id },
-                    React.createElement("p", { className: "radios__item" },
-                        React.createElement("span", { className: "radio" },
-                            React.createElement(Field, __assign$1({ type: "radio", id: radioOption.id, name: name, value: radioOption.value, className: "radio__input js-radio" }, props, { autoFocus: props.autoFocus && radioOptionIndex === 0 })),
-                            React.createElement("label", { className: "radio__label " + (radioOption.description !== undefined ? "label--with-description" : ""), htmlFor: radioOption.id, id: radioOption.id + "-label" },
-                                radioOption.label,
-                                radioOption.description !== undefined &&
-                                    React.createElement("span", { id: "white-label-description-hint", className: "label__description radio__label--with-description" }, radioOption.description)),
-                            radioOption.specifyOption && (React.createElement("span", { className: "radio__other radio__other--open", id: "other-radio-other-wrap" },
-                                React.createElement("label", { className: "label u-fs-s--b ", htmlFor: radioOption.specifyOption.id, id: "other-textbox-label" }, radioOption.specifyOption.description),
-                                React.createElement(Field, { type: radioOption.specifyOption.type, id: radioOption.specifyOption.id, name: radioOption.specifyOption.name, validate: radioOption.specifyOption.validate, min: radioOption.specifyOption.min, className: "input input--text input-type__input input--w-auto" }))))),
-                    React.createElement("br", null)));
-            }))));
+    return (React.createElement("fieldset", { className: "ons-fieldset" },
+        React.createElement("legend", { className: "ons-fieldset__legend" }, description),
+        React.createElement("div", { className: "ons-radios__items", id: name }, (radioOptions && radioOptions.length > 0
+            && radioOptions.map(function (radioOption, radioOptionIndex) { return (React.createElement(Fragment$1, { key: radioOption.id },
+                React.createElement("p", { className: "ons-radios__item" },
+                    React.createElement("span", { className: "ons-radio" },
+                        React.createElement(Field, __assign$1({ type: "radio", id: radioOption.id, name: name, value: radioOption.value, className: "ons-radio__input js-radio" }, props, { autoFocus: props.autoFocus && radioOptionIndex === 0 })),
+                        React.createElement("label", { className: "ons-radio__label ".concat(radioOption.description !== undefined ? "ons-label--with-description" : ""), htmlFor: radioOption.id, id: "".concat(radioOption.id, "-label") },
+                            radioOption.label,
+                            radioOption.description !== undefined
+                                && (React.createElement("span", { id: "white-label-description-hint", className: "ons-label__description ons-radio__label--with-description" }, radioOption.description))),
+                        radioOption.specifyOption && (React.createElement("span", { className: "ons-radio__other ons-radio__other--open", id: "other-radio-other-wrap" },
+                            React.createElement("label", { className: "label u-fs-s--b ", htmlFor: radioOption.specifyOption.id, id: "other-textbox-label" }, radioOption.specifyOption.description),
+                            React.createElement(Field, { type: radioOption.specifyOption.type, id: radioOption.specifyOption.id, name: radioOption.specifyOption.name, validate: radioOption.specifyOption.validate, min: radioOption.specifyOption.min, className: "ons-input ons-input--text ons-input-type__input ons-input--w-auto" }))))),
+                React.createElement("br", null))); })))));
 }
 function CheckboxesFieldset(_a) {
     var description = _a.description, checkboxOptions = _a.checkboxOptions, name = _a.name, props = __rest(_a, ["description", "checkboxOptions", "name"]);
     var _b = useFormikContext(), values = _b.values, setFieldValue = _b.setFieldValue;
     var allValues = (checkboxOptions || []).map(function (checkboxOption) { return checkboxOption.value; });
     function areArraysEqual(array1, array2) {
-        if (array1.length != array2.length) {
+        if (array1.length !== array2.length) {
             return false;
         }
-        else {
-            return array1.every(function (item) { return array2.includes(item); });
-        }
+        return array1.every(function (item) { return array2.includes(item); });
     }
     function isAllSelected() {
         if (!isObjectWithProperty(values, name)) {
             return [];
         }
-        else {
-            return areArraysEqual(values[name] || [], allValues);
-        }
+        return areArraysEqual(values[name] || [], allValues);
     }
     function handleSelectAll() {
         if (isAllSelected()) {
@@ -394,64 +386,58 @@ function CheckboxesFieldset(_a) {
             setFieldValue(name, allValues);
         }
     }
-    return React.createElement("fieldset", { className: "fieldset" },
-        React.createElement("legend", { className: "fieldset__legend" }, description),
-        React.createElement("button", { type: "button", className: "btn u-mb-s js-auto-selector btn--small btn--secondary", onClick: handleSelectAll },
-            React.createElement("span", { className: "btn__inner" },
+    return (React.createElement("fieldset", { className: "ons-fieldset" },
+        React.createElement("legend", { className: "ons-fieldset__legend" }, description),
+        React.createElement("button", { type: "button", className: "ons-btn ons-u-mb-s js-auto-selector ons-btn--small ons-btn--secondary", onClick: handleSelectAll },
+            React.createElement("span", { className: "ons-btn__inner" },
                 React.createElement("span", { className: "js-button-text" }, isAllSelected() ? "Unselect All" : "Select All"),
-                React.createElement("span", { className: "u-vh" }, " following checkboxes"))),
-        React.createElement("div", { className: "checkboxes__items", id: name }, (checkboxOptions && checkboxOptions.length > 0 &&
-            checkboxOptions.map(function (checkboxOption, checkboxIndex) {
-                return (React.createElement(Fragment$1, { key: checkboxOption.id },
-                    React.createElement("p", { className: "checkboxes__item" },
-                        React.createElement("span", { className: "checkbox" },
-                            React.createElement(Field, __assign$1({ type: "checkbox", id: checkboxOption.id, name: name, value: checkboxOption.value, className: "checkbox__input js-checkbox" }, props, { autoFocus: props.autoFocus && checkboxIndex === 0 })),
-                            React.createElement("label", { className: "checkbox__label " + (checkboxOption.description !== undefined ? "label--with-description" : ""), htmlFor: checkboxOption.id, id: checkboxOption.id + "-label" },
-                                checkboxOption.label,
-                                checkboxOption.description !== undefined &&
-                                    React.createElement("span", { id: "white-label-description-hint", className: "label__description checkbox__label--with-description" }, checkboxOption.description)))),
-                    React.createElement("br", null)));
-            }))));
+                React.createElement("span", { className: "ons-u-vh" }, " following checkboxes"))),
+        React.createElement("div", { className: "checkboxes__items", id: name }, (checkboxOptions && checkboxOptions.length > 0
+            && checkboxOptions.map(function (checkboxOption, checkboxIndex) { return (React.createElement(Fragment$1, { key: checkboxOption.id },
+                React.createElement("p", { className: "ons-checkboxes__item" },
+                    React.createElement("span", { className: "ons-checkbox" },
+                        React.createElement(Field, __assign$1({ type: "checkbox", id: checkboxOption.id, name: name, value: checkboxOption.value, className: "ons-checkbox__input js-checkbox" }, props, { autoFocus: props.autoFocus && checkboxIndex === 0 })),
+                        React.createElement("label", { className: "ons-checkbox__label ".concat(checkboxOption.description !== undefined ? "ons-label--with-description" : ""), htmlFor: checkboxOption.id, id: "".concat(checkboxOption.id, "-label") },
+                            checkboxOption.label,
+                            checkboxOption.description !== undefined
+                                && (React.createElement("span", { id: "white-label-description-hint", className: "ons-label__description checkbox__label--with-description" }, checkboxOption.description))))),
+                React.createElement("br", null))); })))));
 }
 var ONSInputField = function (_a) {
     var field = _a.field; _a.form; var description = _a.description, props = __rest(_a, ["field", "form", "description"]);
     var id = (props.id ? props.id : field.name);
-    return React.createElement(React.Fragment, null,
-        React.createElement("div", { className: "field" },
-            React.createElement("label", { className: "label " + (description ? "label--with-description" : ""), htmlFor: id }, toUpperCase(field.name)),
-            description &&
-                React.createElement("span", { id: "description-hint", className: "label__description  input--with-description" }, description),
-            React.createElement("input", __assign$1({ id: id, className: "input input--text input-type__input " }, field, props))));
+    return (React.createElement("div", { className: "ons-field" },
+        React.createElement("label", { className: "ons-label ".concat((description ? "ons-label--with-description" : "")), htmlFor: id }, toUpperCase(field.name)),
+        description
+            && (React.createElement("span", { id: "description-hint", className: "ons-label__description  ons-input--with-description" }, description)),
+        React.createElement("input", __assign$1({ id: id, className: "ons-input ons-input--text ons-input-type__input " }, field, props))));
 };
 
+function StyledFormFieldErrorWrapper(fieldError, fieldName, field) {
+    return (React.createElement("div", { className: "ons-panel ons-panel--error ons-panel--no-title ons-u-mb-s", id: "".concat(fieldName, "-error") },
+        React.createElement("span", { className: "ons-u-vh" }, "Error: "),
+        React.createElement("div", { className: "ons-panel__body" },
+            React.createElement("p", { className: "ons-panel__error" },
+                React.createElement("strong", null, fieldError)),
+            field)));
+}
 var StyledFormField = function (_a) {
     var name = _a.name, description = _a.description, _b = _a.radioOptions, radioOptions = _b === void 0 ? [] : _b, _c = _a.checkboxOptions, checkboxOptions = _c === void 0 ? [] : _c, props = __rest(_a, ["name", "description", "radioOptions", "checkboxOptions"]);
     var errors = useFormikContext().errors;
     var newField;
-    // @ts-ignore
     if (props.type === "radio") {
-        newField = React.createElement(RadioFieldset, __assign$1({ description: description, name: name, radioOptions: radioOptions }, props));
+        newField = (React.createElement(RadioFieldset, __assign$1({ description: description, name: name, radioOptions: radioOptions }, props)));
     }
-    // @ts-ignore
     else if (props.type === "checkbox") {
-        newField = React.createElement(CheckboxesFieldset, __assign$1({ description: description, name: name, checkboxOptions: checkboxOptions }, props));
+        newField = (React.createElement(CheckboxesFieldset, __assign$1({ description: description, name: name, checkboxOptions: checkboxOptions }, props)));
     }
     else {
         newField = React.createElement(Field, __assign$1({ name: name, description: description }, props, { component: ONSInputField }));
     }
-    return (React.createElement(Fragment$1, { key: name }, errors[name] ?
-        StyledFormFieldErrorWrapper(errors[name], "name", newField)
-        :
-            newField));
+    return (React.createElement(Fragment$1, { key: name }, errors[name]
+        ? StyledFormFieldErrorWrapper(errors[name], "name", newField)
+        : newField));
 };
-function StyledFormFieldErrorWrapper(fieldError, fieldName, field) {
-    return (React.createElement("div", { className: "panel panel--error panel--no-title u-mb-s", id: fieldName + "-error" },
-        React.createElement("span", { className: "u-vh" }, "Error: "),
-        React.createElement("div", { className: "panel__body" },
-            React.createElement("p", { className: "panel__error" },
-                React.createElement("strong", null, fieldError)),
-            field)));
-}
 
 /**
  * Formik form styled to ONS design guide with form error panel
@@ -476,12 +462,13 @@ function StyledForm(_a) {
         return (React.createElement(Form, null,
             React.createElement(StyledFormErrorSummary, null),
             fields.map(function (field, index) {
+                // eslint-disable-next-line no-param-reassign
                 field.autoFocus = (isValid && index === 0);
                 return (React.createElement(Fragment$1, { key: field.name }, // @ts-ignore
                 React.createElement(StyledFormField, __assign$1({}, field))));
             }),
             React.createElement("br", null),
-            React.createElement(ONSButton, { submit: true, label: (submitLabel ? submitLabel : "Save and continue"), primary: true, testid: "submit", loading: isSubmitting })));
+            React.createElement(ONSButton, { submit: true, label: (submitLabel || "Save and continue"), primary: true, testid: "submit", loading: isSubmitting })));
     }));
 }
 
@@ -3272,7 +3259,7 @@ unwrapExports(dist);
     }
     ErrorBoundary.prototype.componentDidCatch = function (_, errorInfo) {
         this.setState({
-            errorInfo: errorInfo
+            errorInfo: errorInfo,
         });
     };
     ErrorBoundary.prototype.render = function () {
@@ -3301,7 +3288,7 @@ unwrapExports(dist);
     }
     DefaultErrorBoundary.prototype.componentDidCatch = function (error, errorInfo) {
         this.setState({
-            errorInfo: errorInfo
+            errorInfo: errorInfo,
         });
     };
     DefaultErrorBoundary.prototype.render = function () {
@@ -3312,7 +3299,8 @@ unwrapExports(dist);
                 React.createElement("p", null, "If you have started a survey, your answers have been saved."),
                 React.createElement("p", null,
                     React.createElement("a", { href: "https://ons.service-now.com/" }, "Contact us"),
-                    " if you need to speak to someone about your survey.")));
+                    " ",
+                    "if you need to speak to someone about your survey.")));
         }
         return React.createElement(React.Fragment, null, this.props.children);
     };
