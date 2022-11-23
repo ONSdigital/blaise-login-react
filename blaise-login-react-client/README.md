@@ -86,17 +86,17 @@ function App(): ReactElement {
 
   function appContent(): ReactElement {
     if (loaded && loggedIn) {
-      return <h2 className="u-mt-m">This is my app</h2>;
+      return <h2 className="ons-u-mt-m">This is my app</h2>;
     }
     return <></>;
   }
 
   return (
     <>
-      <a className="skip__link" href="#main-content">Skip to main content</a>
+      <a className="ons-skip-link" href="#main-content">Skip to main content</a>
       <BetaBanner />
       <Header title={"Management Information Reports"} signOutButton={loggedIn} noSave={true} signOutFunction={signOut} />
-      <div style={divStyle} className="page__container container">
+      <div style={divStyle} className="ons-page__container ons-container">
         {loading()}
         {loginPage()}
         {appContent()}
