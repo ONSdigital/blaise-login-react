@@ -3,7 +3,7 @@ import { User } from "blaise-api-node-client";
 import { AuthManager } from "./token";
 
 export async function getCurrentUser(authManager: AuthManager): Promise<User> {
-  const response = await axios.get(`/api/login/current-user`, {
+  const response = await axios.get("/api/login/current-user", {
     headers: authManager.authHeader()
   });
 
@@ -16,7 +16,7 @@ export async function getUser(username: string): Promise<User | undefined> {
 
     return response.data;
   } catch (error: unknown) {
-    return undefined
+    return undefined;
   }
 }
 
@@ -30,11 +30,11 @@ export async function validatePassword(username: string, password: string): Prom
     if (response.status === 200) {
       return response.data;
     }
-    console.log(`Did not get the expected response from password validate: ${response.status} - ${response.data}`)
-    return false
+    console.log(`Did not get the expected response from password validate: ${response.status} - ${response.data}`);
+    return false;
   } catch (error: unknown) {
-    console.log(`Failed to validate password: ${error}`)
-    return false
+    console.log(`Failed to validate password: ${error}`);
+    return false;
   }
 }
 

@@ -8,7 +8,7 @@ const mock = new MockAdapter(axios);
 
 describe("Get current", () => {
   it("returns the user details", async () => {
-    const authManager = new AuthManager()
+    const authManager = new AuthManager();
     mock.onGet("/api/login/current-user").reply(200, { "role": "test" });
 
     expect(await getCurrentUser(authManager)).toEqual({ "role": "test" });
