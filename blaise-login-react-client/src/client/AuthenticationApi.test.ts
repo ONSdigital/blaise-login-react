@@ -3,19 +3,19 @@ import AuthenticationApi from "./AuthenticationApi";
 import { getCurrentUser } from "./user";
 
 // define mocks
-jest.mock('./user');
+jest.mock("./user");
 const getLoggedInUserMock = getCurrentUser as jest.Mock<Promise<User>>;
 const userMockObject:User = {
-  name: 'Jake Bullet',
-  role: 'Manager',
-  serverParks: ['gusty'],
-  defaultServerPark: 'gusty',
+  name: "Jake Bullet",
+  role: "Manager",
+  serverParks: ["gusty"],
+  defaultServerPark: "gusty",
 };
 
 const sut = new AuthenticationApi();
 
-describe('GetUser from Blaise', () => {
-  it('Should return expected user', async () => {
+describe("GetUser from Blaise", () => {
+  it("Should return expected user", async () => {
     // arrange
     getLoggedInUserMock.mockImplementation(() => Promise.resolve(userMockObject));
 
@@ -26,11 +26,11 @@ describe('GetUser from Blaise', () => {
     expect(user).toEqual(userMockObject);
   });
 
-  it('Should throw an error if getCurrentUser errors', async () => {
+  it("Should throw an error if getCurrentUser errors", async () => {
     // arrange
     getLoggedInUserMock.mockImplementation(() => Promise.reject());
 
     // act && assert
-    expect(() => sut.getLoggedInUser()).rejects.toThrow('Unable to retrieve logged in user');
+    expect(() => sut.getLoggedInUser()).rejects.toThrow("Unable to retrieve logged in user");
   });
 });

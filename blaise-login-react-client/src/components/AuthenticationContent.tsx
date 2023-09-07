@@ -1,8 +1,8 @@
-import { User } from 'blaise-api-node-client';
-import React, { ReactElement } from 'react';
-import AuthenticationApi from '../client/AuthenticationApi';
-import { useAsyncRequestWithParam } from '../hooks/useAsyncRequest';
-import AsyncContent from './AsyncContent';
+import { User } from "blaise-api-node-client";
+import React, { ReactElement } from "react";
+import AuthenticationApi from "../client/AuthenticationApi";
+import { useAsyncRequestWithParam } from "../hooks/useAsyncRequest";
+import AsyncContent from "./AsyncContent";
 
 interface AuthenticationContentProps {
   authenticationApi: AuthenticationApi;

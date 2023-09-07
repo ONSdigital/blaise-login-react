@@ -1,6 +1,6 @@
-import { ONSLoadingPanel, ONSPanel } from 'blaise-design-system-react-components';
-import { AsyncState, hasErrored, isLoading } from '../hooks/useAsyncRequest';
-import React from 'react';
+import { ONSLoadingPanel, ONSPanel } from "blaise-design-system-react-components";
+import { AsyncState, hasErrored, isLoading } from "../hooks/useAsyncRequest";
+import React from "react";
 
 interface AsyncContentProps<T> {
   content: AsyncState<T>;

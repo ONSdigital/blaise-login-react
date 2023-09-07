@@ -1,9 +1,9 @@
-import { ONSPanel } from 'blaise-design-system-react-components';
-import React, { ReactElement } from 'react';
-import { useAsyncRequestWithTwoParams } from '../hooks/useAsyncRequest';
-import AsyncContent from './AsyncContent';
-import AuthenticationApi from '../client/AuthenticationApi';
-import LoginForm from './LoginForm';
+import { ONSPanel } from "blaise-design-system-react-components";
+import React, { ReactElement } from "react";
+import { useAsyncRequestWithTwoParams } from "../hooks/useAsyncRequest";
+import AsyncContent from "./AsyncContent";
+import AuthenticationApi from "../client/AuthenticationApi";
+import LoginForm from "./LoginForm";
 
 interface LoginProps {
   authenticationApi:AuthenticationApi;

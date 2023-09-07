@@ -17,7 +17,7 @@ export default class AuthenticationApi extends AuthManager {
     try {
       return await getCurrentUser(this);
     } catch (error) {
-      throw new Error('Unable to retrieve logged in user');
+      throw new Error("Unable to retrieve logged in user");
     }
   }
 }
