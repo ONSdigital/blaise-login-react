@@ -5806,10 +5806,10 @@ var Authentication = /** @class */ (function (_super) {
         return _super.call(this, props) || this;
     }
     Authentication.prototype.render = function () {
-        //const [loggedIn, setLoggedIn] = useState(false);
+        var _a = React.useState(false); _a[0]; _a[1];
         //const authenticationApi = new AuthenticationApi();
         return (React__default["default"].createElement(LayoutTemplate, { showSignOutButton: false, signOut: function () { } }, React__default["default"].createElement(React__default["default"].Fragment, null,
-            React__default["default"].createElement("p", null, "testing 123"),
+            React__default["default"].createElement("p", null, "testing 1234"),
             React__default["default"].createElement(Login, null))
         /*           loggedIn
                     ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>

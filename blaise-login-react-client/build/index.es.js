@@ -1,4 +1,4 @@
-import React, { Component, Fragment as Fragment$1, useEffect } from 'react';
+import React, { Component, Fragment as Fragment$1, useEffect, useState } from 'react';
 import { Formik, Form, useFormikContext, Field } from 'formik';
 
 /*! *****************************************************************************
@@ -5798,10 +5798,10 @@ var Authentication = /** @class */ (function (_super) {
         return _super.call(this, props) || this;
     }
     Authentication.prototype.render = function () {
-        //const [loggedIn, setLoggedIn] = useState(false);
+        var _a = useState(false); _a[0]; _a[1];
         //const authenticationApi = new AuthenticationApi();
         return (React.createElement(LayoutTemplate, { showSignOutButton: false, signOut: function () { } }, React.createElement(React.Fragment, null,
-            React.createElement("p", null, "testing 123"),
+            React.createElement("p", null, "testing 1234"),
             React.createElement(Login, null))
         /*           loggedIn
                     ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
