@@ -22,6 +22,6 @@ export default function AuthenticationContent({ authenticationApi, children }:Au
         children(user)
       )}
     </AsyncContent> */
-    <>children(userMockObject)</>
+    <>{children(userMockObject)}</>
   );
 }

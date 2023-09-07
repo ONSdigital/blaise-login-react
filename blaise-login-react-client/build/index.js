@@ -5778,11 +5778,18 @@ function LayoutTemplate(_a) {
         React__default["default"].createElement(Footer, null)));
 }
 
+var userMockObject = {
+    name: "Jake Bullet",
+    role: "Manager",
+    serverParks: ["gusty"],
+    defaultServerPark: "gusty",
+};
+
 /* async function getLoggedInUser(authenticationApi: AuthenticationApi): Promise<User> {
   return authenticationApi.getLoggedInUser();
 } */
 function AuthenticationContent(_a) {
-    _a.authenticationApi; _a.children;
+    _a.authenticationApi; var children = _a.children;
     //const getUser = useAsyncRequestWithParam<User, AuthenticationApi>(getLoggedInUser, authenticationApi);
     return (
     /*     <AsyncContent content={getUser}>
@@ -5790,7 +5797,7 @@ function AuthenticationContent(_a) {
             children(user)
           )}
         </AsyncContent> */
-    React__default["default"].createElement(React__default["default"].Fragment, null, "children(userMockObject)"));
+    React__default["default"].createElement(React__default["default"].Fragment, null, children(userMockObject)));
 }
 
 var AuthenticationApi = /** @class */ (function (_super) {
