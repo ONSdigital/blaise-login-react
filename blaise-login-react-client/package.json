@@ -28,18 +28,18 @@
   "homepage": "https://github.com/ONSdigital/blaise-login-react-client#readme",
   "peerDependencies": {
     "formik": "^2.2.9",
-    "react": "^18.0.1",
-    "react-dom": "^18.0.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "dependencies": {
     "axios": "~0.21.0",
     "blaise-api-node-client": "ONSDigital/blaise-api-node-client",
     "blaise-design-system-react-components": "git+https://github.com/ONSdigital/blaise-design-system-react-components#BL5FRS-54",
     "formik": "^2.2.9",
-    "react": "^18.0.1",
-    "react-dom": "^18.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-loader-spinner": "^4.0.0",
-    "react-router-dom": "^6.2.1",
+    "react-router-dom": "^6.11.2",
     "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
