@@ -5919,6 +5919,7 @@ var Authentication = /** @class */ (function (_super) {
 
 exports.AuthManager = AuthManager;
 exports.Authentication = Authentication;
+exports.AuthenticationApi = AuthenticationApi;
 exports.LoginForm = LoginForm;
 exports.getCurrentUser = getCurrentUser;
 exports.getUser = getUser;
