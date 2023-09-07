@@ -16,17 +16,17 @@ async function loginUserIfAlreadyAuthenticated(authenticationApi:AuthenticationA
 }
 
 export default function Login({ authenticationApi, setLoggedIn }: LoginProps): ReactElement {
-  const logInUser = useAsyncRequestWithTwoParams<void, AuthenticationApi, (loggedIn: boolean) => void>(loginUserIfAlreadyAuthenticated, authenticationApi, setLoggedIn);
+  //const logInUser = useAsyncRequestWithTwoParams<void, AuthenticationApi, (loggedIn: boolean) => void>(loginUserIfAlreadyAuthenticated, authenticationApi, setLoggedIn);
 
   return (
-    <AsyncContent content={logInUser}>
-      {() => (
+/*     <AsyncContent content={logInUser}>
+      {() => ( */
         <>
           <ONSPanel status="info">Enter your Blaise username and password</ONSPanel>
           <LoginForm authManager={authenticationApi} setLoggedIn={setLoggedIn} />
         </>
-      )}
+/*       )}
 
-    </AsyncContent>
+    </AsyncContent> */
   );
 }
