@@ -17,7 +17,7 @@ export default function AuthenticateUserHandler({ title, children }:Authenticate
     <>
       {
         loggedIn
-          ? <RenderAuthenticatedContent authenticationApi={authenticationApi}>{children}</RenderAuthenticatedContent>
+          ? <RenderAuthenticatedContent authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} >{children}</RenderAuthenticatedContent>
           : <AuthenticateUser title={title} authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} />
       }
     </>

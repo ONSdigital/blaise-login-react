@@ -5857,9 +5857,9 @@ function getLoggedInUser(authenticationApi) {
     });
 }
 function RenderAuthenticatedContent(_a) {
-    var authenticationApi = _a.authenticationApi, children = _a.children;
+    var authenticationApi = _a.authenticationApi, children = _a.children, setLoggedIn = _a.setLoggedIn;
     var getUser = useAsyncRequestWithParam(getLoggedInUser, authenticationApi);
-    return (React__default["default"].createElement(AsyncContent, { content: getUser }, function (user) { return (children(user, true, function () { return authenticationApi.logOut; })); }));
+    return (React__default["default"].createElement(AsyncContent, { content: getUser }, function (user) { return (children(user, true, function () { return authenticationApi.logOut(setLoggedIn); })); }));
 }
 
 var divStyle = {
@@ -5900,7 +5900,7 @@ function AuthenticateUserHandler(_a) {
     var _b = React.useState(false), loggedIn = _b[0], setLoggedIn = _b[1];
     var authenticationApi = new AuthenticationApi();
     return (React__default["default"].createElement(React__default["default"].Fragment, null, loggedIn
-        ? React__default["default"].createElement(RenderAuthenticatedContent, { authenticationApi: authenticationApi }, children)
+        ? React__default["default"].createElement(RenderAuthenticatedContent, { authenticationApi: authenticationApi, setLoggedIn: setLoggedIn }, children)
         : React__default["default"].createElement(AuthenticateUser, { title: title, authenticationApi: authenticationApi, setLoggedIn: setLoggedIn })));
 }
 

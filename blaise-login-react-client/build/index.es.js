@@ -5849,9 +5849,9 @@ function getLoggedInUser(authenticationApi) {
     });
 }
 function RenderAuthenticatedContent(_a) {
-    var authenticationApi = _a.authenticationApi, children = _a.children;
+    var authenticationApi = _a.authenticationApi, children = _a.children, setLoggedIn = _a.setLoggedIn;
     var getUser = useAsyncRequestWithParam(getLoggedInUser, authenticationApi);
-    return (React.createElement(AsyncContent, { content: getUser }, function (user) { return (children(user, true, function () { return authenticationApi.logOut; })); }));
+    return (React.createElement(AsyncContent, { content: getUser }, function (user) { return (children(user, true, function () { return authenticationApi.logOut(setLoggedIn); })); }));
 }
 
 var divStyle = {
@@ -5892,7 +5892,7 @@ function AuthenticateUserHandler(_a) {
     var _b = useState(false), loggedIn = _b[0], setLoggedIn = _b[1];
     var authenticationApi = new AuthenticationApi();
     return (React.createElement(React.Fragment, null, loggedIn
-        ? React.createElement(RenderAuthenticatedContent, { authenticationApi: authenticationApi }, children)
+        ? React.createElement(RenderAuthenticatedContent, { authenticationApi: authenticationApi, setLoggedIn: setLoggedIn }, children)
         : React.createElement(AuthenticateUser, { title: title, authenticationApi: authenticationApi, setLoggedIn: setLoggedIn })));
 }
 
