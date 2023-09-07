@@ -5818,8 +5818,8 @@ var Authenticate = /** @class */ (function (_super) {
 }(React.Component));
 
 exports.AuthManager = AuthManager;
+exports.Authenticate = Authenticate;
 exports.AuthenticationApi = AuthenticationApi;
-exports.AuthenticationHandler = Authenticate;
 exports.LoginForm = LoginForm;
 exports.getCurrentUser = getCurrentUser;
 exports.getUser = getUser;

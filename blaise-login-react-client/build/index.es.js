@@ -5809,5 +5809,5 @@ var Authenticate = /** @class */ (function (_super) {
     return Authenticate;
 }(Component));
 
-export { AuthManager, AuthenticationApi, Authenticate as AuthenticationHandler, LoginForm, getCurrentUser, getUser, validatePassword, validateToken, validateUserPermissions };
+export { AuthManager, Authenticate, AuthenticationApi, LoginForm, getCurrentUser, getUser, validatePassword, validateToken, validateUserPermissions };
 //# sourceMappingURL=index.es.js.map

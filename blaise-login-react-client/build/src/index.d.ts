@@ -1,6 +1,6 @@
 import LoginForm from "./components/LoginForm";
 import { AuthManager } from "./client/token";
 import { getUser, getCurrentUser, validatePassword, validateUserPermissions, validateToken } from "./client/user";
-import AuthenticationHandler from "./components/Authenticate";
+import Authenticate from "./components/Authenticate";
 import AuthenticationApi from "./client/AuthenticationApi";
-export { AuthenticationHandler, LoginForm, AuthenticationApi, AuthManager, getUser, getCurrentUser, validatePassword, validateUserPermissions, validateToken };
+export { Authenticate, LoginForm, AuthenticationApi, AuthManager, getUser, getCurrentUser, validatePassword, validateUserPermissions, validateToken };
