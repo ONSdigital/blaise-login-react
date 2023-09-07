@@ -5793,7 +5793,7 @@ var AuthenticationApi = /** @class */ (function (_super) {
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2:
                         _a.sent();
-                        throw new Error('Unable to retrieve logged in user');
+                        throw new Error("Unable to retrieve logged in user");
                     case 3: return [2 /*return*/];
                 }
             });
@@ -5803,15 +5803,15 @@ var AuthenticationApi = /** @class */ (function (_super) {
 }(AuthManager));
 
 var divStyle = {
-    minHeight: 'calc(67vh)',
+    minHeight: "calc(67vh)",
 };
 function LayoutTemplate(_a) {
     var children = _a.children, showSignOutButton = _a.showSignOutButton, signOut = _a.signOut;
     var navigationLinks = [
         {
-            endpoint: '/',
-            id: 'home',
-            label: 'Home',
+            endpoint: "/",
+            id: "home",
+            label: "Home",
         },
     ];
     return (React__default["default"].createElement(React__default["default"].Fragment, null,
@@ -5821,19 +5821,19 @@ function LayoutTemplate(_a) {
 }
 
 function isLoading(state) {
-    return state.state === 'loading';
+    return state.state === "loading";
 }
 function hasErrored(state) {
-    return state.state === 'errored';
+    return state.state === "errored";
 }
 function loading() {
-    return { state: 'loading' };
+    return { state: "loading" };
 }
 function errored(error) {
-    return { state: 'errored', error: error };
+    return { state: "errored", error: error };
 }
 function succeeded(data) {
-    return { state: 'succeeded', data: data };
+    return { state: "succeeded", data: data };
 }
 function useAsyncRequestWithParam(request, param) {
     var _a = React.useState(loading()), state = _a[0], setState = _a[1];
@@ -5902,21 +5902,23 @@ function Login(_a) {
         React__default["default"].createElement(LoginForm, { authManager: authenticationApi, setLoggedIn: setLoggedIn }))); }));
 }
 
-function Authentication(_a) {
-    var children = _a.children;
-    var _b = React.useState(false), loggedIn = _b[0], setLoggedIn = _b[1];
-    var authenticationApi = new AuthenticationApi();
-    return (React__default["default"].createElement(LayoutTemplate, { showSignOutButton: loggedIn, signOut: function () { return authenticationApi.logOut(setLoggedIn); } }, loggedIn
-        ? React__default["default"].createElement(AuthenticationContent, { authenticationApi: authenticationApi }, children)
-        : React__default["default"].createElement(Login, { authenticationApi: authenticationApi, setLoggedIn: setLoggedIn })));
-}
+var Authentication = /** @class */ (function (_super) {
+    __extends$1(Authentication, _super);
+    function Authentication(props) {
+        return _super.call(this, props) || this;
+    }
+    Authentication.prototype.render = function () {
+        var _a = React.useState(false), loggedIn = _a[0], setLoggedIn = _a[1];
+        var authenticationApi = new AuthenticationApi();
+        return (React__default["default"].createElement(LayoutTemplate, { showSignOutButton: loggedIn, signOut: function () { return authenticationApi.logOut(setLoggedIn); } }, loggedIn
+            ? React__default["default"].createElement(AuthenticationContent, { authenticationApi: authenticationApi }, this.props.children)
+            : React__default["default"].createElement(Login, { authenticationApi: authenticationApi, setLoggedIn: setLoggedIn })));
+    };
+    return Authentication;
+}(React.Component));
 
 exports.AuthManager = AuthManager;
 exports.Authentication = Authentication;
-exports.AuthenticationApi = AuthenticationApi;
-exports.AuthenticationContent = AuthenticationContent;
-exports.LayoutTemplate = LayoutTemplate;
-exports.Login = Login;
 exports.LoginForm = LoginForm;
 exports.getCurrentUser = getCurrentUser;
 exports.getUser = getUser;

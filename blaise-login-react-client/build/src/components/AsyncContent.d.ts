@@ -1,5 +1,5 @@
-import { AsyncState } from '../hooks/useAsyncRequest';
-import React from 'react';
+import { AsyncState } from "../hooks/useAsyncRequest";
+import React from "react";
 interface AsyncContentProps<T> {
     content: AsyncState<T>;
     children: (content: T) => React.ReactNode;
