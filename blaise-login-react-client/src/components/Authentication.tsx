@@ -1,5 +1,5 @@
+import React, { ReactElement, useState } from "react";
 import { User } from "blaise-api-node-client";
-import React, { Component, ReactElement, useState } from "react";
 import AuthenticationApi from "../client/AuthenticationApi";
 import LayoutTemplate from "./LayoutTemplate";
 import AuthenticationContent from "./AuthenticationContent";
@@ -9,27 +9,17 @@ interface AuthenticationProps {
   children: (user: User) => React.ReactNode;
 }
 
-export default class Authentication extends Component<AuthenticationProps> {
-  constructor(props: AuthenticationProps) {
-    super(props);
-  }
-
-  render(): ReactElement {
+export default function Authentication({ children }:AuthenticationProps): ReactElement {
   const [loggedIn, setLoggedIn] = useState(false);
-  //const authenticationApi = new AuthenticationApi();
+  const authenticationApi = new AuthenticationApi();
 
   return (
-    <LayoutTemplate showSignOutButton={false} signOut={() => {}}>
+    <LayoutTemplate showSignOutButton={loggedIn} signOut={() => authenticationApi.logOut(setLoggedIn)}>
       {
-        <>
-        <p>testing 1234</p>
-        <Login />
-        </>
-/*           loggedIn
-            ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
-            : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} /> */
+          loggedIn
+            ? <AuthenticationContent authenticationApi={authenticationApi}>{children}</AuthenticationContent>
+            : <Login />
       }
     </LayoutTemplate>
   );
-    }
 }

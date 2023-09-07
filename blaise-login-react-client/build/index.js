@@ -3335,7 +3335,19 @@ Loader.defaultProps = {
 };
 });
 
-unwrapExports(dist);
+var Loader = unwrapExports(dist);
+
+/**
+ * This is a Standard Panel with an info status, with a loading spinner and "Loading" message.
+ * Uses [react-loader-spinner](https://www.npmjs.com/package/react-loader-spinner) for the loading spinner.
+ */
+var ONSLoadingPanel = function (_a) {
+    var hidden = _a.hidden, message = _a.message;
+    return (React__default["default"].createElement(ONSPanel, { hidden: hidden },
+        React__default["default"].createElement("div", { style: { textAlign: "center" } },
+            React__default["default"].createElement(Loader, { type: "TailSpin", color: "#064868", height: 30, width: 30 }),
+            message || "Loading")));
+};
 
 /**
  * If an issue occurs in the render function of a React component, if not handled then the UI will fall over.
@@ -5760,65 +5772,6 @@ var AuthManager = /** @class */ (function () {
     return AuthManager;
 }());
 
-var divStyle = {
-    minHeight: "calc(67vh)",
-};
-function LayoutTemplate(_a) {
-    var children = _a.children, showSignOutButton = _a.showSignOutButton, signOut = _a.signOut;
-    var navigationLinks = [
-        {
-            endpoint: "/",
-            id: "home",
-            label: "Home",
-        },
-    ];
-    return (React__default["default"].createElement(React__default["default"].Fragment, null,
-        React__default["default"].createElement(Header, { title: "Blaise Editing Service", noSave: true, signOutButton: showSignOutButton, signOutFunction: function () { return signOut(); }, navigationLinks: navigationLinks }),
-        React__default["default"].createElement("div", { style: divStyle, className: "ons-page__container ons-container", "data-testid": "app-content" }, children),
-        React__default["default"].createElement(Footer, null)));
-}
-
-/* interface LoginProps {
-  authenticationApi:AuthenticationApi;
-  setLoggedIn: (loggedIn: boolean) => void;
-} */
-/*
-async function loginUserIfAlreadyAuthenticated(authenticationApi:AuthenticationApi, setLoggedIn: (loggedIn: boolean) => void) {
-  const loggedIn = await authenticationApi.loggedIn();
-  setLoggedIn(loggedIn);
-} */
-function Login() {
-    //const logInUser = useAsyncRequestWithTwoParams<void, AuthenticationApi, (loggedIn: boolean) => void>(loginUserIfAlreadyAuthenticated, authenticationApi, setLoggedIn);
-    return (
-    /*     <AsyncContent content={logInUser}>
-          {() => ( */
-    React__default["default"].createElement(React__default["default"].Fragment, null,
-        React__default["default"].createElement(ONSPanel, { status: "info" }, "Enter your Blaise username and password"))
-    /*       )}
-    
-        </AsyncContent> */
-    );
-}
-
-var Authentication = /** @class */ (function (_super) {
-    __extends$1(Authentication, _super);
-    function Authentication(props) {
-        return _super.call(this, props) || this;
-    }
-    Authentication.prototype.render = function () {
-        var _a = React.useState(false); _a[0]; _a[1];
-        //const authenticationApi = new AuthenticationApi();
-        return (React__default["default"].createElement(LayoutTemplate, { showSignOutButton: false, signOut: function () { } }, React__default["default"].createElement(React__default["default"].Fragment, null,
-            React__default["default"].createElement("p", null, "testing 1234"),
-            React__default["default"].createElement(Login, null))
-        /*           loggedIn
-                    ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
-                    : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} /> */
-        ));
-    };
-    return Authentication;
-}(React.Component));
-
 var AuthenticationApi = /** @class */ (function (_super) {
     __extends$1(AuthenticationApi, _super);
     function AuthenticationApi() {
@@ -5849,9 +5802,119 @@ var AuthenticationApi = /** @class */ (function (_super) {
     return AuthenticationApi;
 }(AuthManager));
 
+var divStyle = {
+    minHeight: "calc(67vh)",
+};
+function LayoutTemplate(_a) {
+    var children = _a.children, showSignOutButton = _a.showSignOutButton, signOut = _a.signOut;
+    var navigationLinks = [
+        {
+            endpoint: "/",
+            id: "home",
+            label: "Home",
+        },
+    ];
+    return (React__default["default"].createElement(React__default["default"].Fragment, null,
+        React__default["default"].createElement(Header, { title: "Blaise Editing Service", noSave: true, signOutButton: showSignOutButton, signOutFunction: function () { return signOut(); }, navigationLinks: navigationLinks }),
+        React__default["default"].createElement("div", { style: divStyle, className: "ons-page__container ons-container", "data-testid": "app-content" }, children),
+        React__default["default"].createElement(Footer, null)));
+}
+
+function isLoading(state) {
+    return state.state === "loading";
+}
+function hasErrored(state) {
+    return state.state === "errored";
+}
+function loading() {
+    return { state: "loading" };
+}
+function errored(error) {
+    return { state: "errored", error: error };
+}
+function succeeded(data) {
+    return { state: "succeeded", data: data };
+}
+function useAsyncRequestWithParam(request, param) {
+    var _a = React.useState(loading()), state = _a[0], setState = _a[1];
+    React.useEffect(function () {
+        setState(loading());
+        request(param)
+            .then(function (response) { return setState(succeeded(response)); })
+            .catch(function (error) { return setState(errored(error.message)); });
+    }, [request, param]);
+    return state;
+}
+
+function AsyncContent(_a) {
+    var content = _a.content, children = _a.children;
+    if (isLoading(content)) {
+        return React__default["default"].createElement(ONSLoadingPanel, null);
+    }
+    if (hasErrored(content)) {
+        return React__default["default"].createElement(ONSPanel, { status: "error" }, content.error);
+    }
+    return React__default["default"].createElement(React__default["default"].Fragment, null, children(content.data));
+}
+
+function getLoggedInUser(authenticationApi) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, authenticationApi.getLoggedInUser()];
+        });
+    });
+}
+function AuthenticationContent(_a) {
+    var authenticationApi = _a.authenticationApi, children = _a.children;
+    var getUser = useAsyncRequestWithParam(getLoggedInUser, authenticationApi);
+    return (React__default["default"].createElement(AsyncContent, { content: getUser }, function (user) { return (children(user)); }));
+}
+
+/* interface LoginProps {
+  authenticationApi:AuthenticationApi;
+  setLoggedIn: (loggedIn: boolean) => void;
+} */
+/*
+async function loginUserIfAlreadyAuthenticated(authenticationApi:AuthenticationApi, setLoggedIn: (loggedIn: boolean) => void) {
+  const loggedIn = await authenticationApi.loggedIn();
+  setLoggedIn(loggedIn);
+} */
+function Login() {
+    //const logInUser = useAsyncRequestWithTwoParams<void, AuthenticationApi, (loggedIn: boolean) => void>(loginUserIfAlreadyAuthenticated, authenticationApi, setLoggedIn);
+    return (
+    /*     <AsyncContent content={logInUser}>
+          {() => ( */
+    React__default["default"].createElement(React__default["default"].Fragment, null,
+        React__default["default"].createElement(ONSPanel, { status: "info" }, "Enter your Blaise username and password"))
+    /*       )}
+    
+        </AsyncContent> */
+    );
+}
+
+function Authentication(_a) {
+    var children = _a.children;
+    var _b = React.useState(false), loggedIn = _b[0], setLoggedIn = _b[1];
+    var authenticationApi = new AuthenticationApi();
+    return (React__default["default"].createElement(LayoutTemplate, { showSignOutButton: loggedIn, signOut: function () { return authenticationApi.logOut(setLoggedIn); } }, loggedIn
+        ? React__default["default"].createElement(AuthenticationContent, { authenticationApi: authenticationApi }, children)
+        : React__default["default"].createElement(Login, null)));
+}
+
+var AuthenticationHandler = /** @class */ (function (_super) {
+    __extends$1(AuthenticationHandler, _super);
+    function AuthenticationHandler(props) {
+        return _super.call(this, props) || this;
+    }
+    AuthenticationHandler.prototype.render = function () {
+        return (React__default["default"].createElement(Authentication, null, this.props.children));
+    };
+    return AuthenticationHandler;
+}(React.Component));
+
 exports.AuthManager = AuthManager;
-exports.Authentication = Authentication;
 exports.AuthenticationApi = AuthenticationApi;
+exports.AuthenticationHandler = AuthenticationHandler;
 exports.LoginForm = LoginForm;
 exports.getCurrentUser = getCurrentUser;
 exports.getUser = getUser;

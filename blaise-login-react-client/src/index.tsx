@@ -2,11 +2,11 @@ import LoginForm from "./components/LoginForm";
 
 import { AuthManager } from "./client/token";
 import { getUser, getCurrentUser, validatePassword, validateUserPermissions, validateToken } from "./client/user";
-import Authentication from "./components/Authentication";
+import AuthenticationHandler from "./components/AuthenticationHandler";
 import AuthenticationApi from "./client/AuthenticationApi";
 
 export {
-  Authentication,
+  AuthenticationHandler,
   LoginForm,
   AuthenticationApi,
   AuthManager,
