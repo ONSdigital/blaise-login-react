@@ -17,11 +17,12 @@ export default class Authentication extends Component<AuthenticationProps> {
   render(): ReactElement {
   const [loggedIn, setLoggedIn] = useState(false);
   const authenticationApi = new AuthenticationApi();
+  console.debug("render");
 
   return (
     <LayoutTemplate showSignOutButton={loggedIn} signOut={() => authenticationApi.logOut(setLoggedIn)}>
       {
-          loggedIn
+          !loggedIn
             ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
             : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} />
       }
