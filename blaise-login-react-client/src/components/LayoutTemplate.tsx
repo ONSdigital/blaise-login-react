@@ -1,8 +1,8 @@
-import { Footer, Header } from 'blaise-design-system-react-components';
-import React from 'react';
+import { Footer, Header } from "blaise-design-system-react-components";
+import React from "react";
 
 const divStyle = {
-  minHeight: 'calc(67vh)',
+  minHeight: "calc(67vh)",
 };
 
 interface LayoutTemplateProps {

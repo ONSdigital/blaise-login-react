@@ -5851,11 +5851,11 @@ function getLoggedInUser(authenticationApi) {
 function RenderAuthenticatedContent(_a) {
     var authenticationApi = _a.authenticationApi, children = _a.children;
     var getUser = useAsyncRequestWithParam(getLoggedInUser, authenticationApi);
-    return (React.createElement(AsyncContent, { content: getUser }, function (user) { return (children(user, true)); }));
+    return (React.createElement(AsyncContent, { content: getUser }, function (user) { return (children(user, true, function () { return authenticationApi.logOut; })); }));
 }
 
 var divStyle = {
-    minHeight: 'calc(67vh)',
+    minHeight: "calc(67vh)",
 };
 function LayoutTemplate(_a) {
     var title = _a.title, children = _a.children;

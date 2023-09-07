@@ -4,7 +4,7 @@ import AuthenticateUserHandler from "./AuthenticateUserHandler";
 
 interface AuthenticateProps {
   title:string;
-  children: (user: User, loggedIn: boolean) => React.ReactNode;
+  children: (user: User, loggedIn: boolean, logOutFunction: () => void) => React.ReactNode;
 }
 
 export default class Authenticate extends Component<AuthenticateProps> {

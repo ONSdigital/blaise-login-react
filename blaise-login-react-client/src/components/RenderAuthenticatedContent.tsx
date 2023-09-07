@@ -6,7 +6,7 @@ import AsyncContent from "./AsyncContent";
 
 interface RenderAuthenticatedContentProps {
   authenticationApi: AuthenticationApi;
-  children: (user: User, loggedIn:boolean) => React.ReactNode;
+  children: (user: User, loggedIn:boolean, logOutFunction: () => void) => React.ReactNode;
 }
 
 async function getLoggedInUser(authenticationApi: AuthenticationApi): Promise<User> {
@@ -18,7 +18,7 @@ export default function RenderAuthenticatedContent({ authenticationApi, children
   return (
    <AsyncContent content={getUser}>
       {(user) => (
-        children(user, true)
+        children(user, true, () => authenticationApi.logOut)
       )}
     </AsyncContent> 
   );
