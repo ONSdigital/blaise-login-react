@@ -5862,6 +5862,17 @@ function RenderAuthenticatedContent(_a) {
     return (React__default["default"].createElement(AsyncContent, { content: getUser }, function (user) { return (children(user, true)); }));
 }
 
+var divStyle = {
+    minHeight: 'calc(67vh)',
+};
+function LayoutTemplate(_a) {
+    var title = _a.title, children = _a.children;
+    return (React__default["default"].createElement(React__default["default"].Fragment, null,
+        React__default["default"].createElement(Header, { title: title, noSave: true }),
+        React__default["default"].createElement("div", { style: divStyle, className: "ons-page__container ons-container", "data-testid": "login-page" }, children),
+        React__default["default"].createElement(Footer, null)));
+}
+
 function loginUserIfAlreadyAuthenticated(authenticationApi, setLoggedIn) {
     return __awaiter(this, void 0, void 0, function () {
         var loggedIn;
@@ -5877,22 +5888,20 @@ function loginUserIfAlreadyAuthenticated(authenticationApi, setLoggedIn) {
     });
 }
 function AuthenticateUser(_a) {
-    var authenticationApi = _a.authenticationApi, setLoggedIn = _a.setLoggedIn;
+    var title = _a.title, authenticationApi = _a.authenticationApi, setLoggedIn = _a.setLoggedIn;
     var logInUser = useAsyncRequestWithTwoParams(loginUserIfAlreadyAuthenticated, authenticationApi, setLoggedIn);
-    return (React__default["default"].createElement(AsyncContent, { content: logInUser }, function () { return (React__default["default"].createElement(React__default["default"].Fragment, null,
-        React__default["default"].createElement(Header, { title: "Application name", noSave: true }),
+    return (React__default["default"].createElement(AsyncContent, { content: logInUser }, function () { return (React__default["default"].createElement(LayoutTemplate, { title: title },
         React__default["default"].createElement(ONSPanel, { status: "info" }, "Enter your Blaise username and password"),
-        React__default["default"].createElement(LoginForm, { authManager: authenticationApi, setLoggedIn: setLoggedIn }),
-        React__default["default"].createElement(Footer, null))); }));
+        React__default["default"].createElement(LoginForm, { authManager: authenticationApi, setLoggedIn: setLoggedIn }))); }));
 }
 
 function AuthenticateUserHandler(_a) {
-    var children = _a.children;
+    var title = _a.title, children = _a.children;
     var _b = React.useState(false), loggedIn = _b[0], setLoggedIn = _b[1];
     var authenticationApi = new AuthenticationApi();
     return (React__default["default"].createElement(React__default["default"].Fragment, null, loggedIn
         ? React__default["default"].createElement(RenderAuthenticatedContent, { authenticationApi: authenticationApi }, children)
-        : React__default["default"].createElement(AuthenticateUser, { authenticationApi: authenticationApi, setLoggedIn: setLoggedIn })));
+        : React__default["default"].createElement(AuthenticateUser, { title: title, authenticationApi: authenticationApi, setLoggedIn: setLoggedIn })));
 }
 
 var Authenticate = /** @class */ (function (_super) {
@@ -5901,7 +5910,7 @@ var Authenticate = /** @class */ (function (_super) {
         return _super.call(this, props) || this;
     }
     Authenticate.prototype.render = function () {
-        return (React__default["default"].createElement(AuthenticateUserHandler, null, this.props.children));
+        return (React__default["default"].createElement(AuthenticateUserHandler, { title: this.props.title }, this.props.children));
     };
     return Authenticate;
 }(React.Component));
