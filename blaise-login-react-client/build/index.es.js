@@ -5770,28 +5770,20 @@ function LayoutTemplate(_a) {
         React.createElement(Footer, null)));
 }
 
-var Authentication = /** @class */ (function (_super) {
-    __extends$1(Authentication, _super);
-    function Authentication(props) {
-        var _this = _super.call(this, props) || this;
-        console.debug("Authentication");
-        return _this;
-    }
-    Authentication.prototype.render = function () {
-        console.debug("render");
-        return (React.createElement(LayoutTemplate, { showSignOutButton: false, signOut: function () { } },
-            React.createElement("p", null, " yo bruv"))
-        /*
-              {
-                  !loggedIn
-                    ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
-                    : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} />
-              }
-            */
-        );
-    };
-    return Authentication;
-}(Component));
+/* async function getLoggedInUser(authenticationApi: AuthenticationApi): Promise<User> {
+  return authenticationApi.getLoggedInUser();
+} */
+function AuthenticationContent(_a) {
+    _a.authenticationApi; _a.children;
+    //const getUser = useAsyncRequestWithParam<User, AuthenticationApi>(getLoggedInUser, authenticationApi);
+    return (
+    /*     <AsyncContent content={getUser}>
+          {(user) => (
+            children(user)
+          )}
+        </AsyncContent> */
+    React.createElement(React.Fragment, null, "children(userMockObject)"));
+}
 
 var AuthenticationApi = /** @class */ (function (_super) {
     __extends$1(AuthenticationApi, _super);
@@ -5822,6 +5814,30 @@ var AuthenticationApi = /** @class */ (function (_super) {
     };
     return AuthenticationApi;
 }(AuthManager));
+
+var Authentication = /** @class */ (function (_super) {
+    __extends$1(Authentication, _super);
+    function Authentication(props) {
+        var _this = _super.call(this, props) || this;
+        console.debug("Authentication");
+        return _this;
+    }
+    Authentication.prototype.render = function () {
+        var authenticationApi = new AuthenticationApi();
+        console.debug("render");
+        return (React.createElement(LayoutTemplate, { showSignOutButton: false, signOut: function () { console.debug("logout"); } },
+            React.createElement(AuthenticationContent, { authenticationApi: authenticationApi }, this.props.children))
+        /*
+              {
+                  !loggedIn
+                    ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
+                    : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} />
+              }
+            */
+        );
+    };
+    return Authentication;
+}(Component));
 
 export { AuthManager, Authentication, AuthenticationApi, LoginForm, getCurrentUser, getUser, validatePassword, validateToken, validateUserPermissions };
 //# sourceMappingURL=index.es.js.map
