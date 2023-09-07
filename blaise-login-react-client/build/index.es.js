@@ -5770,6 +5770,28 @@ function LayoutTemplate(_a) {
         React.createElement(Footer, null)));
 }
 
+/* interface LoginProps {
+  authenticationApi:AuthenticationApi;
+  setLoggedIn: (loggedIn: boolean) => void;
+} */
+/*
+async function loginUserIfAlreadyAuthenticated(authenticationApi:AuthenticationApi, setLoggedIn: (loggedIn: boolean) => void) {
+  const loggedIn = await authenticationApi.loggedIn();
+  setLoggedIn(loggedIn);
+} */
+function Login() {
+    //const logInUser = useAsyncRequestWithTwoParams<void, AuthenticationApi, (loggedIn: boolean) => void>(loginUserIfAlreadyAuthenticated, authenticationApi, setLoggedIn);
+    return (
+    /*     <AsyncContent content={logInUser}>
+          {() => ( */
+    React.createElement(React.Fragment, null,
+        React.createElement(ONSPanel, { status: "info" }, "Enter your Blaise username and password"))
+    /*       )}
+    
+        </AsyncContent> */
+    );
+}
+
 var Authentication = /** @class */ (function (_super) {
     __extends$1(Authentication, _super);
     function Authentication(props) {
@@ -5778,8 +5800,9 @@ var Authentication = /** @class */ (function (_super) {
     Authentication.prototype.render = function () {
         //const [loggedIn, setLoggedIn] = useState(false);
         //const authenticationApi = new AuthenticationApi();
-        return (React.createElement(LayoutTemplate, { showSignOutButton: false, signOut: function () { } }, React.createElement("p", null, "testing")
-        //<Login />
+        return (React.createElement(LayoutTemplate, { showSignOutButton: false, signOut: function () { } }, React.createElement(React.Fragment, null,
+            React.createElement("p", null, "testing 123"),
+            React.createElement(Login, null))
         /*           loggedIn
                     ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
                     : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} /> */

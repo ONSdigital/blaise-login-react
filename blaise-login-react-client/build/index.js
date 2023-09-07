@@ -5778,6 +5778,28 @@ function LayoutTemplate(_a) {
         React__default["default"].createElement(Footer, null)));
 }
 
+/* interface LoginProps {
+  authenticationApi:AuthenticationApi;
+  setLoggedIn: (loggedIn: boolean) => void;
+} */
+/*
+async function loginUserIfAlreadyAuthenticated(authenticationApi:AuthenticationApi, setLoggedIn: (loggedIn: boolean) => void) {
+  const loggedIn = await authenticationApi.loggedIn();
+  setLoggedIn(loggedIn);
+} */
+function Login() {
+    //const logInUser = useAsyncRequestWithTwoParams<void, AuthenticationApi, (loggedIn: boolean) => void>(loginUserIfAlreadyAuthenticated, authenticationApi, setLoggedIn);
+    return (
+    /*     <AsyncContent content={logInUser}>
+          {() => ( */
+    React__default["default"].createElement(React__default["default"].Fragment, null,
+        React__default["default"].createElement(ONSPanel, { status: "info" }, "Enter your Blaise username and password"))
+    /*       )}
+    
+        </AsyncContent> */
+    );
+}
+
 var Authentication = /** @class */ (function (_super) {
     __extends$1(Authentication, _super);
     function Authentication(props) {
@@ -5786,8 +5808,9 @@ var Authentication = /** @class */ (function (_super) {
     Authentication.prototype.render = function () {
         //const [loggedIn, setLoggedIn] = useState(false);
         //const authenticationApi = new AuthenticationApi();
-        return (React__default["default"].createElement(LayoutTemplate, { showSignOutButton: false, signOut: function () { } }, React__default["default"].createElement("p", null, "testing")
-        //<Login />
+        return (React__default["default"].createElement(LayoutTemplate, { showSignOutButton: false, signOut: function () { } }, React__default["default"].createElement(React__default["default"].Fragment, null,
+            React__default["default"].createElement("p", null, "testing 123"),
+            React__default["default"].createElement(Login, null))
         /*           loggedIn
                     ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
                     : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} /> */

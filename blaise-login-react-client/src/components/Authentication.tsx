@@ -21,8 +21,10 @@ export default class Authentication extends Component<AuthenticationProps> {
   return (
     <LayoutTemplate showSignOutButton={false} signOut={() => {}}>
       {
-        <p>testing</p>
-        //<Login />
+        <>
+        <p>testing 123</p>
+        <Login />
+        </>
 /*           loggedIn
             ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
             : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} /> */
