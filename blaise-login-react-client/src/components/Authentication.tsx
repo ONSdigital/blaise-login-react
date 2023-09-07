@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useState } from 'react';
 import { User } from "blaise-api-node-client";
 import AuthenticationApi from "../client/AuthenticationApi";
 import LayoutTemplate from "./LayoutTemplate";
@@ -18,7 +18,7 @@ export default function Authentication({ children }:AuthenticationProps): ReactE
       {
           loggedIn
             ? <AuthenticationContent authenticationApi={authenticationApi}>{children}</AuthenticationContent>
-            : <Login />
+            : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} />
       }
     </LayoutTemplate>
   );

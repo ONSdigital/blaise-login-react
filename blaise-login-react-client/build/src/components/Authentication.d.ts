@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement } from 'react';
 import { User } from "blaise-api-node-client";
 interface AuthenticationProps {
     children: (user: User) => React.ReactNode;

@@ -5837,6 +5837,16 @@ function useAsyncRequestWithParam(request, param) {
     }, [request, param]);
     return state;
 }
+function useAsyncRequestWithTwoParams(request, param1, param2) {
+    var _a = useState(loading()), state = _a[0], setState = _a[1];
+    useEffect(function () {
+        setState(loading());
+        request(param1, param2)
+            .then(function (response) { return setState(succeeded(response)); })
+            .catch(function (error) { return setState(errored(error.message)); });
+    }, [request, param1, param2]);
+    return state;
+}
 
 function AsyncContent(_a) {
     var content = _a.content, children = _a.children;
@@ -5862,26 +5872,26 @@ function AuthenticationContent(_a) {
     return (React.createElement(AsyncContent, { content: getUser }, function (user) { return (children(user)); }));
 }
 
-/* interface LoginProps {
-  authenticationApi:AuthenticationApi;
-  setLoggedIn: (loggedIn: boolean) => void;
-} */
-/*
-async function loginUserIfAlreadyAuthenticated(authenticationApi:AuthenticationApi, setLoggedIn: (loggedIn: boolean) => void) {
-  const loggedIn = await authenticationApi.loggedIn();
-  setLoggedIn(loggedIn);
-} */
-function Login() {
-    //const logInUser = useAsyncRequestWithTwoParams<void, AuthenticationApi, (loggedIn: boolean) => void>(loginUserIfAlreadyAuthenticated, authenticationApi, setLoggedIn);
-    return (
-    /*     <AsyncContent content={logInUser}>
-          {() => ( */
-    React.createElement(React.Fragment, null,
-        React.createElement(ONSPanel, { status: "info" }, "Enter your Blaise username and password"))
-    /*       )}
-    
-        </AsyncContent> */
-    );
+function loginUserIfAlreadyAuthenticated(authenticationApi, setLoggedIn) {
+    return __awaiter(this, void 0, void 0, function () {
+        var loggedIn;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, authenticationApi.loggedIn()];
+                case 1:
+                    loggedIn = _a.sent();
+                    setLoggedIn(loggedIn);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function Login(_a) {
+    var authenticationApi = _a.authenticationApi, setLoggedIn = _a.setLoggedIn;
+    var logInUser = useAsyncRequestWithTwoParams(loginUserIfAlreadyAuthenticated, authenticationApi, setLoggedIn);
+    return (React.createElement(AsyncContent, { content: logInUser }, function () { return (React.createElement(React.Fragment, null,
+        React.createElement(ONSPanel, { status: "info" }, "Enter your Blaise username and password"),
+        React.createElement(LoginForm, { authManager: authenticationApi, setLoggedIn: setLoggedIn }))); }));
 }
 
 function Authentication(_a) {
@@ -5890,7 +5900,7 @@ function Authentication(_a) {
     var authenticationApi = new AuthenticationApi();
     return (React.createElement(LayoutTemplate, { showSignOutButton: loggedIn, signOut: function () { return authenticationApi.logOut(setLoggedIn); } }, loggedIn
         ? React.createElement(AuthenticationContent, { authenticationApi: authenticationApi }, children)
-        : React.createElement(Login, null)));
+        : React.createElement(Login, { authenticationApi: authenticationApi, setLoggedIn: setLoggedIn })));
 }
 
 var AuthenticationHandler = /** @class */ (function (_super) {
