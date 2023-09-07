@@ -5667,15 +5667,22 @@ var AuthManager = /** @class */ (function () {
 
 var Authentication = /** @class */ (function (_super) {
     __extends$1(Authentication, _super);
-    function Authentication() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Authentication.prototype.superconstructor = function () {
+    function Authentication(props) {
+        var _this = _super.call(this, props) || this;
         console.debug("Authentication");
-    };
+        return _this;
+    }
     Authentication.prototype.render = function () {
         console.debug("render");
-        return (React.createElement("div", null, "yo"));
+        return (React.createElement("div", null, "yo")
+        /*     <LayoutTemplate showSignOutButton={loggedIn} signOut={() => authenticationApi.logOut(setLoggedIn)}>
+              {
+                  !loggedIn
+                    ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
+                    : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} />
+              }
+            </LayoutTemplate> */
+        );
     };
     return Authentication;
 }(Component));
