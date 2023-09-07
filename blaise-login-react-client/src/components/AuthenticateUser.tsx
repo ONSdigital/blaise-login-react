@@ -5,7 +5,7 @@ import AsyncContent from "./AsyncContent";
 import AuthenticationApi from "../client/AuthenticationApi";
 import LoginForm from "./LoginForm";
 
-interface LoginProps {
+interface AuthenticateUserProps {
   authenticationApi:AuthenticationApi;
   setLoggedIn: (loggedIn: boolean) => void;
 }
@@ -15,7 +15,7 @@ async function loginUserIfAlreadyAuthenticated(authenticationApi:AuthenticationA
   setLoggedIn(loggedIn);
 }
 
-export default function Login({ authenticationApi, setLoggedIn }: LoginProps): ReactElement {
+export default function AuthenticateUser({ authenticationApi, setLoggedIn }: AuthenticateUserProps): ReactElement {
   const logInUser = useAsyncRequestWithTwoParams<void, AuthenticationApi, (loggedIn: boolean) => void>(loginUserIfAlreadyAuthenticated, authenticationApi, setLoggedIn);
 
   return (

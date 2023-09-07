@@ -4,21 +4,21 @@ import AuthenticationApi from "../client/AuthenticationApi";
 import { useAsyncRequestWithParam } from "../hooks/useAsyncRequest";
 import AsyncContent from "./AsyncContent";
 
-interface AuthenticationContentProps {
+interface RenderAuthenticatedContentProps {
   authenticationApi: AuthenticationApi;
-  children: (user: User) => React.ReactNode;
+  children: (user: User, loggedIn:boolean) => React.ReactNode;
 }
 
 async function getLoggedInUser(authenticationApi: AuthenticationApi): Promise<User> {
   return authenticationApi.getLoggedInUser();
 }
 
-export default function AuthenticationContent({ authenticationApi, children }:AuthenticationContentProps): ReactElement {
+export default function RenderAuthenticatedContent({ authenticationApi, children }:RenderAuthenticatedContentProps): ReactElement {
   const getUser = useAsyncRequestWithParam<User, AuthenticationApi>(getLoggedInUser, authenticationApi);
   return (
    <AsyncContent content={getUser}>
       {(user) => (
-        children(user)
+        children(user, true)
       )}
     </AsyncContent> 
   );
