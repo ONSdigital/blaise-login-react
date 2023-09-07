@@ -1,8 +1,8 @@
 import { ReactElement } from "react";
 import AuthenticationApi from "../client/AuthenticationApi";
-interface LoginProps {
+interface AuthenticateUserProps {
     authenticationApi: AuthenticationApi;
     setLoggedIn: (loggedIn: boolean) => void;
 }
-export default function Login({ authenticationApi, setLoggedIn }: LoginProps): ReactElement;
+export default function AuthenticateUser({ authenticationApi, setLoggedIn }: AuthenticateUserProps): ReactElement;
 export {};
