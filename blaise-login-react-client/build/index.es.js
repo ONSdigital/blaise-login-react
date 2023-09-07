@@ -1,4 +1,4 @@
-import React, { Component, Fragment as Fragment$1, useEffect, useState } from 'react';
+import React, { Component, Fragment as Fragment$1, useEffect } from 'react';
 import { Formik, Form, useFormikContext, Field } from 'formik';
 
 /*! *****************************************************************************
@@ -5665,6 +5665,21 @@ var AuthManager = /** @class */ (function () {
     return AuthManager;
 }());
 
+var Authentication = /** @class */ (function (_super) {
+    __extends$1(Authentication, _super);
+    function Authentication() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Authentication.prototype.superconstructor = function () {
+        console.debug("Authentication");
+    };
+    Authentication.prototype.render = function () {
+        console.debug("render");
+        return (React.createElement("div", null, "yo"));
+    };
+    return Authentication;
+}(Component));
+
 var AuthenticationApi = /** @class */ (function (_super) {
     __extends$1(AuthenticationApi, _super);
     function AuthenticationApi() {
@@ -5694,30 +5709,6 @@ var AuthenticationApi = /** @class */ (function (_super) {
     };
     return AuthenticationApi;
 }(AuthManager));
-
-var Authentication = /** @class */ (function (_super) {
-    __extends$1(Authentication, _super);
-    function Authentication(props) {
-        var _this = _super.call(this, props) || this;
-        console.debug("Authentication");
-        return _this;
-    }
-    Authentication.prototype.render = function () {
-        var _a = useState(false); _a[0]; _a[1];
-        new AuthenticationApi();
-        console.debug("render");
-        return (React.createElement("div", null, "yo")
-        /*     <LayoutTemplate showSignOutButton={loggedIn} signOut={() => authenticationApi.logOut(setLoggedIn)}>
-              {
-                  !loggedIn
-                    ? <AuthenticationContent authenticationApi={authenticationApi}>{this.props.children}</AuthenticationContent>
-                    : <Login authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} />
-              }
-            </LayoutTemplate> */
-        );
-    };
-    return Authentication;
-}(Component));
 
 export { AuthManager, Authentication, AuthenticationApi, LoginForm, getCurrentUser, getUser, validatePassword, validateToken, validateUserPermissions };
 //# sourceMappingURL=index.es.js.map
