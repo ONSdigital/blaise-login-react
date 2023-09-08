@@ -5902,7 +5902,8 @@ var Authenticate = /** @class */ (function (_super) {
         return _super.call(this, props) || this;
     }
     Authenticate.prototype.render = function () {
-        return (React.createElement(AuthenticateUserHandler, { title: this.props.title }, this.props.children));
+        var _a;
+        return (React.createElement(AuthenticateUserHandler, { title: (_a = this.props.title) !== null && _a !== void 0 ? _a : 'Blaise login' }, this.props.children));
     };
     return Authenticate;
 }(Component));

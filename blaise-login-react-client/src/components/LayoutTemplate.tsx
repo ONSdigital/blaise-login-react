@@ -14,11 +14,14 @@ export default function LayoutTemplate({ title, children}: LayoutTemplateProps) 
   return (
 
     <>
-      <Header title={title} noSave />
-      <div style={divStyle} className="ons-page__container ons-container" data-testid="login-page">
+      <div data-testid="login-page">
+        <Header title={title} noSave/>
+  
+      <div style={divStyle} className="ons-page__container ons-container" data-testid="login-page-content">
         {children}
       </div>
       <Footer />
+      </div>
     </>
   );
 }

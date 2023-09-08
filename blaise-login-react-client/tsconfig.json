@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "types": [
+      // ... other types
+      "jest"
+    ],
     "target": "es5",
     "lib": [
       "dom",
@@ -29,7 +33,6 @@
     "src"
   ],
   "exclude": [
-    "**/*.test.tsx",
     "node_modules"
   ]
 }

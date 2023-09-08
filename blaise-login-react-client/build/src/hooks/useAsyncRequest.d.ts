@@ -1,15 +1,15 @@
-declare type Loading = {
+type Loading = {
     state: "loading";
 };
-declare type Errored = {
+type Errored = {
     error: string;
     state: "errored";
 };
-declare type Succeeded<T> = {
+type Succeeded<T> = {
     data: T;
     state: "succeeded";
 };
-export declare type AsyncState<T> = Loading | Errored | Succeeded<T>;
+export type AsyncState<T> = Loading | Errored | Succeeded<T>;
 export declare function isLoading<T>(state: AsyncState<T>): state is Loading;
 export declare function hasErrored<T>(state: AsyncState<T>): state is Errored;
 export declare function useAsyncRequest<T>(request: () => Promise<T>): AsyncState<T>;

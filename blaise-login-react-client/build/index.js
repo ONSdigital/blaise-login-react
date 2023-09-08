@@ -5910,7 +5910,8 @@ var Authenticate = /** @class */ (function (_super) {
         return _super.call(this, props) || this;
     }
     Authenticate.prototype.render = function () {
-        return (React__default["default"].createElement(AuthenticateUserHandler, { title: this.props.title }, this.props.children));
+        var _a;
+        return (React__default["default"].createElement(AuthenticateUserHandler, { title: (_a = this.props.title) !== null && _a !== void 0 ? _a : 'Blaise login' }, this.props.children));
     };
     return Authenticate;
 }(React.Component));
