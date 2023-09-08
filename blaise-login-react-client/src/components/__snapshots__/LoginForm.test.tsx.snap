@@ -31,6 +31,7 @@ exports[`Login form matches snapshot 1`] = `
           <input
             class="ons-input ons-input--text ons-input-type__input "
             id="username"
+            initial_value=""
             name="Username"
             type="username"
             value=""
@@ -54,6 +55,7 @@ exports[`Login form matches snapshot 1`] = `
           <input
             class="ons-input ons-input--text ons-input-type__input "
             id="Password"
+            initial_value=""
             name="Password"
             type="password"
             value=""
@@ -101,6 +103,7 @@ exports[`Login form matches snapshot 1`] = `
         <input
           class="ons-input ons-input--text ons-input-type__input "
           id="username"
+          initial_value=""
           name="Username"
           type="username"
           value=""
@@ -124,6 +127,7 @@ exports[`Login form matches snapshot 1`] = `
         <input
           class="ons-input ons-input--text ons-input-type__input "
           id="Password"
+          initial_value=""
           name="Password"
           type="password"
           value=""

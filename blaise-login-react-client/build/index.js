@@ -5330,11 +5330,13 @@ var LoginForm = /** @class */ (function (_super) {
                 id: "username",
                 description: "Your Blaise username",
                 type: "username",
+                initial_value: ''
             },
             {
                 name: "Password",
                 description: "Your Blaise password",
                 type: "password",
+                initial_value: ''
             }
         ];
     };
@@ -5868,9 +5870,10 @@ var divStyle = {
 function LayoutTemplate(_a) {
     var title = _a.title, children = _a.children;
     return (React__default["default"].createElement(React__default["default"].Fragment, null,
-        React__default["default"].createElement(Header, { title: title, noSave: true }),
-        React__default["default"].createElement("div", { style: divStyle, className: "ons-page__container ons-container", "data-testid": "login-page" }, children),
-        React__default["default"].createElement(Footer, null)));
+        React__default["default"].createElement("div", { "data-testid": "login-page" },
+            React__default["default"].createElement(Header, { title: title, noSave: true }),
+            React__default["default"].createElement("div", { style: divStyle, className: "ons-page__container ons-container", "data-testid": "login-page-content" }, children),
+            React__default["default"].createElement(Footer, null))));
 }
 
 function loginUserIfAlreadyAuthenticated(authenticationApi, setLoggedIn) {
@@ -5911,7 +5914,7 @@ var Authenticate = /** @class */ (function (_super) {
     }
     Authenticate.prototype.render = function () {
         var _a;
-        return (React__default["default"].createElement(AuthenticateUserHandler, { title: (_a = this.props.title) !== null && _a !== void 0 ? _a : 'Blaise login' }, this.props.children));
+        return (React__default["default"].createElement(AuthenticateUserHandler, { title: (_a = this.props.title) !== null && _a !== void 0 ? _a : "Blaise login" }, this.props.children));
     };
     return Authenticate;
 }(React.Component));
