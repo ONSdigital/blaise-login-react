@@ -5071,9 +5071,9 @@ bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-blaise-api-node-client@ONSDigital/blaise-api-node-client:
+blaise-api-node-client@ONSDigital/blaise-api-node-client#BL5FRS-67:
   version "1.0.0"
-  resolved "https://codeload.github.com/ONSDigital/blaise-api-node-client/tar.gz/dbc1474e320153e94a43673c8ecaa18ce1b7c65a"
+  resolved "https://codeload.github.com/ONSDigital/blaise-api-node-client/tar.gz/8924d5a5e7ebc010b3739aee613c50dd508d725f"
   dependencies:
     "@babel/preset-env" "^7.14.7"
     axios "^0.21.1"
