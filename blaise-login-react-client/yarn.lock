@@ -5073,7 +5073,7 @@ bindings@^1.5.0:
 
 blaise-api-node-client@ONSDigital/blaise-api-node-client#BL5FRS-67:
   version "1.0.0"
-  resolved "https://codeload.github.com/ONSDigital/blaise-api-node-client/tar.gz/8924d5a5e7ebc010b3739aee613c50dd508d725f"
+  resolved "https://codeload.github.com/ONSDigital/blaise-api-node-client/tar.gz/1c2ba850041dc43d1fe3366d62aa417e3d90bba0"
   dependencies:
     "@babel/preset-env" "^7.14.7"
     axios "^0.21.1"
