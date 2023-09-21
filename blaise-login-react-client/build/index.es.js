@@ -5911,5 +5911,33 @@ var Authenticate = /** @class */ (function (_super) {
     return Authenticate;
 }(Component));
 
-export { AuthManager, Authenticate, AuthenticationApi, LoginForm, getCurrentUser, getUser, validatePassword, validateToken, validateUserPermissions };
+var userMockObject = {
+    name: "Jake Bullet",
+    role: "Manager",
+    serverParks: ["gusty"],
+    defaultServerPark: "gusty",
+};
+
+var MockAuthenticate = /** @class */ (function (_super) {
+    __extends$1(MockAuthenticate, _super);
+    function MockAuthenticate() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    MockAuthenticate.OverrideReturnValues = function (user, loggedIn, logOutFunction) {
+        this.user = user !== null && user !== void 0 ? user : MockAuthenticate.user;
+        this.loggedIn = loggedIn !== null && loggedIn !== void 0 ? loggedIn : MockAuthenticate.loggedIn;
+        this.logOutFunction = logOutFunction !== null && logOutFunction !== void 0 ? logOutFunction : MockAuthenticate.logOutFunction;
+    };
+    MockAuthenticate.prototype.render = function () {
+        return (React.createElement("div", null, MockAuthenticate.loggedIn
+            ? React.createElement("div", { "data-testid": "content-page" }, this.props.children(MockAuthenticate.user, MockAuthenticate.loggedIn, MockAuthenticate.logOutFunction))
+            : React.createElement("div", { "data-testid": "login-page" }, "Enter your Blaise username and password")));
+    };
+    MockAuthenticate.user = userMockObject;
+    MockAuthenticate.loggedIn = true;
+    MockAuthenticate.logOutFunction = function () { console.debug("Logged out"); };
+    return MockAuthenticate;
+}(Authenticate));
+
+export { AuthManager, Authenticate, AuthenticationApi, LoginForm, MockAuthenticate, getCurrentUser, getUser, validatePassword, validateToken, validateUserPermissions };
 //# sourceMappingURL=index.es.js.map
