@@ -5329,14 +5329,12 @@ var LoginForm = /** @class */ (function (_super) {
                 name: "Username",
                 id: "username",
                 description: "Your Blaise username",
-                type: "username",
-                initial_value: ""
+                type: "username"
             },
             {
                 name: "Password",
                 description: "Your Blaise password",
-                type: "password",
-                initial_value: ""
+                type: "password"
             }
         ];
     };
