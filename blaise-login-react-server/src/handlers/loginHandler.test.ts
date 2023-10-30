@@ -80,15 +80,84 @@ describe("LoginHandler", () => {
 
   describe("Validate Password", () => {
     it("should return a 200 and true", async () => {
+      // arrange
+      const body = {username: "Jake", password: "2342388" };
+
       mockValidatePassword.mockImplementation(async () => {
         return Promise.resolve(true);
       });
 
-      const response: Response = await request.post("/api/login/users/password/validate");
+      // act
+      const response: Response = await request.post("/api/login/users/password/validate").send(body);
 
+      // assert
       expect(response.status).toEqual(200);
       expect(response.body).toBeTruthy();
     });
+
+    it.each(["", undefined])("should return a 400 and true if username is empty or undefined", async (value) => {
+      // arrange
+      const body = {username: value, password: "2342388" };
+
+      mockValidatePassword.mockImplementation(async () => {
+        return Promise.resolve(true);
+      });
+
+      // act
+      const response: Response = await request.post("/api/login/users/password/validate").send(body);
+
+      // assert
+      expect(response.status).toEqual(400);
+      expect(response.body).toEqual({"error": "Username or password has not been supplied"});
+    });   
+    
+    it("should return a 400 and true if username is not supplied", async () => {
+      // arrange
+      const body = {password: "2342388" };
+
+      mockValidatePassword.mockImplementation(async () => {
+        return Promise.resolve(true);
+      });
+
+      // act
+      const response: Response = await request.post("/api/login/users/password/validate").send(body);
+
+      // assert
+      expect(response.status).toEqual(400);
+      expect(response.body).toEqual({"error": "Username or password has not been supplied"});
+    });    
+
+    it.each(["", undefined])("should return a 400 and true if password is empty or undefined", async (value) => {
+      // arrange
+      const body = {username: "Jake", password: value };
+
+      mockValidatePassword.mockImplementation(async () => {
+        return Promise.resolve(true);
+      });
+
+      // act
+      const response: Response = await request.post("/api/login/users/password/validate").send(body);
+
+      // assert
+      expect(response.status).toEqual(400);
+      expect(response.body).toEqual({"error": "Username or password has not been supplied"});
+    });     
+
+    it("should return a 400 and true if password is not supplied", async () => {
+      // arrange
+      const body = {username: "Jake"};
+
+      mockValidatePassword.mockImplementation(async () => {
+        return Promise.resolve(true);
+      });
+
+      // act
+      const response: Response = await request.post("/api/login/users/password/validate").send(body);
+
+      // assert
+      expect(response.status).toEqual(400);
+      expect(response.body).toEqual({"error": "Username or password has not been supplied"});
+    });       
   });
 
   describe("Validate Roles", () => {
