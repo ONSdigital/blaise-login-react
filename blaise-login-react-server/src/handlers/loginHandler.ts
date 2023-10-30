@@ -45,8 +45,6 @@ export class LoginHandler {
     console.log("Validating password");
     const { username, password } = req.body;
 
-    console.log(`username ${username} password ${password}`);
-
     if(username === undefined || username === "" || password === undefined || password === "") {
       return res.status(400).json({"error": "Username or password has not been supplied"});
     }
