@@ -28,13 +28,13 @@
   "homepage": "https://github.com/ONSdigital/blaise-login-react-client#readme",
   "peerDependencies": {
     "formik": "^2.2.9",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "dependencies": {
     "axios": "~0.21.0",
     "blaise-api-node-client": "ONSDigital/blaise-api-node-client",
-    "blaise-design-system-react-components": "git+https://github.com/ONSdigital/blaise-design-system-react-components#0.13.2",
+    "blaise-design-system-react-components": "git+https://github.com/ONSdigital/blaise-design-system-react-components#0.14.0",
     "blaise-login-react-server": "https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-server?main",
     "formik": "^2.2.9",
     "react": "^18.2.0",
@@ -55,7 +55,7 @@
     "@storybook/addon-links": "^6.4.4",
     "@storybook/react": "^6.4.4",
     "@testing-library/jest-dom": "^5.13.0",
-    "@testing-library/react": "^11.2.4",
+    "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/jest": "^27.4.0",

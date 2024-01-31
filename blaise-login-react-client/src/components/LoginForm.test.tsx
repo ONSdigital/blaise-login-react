@@ -1,6 +1,6 @@
 
 import React from "react";
-import ReactDOM from "react-dom/client";
+import { render } from '@testing-library/react';
 import { cleanup, waitFor } from "@testing-library/react";
 import LoginForm from "./LoginForm";
 import { screen } from "@testing-library/dom";
@@ -19,10 +19,6 @@ function setLoggedIn(isLoggedIn: boolean) {
   loggedIn = isLoggedIn;
 }
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement,
-);
-
 describe("Login form", () => {
   const authManager = new AuthManager();
 
@@ -33,7 +29,7 @@ describe("Login form", () => {
   });
 
   it("matches snapshot", async () => {
-    const wrapper = root.render(
+    const wrapper = render(
       <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
     );
 
@@ -43,7 +39,7 @@ describe("Login form", () => {
   });
 
   it("renders correctly", async () => {
-    root.render(
+    render(
       <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
     );
 
@@ -58,7 +54,7 @@ describe("Login form", () => {
     it("renders an error and does not set the token", async () => {
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, false);
 
-      root.render(
+      render(
         <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
       );
 
@@ -81,7 +77,7 @@ describe("Login form", () => {
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
       mockAdapter.onGet("/api/login/users/test/authorised").reply(403, { "error": "Not authorised" });
 
-      root.render(
+      render(
         <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
       );
 
@@ -103,7 +99,7 @@ describe("Login form", () => {
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
       mockAdapter.onGet("/api/login/users/test/authorised").reply(200, { token: jwt.sign({ data: { "role": "test" } }, "test-secret") });
 
-      root.render(
+      render(
         <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
       );
 
