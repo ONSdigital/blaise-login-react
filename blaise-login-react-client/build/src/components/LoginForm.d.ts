@@ -2,11 +2,11 @@ import { ReactElement } from "react";
 import { FormFieldObject } from "blaise-design-system-react-components";
 import { Component } from "react";
 import { AuthManager } from "../client/token";
-declare type LoginFormProps = {
+type LoginFormProps = {
     authManager: AuthManager;
     setLoggedIn: (loggedIn: boolean) => void;
 };
-declare type LoginFormState = {
+type LoginFormState = {
     error: string;
 };
 export default class LoginForm extends Component<LoginFormProps, LoginFormState> {

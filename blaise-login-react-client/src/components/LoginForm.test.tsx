@@ -1,6 +1,7 @@
 
 import React from "react";
-import { cleanup, render, waitFor } from "@testing-library/react";
+import ReactDOM from "react-dom/client";
+import { cleanup, waitFor } from "@testing-library/react";
 import LoginForm from "./LoginForm";
 import { screen } from "@testing-library/dom";
 import "@testing-library/jest-dom";
@@ -18,6 +19,10 @@ function setLoggedIn(isLoggedIn: boolean) {
   loggedIn = isLoggedIn;
 }
 
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement,
+);
+
 describe("Login form", () => {
   const authManager = new AuthManager();
 
@@ -28,7 +33,7 @@ describe("Login form", () => {
   });
 
   it("matches snapshot", async () => {
-    const wrapper = render(
+    const wrapper = root.render(
       <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
     );
 
@@ -38,7 +43,7 @@ describe("Login form", () => {
   });
 
   it("renders correctly", async () => {
-    render(
+    root.render(
       <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
     );
 
@@ -53,7 +58,7 @@ describe("Login form", () => {
     it("renders an error and does not set the token", async () => {
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, false);
 
-      render(
+      root.render(
         <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
       );
 
@@ -76,7 +81,7 @@ describe("Login form", () => {
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
       mockAdapter.onGet("/api/login/users/test/authorised").reply(403, { "error": "Not authorised" });
 
-      render(
+      root.render(
         <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
       );
 
@@ -98,7 +103,7 @@ describe("Login form", () => {
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
       mockAdapter.onGet("/api/login/users/test/authorised").reply(200, { token: jwt.sign({ data: { "role": "test" } }, "test-secret") });
 
-      render(
+      root.render(
         <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
       );
 

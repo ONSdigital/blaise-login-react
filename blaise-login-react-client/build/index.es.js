@@ -5656,7 +5656,7 @@ var AuthManager = /** @class */ (function () {
         var secure = window.location.protocol === "https://";
         return {
             path: "/",
-            maxAge: 60 * 60 * 12,
+            maxAge: 60 * 60 * 12, // 12 hours
             domain: domain,
             secure: secure,
             sameSite: "strict",
