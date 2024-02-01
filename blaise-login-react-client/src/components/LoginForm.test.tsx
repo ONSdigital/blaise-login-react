@@ -1,6 +1,6 @@
 
 import React from "react";
-import { render } from '@testing-library/react';
+import { render } from "@testing-library/react";
 import { cleanup, waitFor } from "@testing-library/react";
 import LoginForm from "./LoginForm";
 import { screen } from "@testing-library/dom";

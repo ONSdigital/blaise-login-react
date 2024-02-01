@@ -11,9 +11,7 @@
   "scripts": {
     "build": "rollup -c",
     "test": "jest --coverage --watchAll=false",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook -o docs-build",
-    "lint-fix": "node_modules/.bin/eslint . --fix"
+    "lint": "node_modules/.bin/eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -35,7 +33,6 @@
     "axios": "~0.21.0",
     "blaise-api-node-client": "ONSDigital/blaise-api-node-client",
     "blaise-design-system-react-components": "git+https://github.com/ONSdigital/blaise-design-system-react-components#0.14.0",
-    "blaise-login-react-server": "https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-server?main",
     "formik": "^2.2.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -50,10 +47,6 @@
     "@babel/preset-react": "^7.12.10",
     "@babel/preset-typescript": "^7.12.7",
     "@rollup/plugin-json": "^4.1.0",
-    "@storybook/addon-actions": "^6.4.4",
-    "@storybook/addon-essentials": "^6.4.4",
-    "@storybook/addon-links": "^6.4.4",
-    "@storybook/react": "^6.4.4",
     "@testing-library/jest-dom": "^5.13.0",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.5.0",
@@ -64,8 +57,8 @@
     "@types/react-dom": "^18.0.0",
     "@types/react-test-renderer": "^17.0.0",
     "@types/sinon": "^10.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.10.2",
-    "@typescript-eslint/parser": "^5.10.2",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
     "axios-mock-adapter": "^1.20.0",
     "babel-loader": "^8.2.3",
     "babel-plugin-transform-class-properties": "^6.24.1",
