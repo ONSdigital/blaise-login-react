@@ -42,6 +42,8 @@ yarn build
 
 Add auth to your react app...
 
+## OLD WAY
+
 **Note**: If you haven't already setup the server side of this, good luck... [blaise-login-react-server](../blaise-login-react-server)
 
 ```tsx
@@ -119,4 +121,86 @@ const authManager = new AuthManager();
 axios.get("/my-protected-endpoint", {
   headers: authManager.authHeader()
 })
+```
+
+
+## NEW WAY
+
+Add the following code to your node server file (server.ts) to route the login request from the 
+react component to the restful API for authentication
+
+```ts
+import { Auth, newLoginHandler } from 'blaise-login-react-server';
+
+// login routing
+const auth = new Auth(config);
+const loginHandler = newLoginHandler(auth, blaiseApi.blaiseApiClient);
+server.use('/', loginHandler);
+
+```
+
+On the react front end, you need to encapsulate your application page at the root level with the following
+
+```ts
+import { Authenticate } from 'blaise-login-react-client';
+
+function App(): ReactElement {
+  return (
+    <Authenticate title="Name of the service">
+      {(user, loggedIn, logOutFunction) => (
+
+```
+        This should be your root level component.
+```ts  
+      )}
+    </Authenticate>
+
+  );
+}
+
+```
+
+By encapsulating your root component with the Authrnticate component it ensures that the content won't get rendered until the user has logged in. 
+
+The authenticate component can also pass back objects that can be used in your component(s)
+
+**User
+```ts  
+        User {
+          name: string;
+          role: string;
+          serverParks: string[];
+          defaultServerPark: string;
+        }
+```
+
+**loggedIn
+
+This is a boolean that is set to true if a user is currently logged in
+
+**logOutFunction
+
+This is a function that you can assign to a button or link to sign out the logged in user
+
+An example of putting this alltogether:
+
+```ts 
+import './App.css';
+import { ReactElement } from 'react';
+import { Authenticate } from 'blaise-login-react-client';
+import AppRoutes from './Common/components/AppRoutes';
+import LayoutTemplate from './Common/components/LayoutTemplate';
+
+function App(): ReactElement {
+  return (
+    <Authenticate title="Blaise editing service">
+      {(user, loggedIn, logOutFunction) => (
+        <LayoutTemplate showSignOutButton={loggedIn} signOut={() => logOutFunction()}>
+          <AppRoutes user={user} />
+        </LayoutTemplate>
+      )}
+    </Authenticate>
+  );
+}
+
 ```
