@@ -204,3 +204,45 @@ function App(): ReactElement {
 }
 
 ```
+
+##Testing
+
+There is a MockAuthenticate component you can use to test how your app interacts with the login component. I.e. what the user will see if they are not logged in, and if they are.
+
+In order to test using the mock component you need to add the following lines of code to the top of your test file
+
+```ts 
+  // create mocks
+  jest.mock('blaise-login-react-client');
+  const { MockAuthenticate } = jest.requireActual('blaise-login-react-client');
+  Authenticate.prototype.render = MockAuthenticate.prototype.render;
+```
+
+You can then override the values that you wish the component to return: 
+
+```ts 
+    // arrange
+    const userMockObject:User = {
+      name: 'Jake Bullet',
+      role: 'Manager',
+      serverParks: ['gusty'],
+      defaultServerPark: 'gusty',
+    };
+
+    const user = userMockObject;
+    MockAuthenticate.OverrideReturnValues(user, false);
+
+```
+
+Then when you render your app the mocks will be used instead of the real Authenticate component:
+
+```ts 
+    // act
+    await act(async () => {
+      view = render(
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>,
+      );
+    });
+```
