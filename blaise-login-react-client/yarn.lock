@@ -4644,7 +4644,7 @@ blaise-api-node-client@ONSDigital/blaise-api-node-client#BL5FRS-67:
     regenerator-runtime "^0.14.1"
     typescript "~4.2.2"
 
-"blaise-design-system-react-components@git+https://github.com/ONSdigital/blaise-design-system-react-components#30ea96f77c024cb0cec27e05e5c1c1c10dd4eca0":
+"blaise-design-system-react-components@git+https://github.com/ONSdigital/blaise-design-system-react-components#0.14.0":
   version "1.0.0"
   resolved "git+https://github.com/ONSdigital/blaise-design-system-react-components#30ea96f77c024cb0cec27e05e5c1c1c10dd4eca0"
   dependencies:
