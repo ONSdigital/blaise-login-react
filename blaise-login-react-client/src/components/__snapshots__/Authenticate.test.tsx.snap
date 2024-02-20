@@ -8,6 +8,46 @@ exports[`Renders the correct screen depending if the user has recently logged in
       <div
         data-testid="login-page"
       >
+        <a
+          class="ons-skip-link"
+          href="#main-content"
+        >
+          Skip to content
+        </a>
+        <div
+          style="background: rgb(34, 34, 34); color: rgb(34, 34, 34);"
+        >
+          <div
+            class="ons-container"
+          >
+            <div
+              class="ons-panel ons-panel--warn-branded ons-panel--no-title"
+              style="background: rgb(34, 34, 34);"
+            >
+              <span
+                aria-hidden="true"
+                class="ons-panel__icon"
+                style="color: rgb(34, 34, 34);"
+              >
+                !
+              </span>
+              <span
+                class="ons-panel__assistive-text ons-u-vh"
+              >
+                Warning: 
+              </span>
+              <div
+                class="ons-panel__body"
+              >
+                <p
+                  class="ons-u-mb-no"
+                >
+                  This environment is not a production environment. Do not upload any live data to this service.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
         <header
           class="ons-header ons-header--internal"
         >
@@ -101,6 +141,7 @@ exports[`Renders the correct screen depending if the user has recently logged in
               </span>
               <input
                 class="ons-input ons-input--text ons-input-type__input "
+                form="[object Object]"
                 id="username"
                 initial_value=""
                 name="Username"
@@ -125,6 +166,7 @@ exports[`Renders the correct screen depending if the user has recently logged in
               </span>
               <input
                 class="ons-input ons-input--text ons-input-type__input "
+                form="[object Object]"
                 id="Password"
                 initial_value=""
                 name="Password"
@@ -297,6 +339,46 @@ exports[`Renders the correct screen depending if the user has recently logged in
     <div
       data-testid="login-page"
     >
+      <a
+        class="ons-skip-link"
+        href="#main-content"
+      >
+        Skip to content
+      </a>
+      <div
+        style="background: rgb(34, 34, 34); color: rgb(34, 34, 34);"
+      >
+        <div
+          class="ons-container"
+        >
+          <div
+            class="ons-panel ons-panel--warn-branded ons-panel--no-title"
+            style="background: rgb(34, 34, 34);"
+          >
+            <span
+              aria-hidden="true"
+              class="ons-panel__icon"
+              style="color: rgb(34, 34, 34);"
+            >
+              !
+            </span>
+            <span
+              class="ons-panel__assistive-text ons-u-vh"
+            >
+              Warning: 
+            </span>
+            <div
+              class="ons-panel__body"
+            >
+              <p
+                class="ons-u-mb-no"
+              >
+                This environment is not a production environment. Do not upload any live data to this service.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
       <header
         class="ons-header ons-header--internal"
       >
@@ -390,6 +472,7 @@ exports[`Renders the correct screen depending if the user has recently logged in
             </span>
             <input
               class="ons-input ons-input--text ons-input-type__input "
+              form="[object Object]"
               id="username"
               initial_value=""
               name="Username"
@@ -414,6 +497,7 @@ exports[`Renders the correct screen depending if the user has recently logged in
             </span>
             <input
               class="ons-input ons-input--text ons-input-type__input "
+              form="[object Object]"
               id="Password"
               initial_value=""
               name="Password"

@@ -29,6 +29,10 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
+  "resolutions": {
+    "wrap-ansi": "7.0.0",
+    "string-width": "4.1.0"
+  },
   "dependencies": {
     "axios": "~0.21.0",
     "blaise-api-node-client": "ONSDigital/blaise-api-node-client#BL5FRS-67",
