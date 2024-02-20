@@ -76,6 +76,20 @@ function __generator(thisArg, body) {
     }
 }
 
+/**
+ * This one is not an 'Official' component. But is based on the Branded Census warning panel.
+ * Shown at the top of a page, above the header to warn users.
+ */
+function NotProductionWarning() {
+    return (React__default["default"].createElement("div", { style: { background: "#222", color: "#222" } },
+        React__default["default"].createElement("div", { className: "ons-container" },
+            React__default["default"].createElement("div", { className: "ons-panel ons-panel--warn-branded ons-panel--no-title", style: { background: "#222" } },
+                React__default["default"].createElement("span", { className: "ons-panel__icon", "aria-hidden": "true", style: { color: "#222" } }, "!"),
+                React__default["default"].createElement("span", { className: "ons-panel__assistive-text ons-u-vh" }, "Warning: "),
+                React__default["default"].createElement("div", { className: "ons-panel__body" },
+                    React__default["default"].createElement("p", { className: "ons-u-mb-no" }, "This environment is not a production environment. Do not upload any live data to this service."))))));
+}
+
 function Footer() {
     return (React__default["default"].createElement("footer", { className: "ons-footer" },
         React__default["default"].createElement("div", { className: "ons-footer__body", "data-analytics": "footer" },
@@ -5865,10 +5879,15 @@ function RenderAuthenticatedContent(_a) {
 var divStyle = {
     minHeight: "calc(67vh)",
 };
+function isProduction(hostname) {
+    return hostname.endsWith(".blaise.gcp.onsdigital.uk");
+}
 function LayoutTemplate(_a) {
     var title = _a.title, children = _a.children;
     return (React__default["default"].createElement(React__default["default"].Fragment, null,
         React__default["default"].createElement("div", { "data-testid": "login-page" },
+            React__default["default"].createElement("a", { className: "ons-skip-link", href: "#main-content" }, "Skip to content"),
+            isProduction(window.location.hostname) ? React__default["default"].createElement(React__default["default"].Fragment, null) : React__default["default"].createElement(NotProductionWarning, null),
             React__default["default"].createElement(Header, { title: title, noSave: true }),
             React__default["default"].createElement("div", { style: divStyle, className: "ons-page__container ons-container", "data-testid": "login-page-content" }, children),
             React__default["default"].createElement(Footer, null))));
