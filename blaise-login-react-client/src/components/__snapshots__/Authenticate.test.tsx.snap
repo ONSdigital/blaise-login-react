@@ -141,7 +141,6 @@ exports[`Renders the correct screen depending if the user has recently logged in
               </span>
               <input
                 class="ons-input ons-input--text ons-input-type__input "
-                form="[object Object]"
                 id="username"
                 initial_value=""
                 name="Username"
@@ -166,7 +165,6 @@ exports[`Renders the correct screen depending if the user has recently logged in
               </span>
               <input
                 class="ons-input ons-input--text ons-input-type__input "
-                form="[object Object]"
                 id="Password"
                 initial_value=""
                 name="Password"
@@ -472,7 +470,6 @@ exports[`Renders the correct screen depending if the user has recently logged in
             </span>
             <input
               class="ons-input ons-input--text ons-input-type__input "
-              form="[object Object]"
               id="username"
               initial_value=""
               name="Username"
@@ -497,7 +494,6 @@ exports[`Renders the correct screen depending if the user has recently logged in
             </span>
             <input
               class="ons-input ons-input--text ons-input-type__input "
-              form="[object Object]"
               id="Password"
               initial_value=""
               name="Password"

@@ -4638,18 +4638,22 @@ bl@^4.0.3, bl@^4.1.0:
     inherits "^2.0.4"
     readable-stream "^3.4.0"
 
-blaise-api-node-client@ONSDigital/blaise-api-node-client#BL5FRS-67:
+"blaise-api-node-client@git+https://github.com/ONSdigital/blaise-api-node-client#1.1.0":
   version "1.0.0"
-  resolved "https://codeload.github.com/ONSDigital/blaise-api-node-client/tar.gz/d5e538c232828a39740ea9a73184470efc89e8f2"
+  resolved "git+https://github.com/ONSdigital/blaise-api-node-client#e5da8ca53073a4fa86f057511acb600a0e894d3f"
   dependencies:
     "@babel/preset-env" "^7.14.7"
     axios "^0.21.1"
-    blaise-iap-node-provider "https://github.com/ONSdigital/blaise-iap-node-provider.git"
+    blaise-iap-node-provider "git+https://github.com/ONSdigital/blaise-iap-node-provider.git"
+    browserslist "^4.22.2"
+    eslint-config-airbnb-base "^15.0.0"
+    eslint-plugin-import "^2.29.1"
+    regenerator-runtime "^0.14.1"
     typescript "~4.2.2"
 
-"blaise-design-system-react-components@git+https://github.com/ONSdigital/blaise-design-system-react-components#f4c43ba35ca986af5c0fa7c3c87fe66e44e6d6ae":
+"blaise-design-system-react-components@git+https://github.com/ONSdigital/blaise-design-system-react-components#0.14.0":
   version "1.0.0"
-  resolved "git+https://github.com/ONSdigital/blaise-design-system-react-components#f4c43ba35ca986af5c0fa7c3c87fe66e44e6d6ae"
+  resolved "git+https://github.com/ONSdigital/blaise-design-system-react-components#30ea96f77c024cb0cec27e05e5c1c1c10dd4eca0"
   dependencies:
     formik "^2.2.9"
     react "^18.2.0"
