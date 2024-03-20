@@ -1,4 +1,4 @@
-# blaise-login-react-server
+# blaise-login-react-client
 
 ## Importing
 
@@ -6,7 +6,7 @@ We are making use of [GitPkg](https://gitpkg.vercel.app/guide/) to make importin
 
 ```sh
 # Server code
-yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-server?main'
+yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-client?main'
 ```
 
 **Note**: The drawback of this approach is that just running a `yarn upgrade` doesn't seem to work reliably.
@@ -15,7 +15,7 @@ The best workaround to this is to use a commit ref instead of `main` in the abov
 
 ```sh
 # Server code
-yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-server?74e88ad500a734ce797df3ed3e2a85bdacb71980'
+yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-client?74e88ad500a734ce797df3ed3e2a85bdacb71980'
 ```
 
 Its worth noting that just because they are the same repo you do not need to use the same commit for each components,
