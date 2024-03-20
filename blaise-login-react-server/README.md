@@ -2,24 +2,22 @@
 
 ## Importing
 
-We are making use of [GitPkg](https://gitpkg.vercel.app/guide/) to make importing a git subdirectory easy.
+We are making use of Releases and Tags to maintain versions of our repository.
+In your React project add the parent repository as a dependency, specifying a release version after the # at the end. For example:
+
+```shell
+yarn add git+https://github.com/ONSdigital/blaise-login-react#<RELEASE_TAG>
+```
+---
+
+This helped us to get rid of working with SHAs of the subdirectories and will be a lot easier and cleaner to specify versions with Releases that we intend to use.
+
+### Server code
+To import Modules from **blaise-login-react-server** subdirectory: For example:
 
 ```sh
-# Server code
-yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-server?main'
+import { newLoginHandler, Auth } from "blaise-login-react/blaise-login-react-server";
 ```
-
-**Note**: The drawback of this approach is that just running a `yarn upgrade` doesn't seem to work reliably.
-
-The best workaround to this is to use a commit ref instead of `main` in the above. For example:
-
-```sh
-# Server code
-yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-server?74e88ad500a734ce797df3ed3e2a85bdacb71980'
-```
-
-Its worth noting that just because they are the same repo you do not need to use the same commit for each components,
-obviously if we make breaking changes in one you will need a new version of both.
 
 ## Tests
 
@@ -46,7 +44,7 @@ yarn build
 ```ts
 import express, {Request, Response} from "express"
 import BlaiseApiClient from "blaise-api-node-client";
-import { newLoginHandler, AuthConfig } from "blaise-login-react-server";
+import { newLoginHandler, AuthConfig } from "blaise-login-react/blaise-login-react-server";
 
 const server = express()
 
@@ -74,7 +72,7 @@ add to requests.
 e.g
 
 ```ts
-import { AuthManager } from "blaise-login-react-client";
+import { AuthManager } from "blaise-login-react/blaise-login-react-client";
 import axios from "axios";
 
 const authManager = new AuthManager();
