@@ -2,24 +2,22 @@
 
 ## Importing
 
-We are making use of [GitPkg](https://gitpkg.vercel.app/guide/) to make importing a git subdirectory easy.
+We are making use of Releases and Tags to maintain versions of our repository.
+In your React project add the parent repository as a dependency, specifying a release version after the # at the end. For example:
+
+```shell
+yarn add git+https://github.com/ONSdigital/blaise-login-react#<RELEASE_TAG>
+```
+---
+
+This helped us to get rid of working with SHAs of the subdirectories and will be a lot easier and cleaner to specify versions with Releases that we intend to use.
+
+### Client code
+To import Modules from **blaise-login-react-client** subdirectory: For example:
 
 ```sh
-# Server code
-yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-client?main'
+import { Authenticate } from "blaise-login-react/blaise-login-react-client";
 ```
-
-**Note**: The drawback of this approach is that just running a `yarn upgrade` doesn't seem to work reliably.
-
-The best workaround to this is to use a commit ref instead of `main` in the above. For example:
-
-```sh
-# Server code
-yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-client?74e88ad500a734ce797df3ed3e2a85bdacb71980'
-```
-
-Its worth noting that just because they are the same repo you do not need to use the same commit for each components,
-obviously if we make breaking changes in one you will need a new version of both.
 
 ## Tests
 
@@ -45,7 +43,7 @@ With the introduction of the `<Authenticate>` component in [v1.1.0](https://gith
 1) Add the following code to your node server file (server.ts) to route the login request from the React component to the restful API for authentication:
 
 ```ts
-import { Auth, newLoginHandler } from 'blaise-login-react-server';
+import { Auth, newLoginHandler } from 'blaise-login-react/blaise-login-react-server';
 
 // login routing
 const auth = new Auth(config);
@@ -57,7 +55,7 @@ server.use('/', loginHandler);
 2) On the React front end, you need to encapsulate your application page at the root level with the following:
 
 ```ts
-import { Authenticate } from 'blaise-login-react-client';
+import { Authenticate } from 'blaise-login-react/blaise-login-react-client';
 
 function App(): ReactElement {
   return (
@@ -87,7 +85,7 @@ Example implementation using `<Authenticate>`:
 ```ts 
 import './App.css';
 import { ReactElement } from 'react';
-import { Authenticate } from 'blaise-login-react-client';
+import { Authenticate } from 'blaise-login-react/blaise-login-react-client';
 import AppRoutes from './Common/components/AppRoutes';
 import LayoutTemplate from './Common/components/LayoutTemplate';
 
@@ -112,8 +110,8 @@ To utilize this mock component in your tests, insert the following lines at the 
 
 ```ts 
   // create mocks
-  jest.mock('blaise-login-react-client');
-  const { MockAuthenticate } = jest.requireActual('blaise-login-react-client');
+  jest.mock('blaise-login-react/blaise-login-react-client');
+  const { MockAuthenticate } = jest.requireActual('blaise-login-react/blaise-login-react-client');
   Authenticate.prototype.render = MockAuthenticate.prototype.render;
 ```
 
