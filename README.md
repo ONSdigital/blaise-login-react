@@ -12,28 +12,44 @@ For detailed information on each module:
 
 ## Importing
 
-We are making use of [GitPkg](https://gitpkg.vercel.app/guide/) to make importing a git subdirectory easy.
+We are making use of Releases and Tags to maintain versions of our repository.
+In your React project add this repository as a dependency, specifying a release version after the # at the end. For example:
+
+```shell
+yarn add git+https://github.com/ONSdigital/blaise-login-react#<RELEASE_TAG>
+```
+---
+
+This helped us to get rid of working with SHAs of the subdirectories and will be a lot easier and cleaner to specify versions with Releases that we intend to use.
+
+### Client code
+To import Modules from blaise-login-react-client subdirectory: For example:
 
 ```sh
-# Client code
-yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-client?main'
-# Server code
-yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-server?main'
+import { Authenticate } from "blaise-login-react/blaise-login-react-client";
 ```
-
-**Note**: The drawback of this approach is that just running a `yarn upgrade` doesn't seem to work reliably.
-
-The best workaround to this is to use a commit ref instead of `main` in the above. For example:
+### Server code
+To import Modules from blaise-login-react-server subdirectory: For example:
 
 ```sh
-# Client code
-yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-client?1bc811bb8993db7a8e75409cdd004500ebaba3d5'
-# Server code
-yarn add 'https://gitpkg.now.sh/ONSdigital/blaise-login-react/blaise-login-react-server?74e88ad500a734ce797df3ed3e2a85bdacb71980'
+import { newLoginHandler, Auth } from "blaise-login-react/blaise-login-react-server";
 ```
 
-Its worth noting that just because they are the same repo you do not need to use the same commit for each components,
-obviously if we make breaking changes in one you will need a new version of both.
+
+## Adding New Functionality or Bug fixing
+
+This repo uses "Releases" to maintain versions. Releases are deployable software iterations you can package and make available for a wider audience to download and use. Releases are based on Git tags, which mark a specific point in your repository's history. 
+
+Make the required changes and then create a new Release following instructions in the link. https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository 
+
+### Rules for Tag Creation
+(use SemVer https://semver.org/spec/v2.0.0.html  for versioning), e.g. v1.0.0, and document any recent changes/commits in the "Describe this release" section.
+
+This new Release with the newly created Tag can then be added in the package.json file of the React repo that intends to use the blaise-login-react functionality.
+```shell
+yarn add git+https://github.com/ONSdigital/blaise-login-react#<RELEASE_TAG>
+```
+
 
 ## Tests
 

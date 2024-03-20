@@ -125,20 +125,106 @@ describe("LoginHandler", function () {
     });
     describe("Validate Password", function () {
         it("should return a 200 and true", function () { return __awaiter(void 0, void 0, void 0, function () {
-            var response;
+            var body, response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        body = { username: "Jake", password: "2342388" };
                         mockValidatePassword.mockImplementation(function () { return __awaiter(void 0, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 return [2 /*return*/, Promise.resolve(true)];
                             });
                         }); });
-                        return [4 /*yield*/, request.post("/api/login/users/password/validate")];
+                        return [4 /*yield*/, request.post("/api/login/users/password/validate").send(body)];
                     case 1:
                         response = _a.sent();
+                        // assert
                         expect(response.status).toEqual(200);
                         expect(response.body).toBeTruthy();
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it.each(["", undefined])("should return a 400 and true if username is empty or undefined", function (value) { return __awaiter(void 0, void 0, void 0, function () {
+            var body, response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        body = { username: value, password: "2342388" };
+                        mockValidatePassword.mockImplementation(function () { return __awaiter(void 0, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                return [2 /*return*/, Promise.resolve(true)];
+                            });
+                        }); });
+                        return [4 /*yield*/, request.post("/api/login/users/password/validate").send(body)];
+                    case 1:
+                        response = _a.sent();
+                        // assert
+                        expect(response.status).toEqual(400);
+                        expect(response.body).toEqual({ "error": "Username or password has not been supplied" });
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it("should return a 400 and true if username is not supplied", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var body, response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        body = { password: "2342388" };
+                        mockValidatePassword.mockImplementation(function () { return __awaiter(void 0, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                return [2 /*return*/, Promise.resolve(true)];
+                            });
+                        }); });
+                        return [4 /*yield*/, request.post("/api/login/users/password/validate").send(body)];
+                    case 1:
+                        response = _a.sent();
+                        // assert
+                        expect(response.status).toEqual(400);
+                        expect(response.body).toEqual({ "error": "Username or password has not been supplied" });
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it.each(["", undefined])("should return a 400 and true if password is empty or undefined", function (value) { return __awaiter(void 0, void 0, void 0, function () {
+            var body, response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        body = { username: "Jake", password: value };
+                        mockValidatePassword.mockImplementation(function () { return __awaiter(void 0, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                return [2 /*return*/, Promise.resolve(true)];
+                            });
+                        }); });
+                        return [4 /*yield*/, request.post("/api/login/users/password/validate").send(body)];
+                    case 1:
+                        response = _a.sent();
+                        // assert
+                        expect(response.status).toEqual(400);
+                        expect(response.body).toEqual({ "error": "Username or password has not been supplied" });
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        it("should return a 400 and true if password is not supplied", function () { return __awaiter(void 0, void 0, void 0, function () {
+            var body, response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        body = { username: "Jake" };
+                        mockValidatePassword.mockImplementation(function () { return __awaiter(void 0, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                return [2 /*return*/, Promise.resolve(true)];
+                            });
+                        }); });
+                        return [4 /*yield*/, request.post("/api/login/users/password/validate").send(body)];
+                    case 1:
+                        response = _a.sent();
+                        // assert
+                        expect(response.status).toEqual(400);
+                        expect(response.body).toEqual({ "error": "Username or password has not been supplied" });
                         return [2 /*return*/];
                 }
             });

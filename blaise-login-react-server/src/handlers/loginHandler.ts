@@ -44,6 +44,11 @@ export class LoginHandler {
   async ValidatePassword(req: Request, res: Response): Promise<Response> {
     console.log("Validating password");
     const { username, password } = req.body;
+
+    if(username === undefined || username === "" || password === undefined || password === "") {
+      return res.status(400).json({"error": "Username or password has not been supplied"});
+    }
+
     return res.status(200).json(await this.blaiseApiClient.validatePassword(username, password));
   }
 

@@ -71,7 +71,6 @@ describe("Login form", () => {
     });
   });
 
-
   describe("when the username and password are correct but the user does not have permission", () => {
     it("renders an error and does not set the token", async () => {
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
@@ -114,5 +113,5 @@ describe("Login form", () => {
 
       expect(loggedIn).toBeTruthy();
     });
-  });
+  }); 
 });

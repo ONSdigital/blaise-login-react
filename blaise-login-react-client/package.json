@@ -29,9 +29,13 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
+  "resolutions": {
+    "wrap-ansi": "7.0.0",
+    "string-width": "4.1.0"
+  },
   "dependencies": {
     "axios": "~0.21.0",
-    "blaise-api-node-client": "ONSDigital/blaise-api-node-client",
+    "blaise-api-node-client": "git+https://github.com/ONSdigital/blaise-api-node-client#1.1.0",
     "blaise-design-system-react-components": "git+https://github.com/ONSdigital/blaise-design-system-react-components#0.14.0",
     "formik": "^2.2.9",
     "react": "^18.2.0",
@@ -52,9 +56,9 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/jest": "^27.4.0",
-    "@types/react": "^18.0.0",
+    "@types/react": "^18.2.0",
     "@types/react-csv": "^1.1.2",
-    "@types/react-dom": "^18.0.0",
+    "@types/react-dom": "^18.2.0",
     "@types/react-test-renderer": "^17.0.0",
     "@types/sinon": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
@@ -68,9 +72,8 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "formik": "^2.2.9",
-    "jest": "^26.6.3",
     "jsonwebtoken": "^8.5.1",
-    "react-test-renderer": "^17.0.1",
+    "react-test-renderer": "^18.0.1",
     "rollup": "^2.38.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",
@@ -78,6 +81,8 @@
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-typescript2": "^0.29.0",
     "sinon": "^10.0.0",
+    "jest": "^29.6.0",
+    "jest-environment-jsdom": "^29.6.1",
     "typescript": "^5.3.3"
   },
   "types": "build/src/index.d.ts"
