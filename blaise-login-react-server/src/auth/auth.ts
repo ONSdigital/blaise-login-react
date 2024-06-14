@@ -16,6 +16,7 @@ export class Auth {
   }
 
   SignToken(user: User): string {
+    console.log(`SignToken for user - ${user.name} with secret ${this.config.SessionSecret}`);
     return jwt.sign({
       user: user
     }, this.config.SessionSecret, { expiresIn: this.config.SessionTimeout });
@@ -23,9 +24,11 @@ export class Auth {
 
   ValidateToken(token: string | undefined): boolean {
     if (!token) {
+      console.log(`ValidateToken - no token`);
       return false;
     }
     try {
+      console.log(`ValidateToken - ${token} with secret ${this.config.SessionSecret}`);
       const decodedToken = jwt.verify(token, this.config.SessionSecret);
       return this.UserHasRole(decodedToken["user"]);
     } catch {
@@ -50,6 +53,7 @@ export class Auth {
     if (!token) {
       token = request.get("Authorization");
     }
+    console.log(`GetToken - ${token}`);
     return token;
   }
 
