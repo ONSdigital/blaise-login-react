@@ -20,13 +20,11 @@ PERFORMANCE OF THIS SOFTWARE.
 var extendStatics$1 = function(d, b) {
     extendStatics$1 = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return extendStatics$1(d, b);
 };
 
 function __extends$1(d, b) {
-    if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
     extendStatics$1(d, b);
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -490,15 +488,15 @@ function CheckboxesFieldset(_a) {
                                 && (React.createElement("span", { id: "white-label-description-hint", className: "ons-label__description checkbox__label--with-description" }, checkboxOption.description))))),
                 React.createElement("br", null))); })))));
 }
-var ONSInputField = function (_a) {
-    var field = _a.field; _a.form; var description = _a.description, props = __rest(_a, ["field", "form", "description"]);
+function ONSInputField(_a) {
+    var field = _a.field, description = _a.description, props = __rest(_a, ["field", "description"]);
     var id = (props.id ? props.id : field.name);
     return (React.createElement("div", { className: "ons-field" },
         React.createElement("label", { className: "ons-label ".concat((description ? "ons-label--with-description" : "")), htmlFor: id }, toUpperCase(field.name)),
         description
             && (React.createElement("span", { id: "description-hint", className: "ons-label__description  ons-input--with-description" }, description)),
-        React.createElement("input", __assign$1({ id: id, className: "ons-input ons-input--text ons-input-type__input " }, field, props))));
-};
+        React.createElement("input", __assign$1({ className: "ons-input ons-input--text ons-input-type__input ", name: "yo vivian", id: id }, field, props))));
+}
 
 function StyledFormFieldErrorWrapper(fieldError, fieldName, field) {
     return (React.createElement("div", { className: "ons-panel ons-panel--error ons-panel--no-title ons-u-mb-s", id: "".concat(fieldName, "-error") },
@@ -546,7 +544,7 @@ function StyledForm(_a) {
             onSubmitFunction(values, setSubmitting);
         } }, function (_a) {
         var isValid = _a.isValid, isSubmitting = _a.isSubmitting;
-        return (React.createElement(Form, null,
+        return (React.createElement(Form, { placeholder: undefined },
             React.createElement(StyledFormErrorSummary, null),
             fields.map(function (field, index) {
                 // eslint-disable-next-line no-param-reassign
@@ -5757,7 +5755,7 @@ var AuthManager = /** @class */ (function () {
         var secure = window.location.protocol === "https://";
         return {
             path: "/",
-            maxAge: 60 * 60 * 12,
+            maxAge: 60 * 60 * 12, // 12 hours
             domain: domain,
             secure: secure,
             sameSite: "strict",
@@ -5779,6 +5777,7 @@ var AuthenticationApi = /** @class */ (function (_super) {
     };
     AuthenticationApi.prototype.getLoggedInUser = function () {
         return __awaiter(this, void 0, void 0, function () {
+            var error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -5786,7 +5785,8 @@ var AuthenticationApi = /** @class */ (function (_super) {
                         return [4 /*yield*/, getCurrentUser(this)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2:
-                        _a.sent();
+                        error_1 = _a.sent();
+                        console.log("Error in getting logged in user - ".concat(error_1));
                         throw new Error("Unable to retrieve logged in user");
                     case 3: return [2 /*return*/];
                 }

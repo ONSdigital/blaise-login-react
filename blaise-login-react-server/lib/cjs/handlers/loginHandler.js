@@ -80,7 +80,15 @@ var LoginHandler = /** @class */ (function () {
     LoginHandler.prototype.GetCurrentUser = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, res.status(200).json(this.auth.GetUser(this.auth.GetToken(req)))];
+                console.log("Getting current logged in user");
+                try {
+                    return [2 /*return*/, res.status(200).json(this.auth.GetUser(this.auth.GetToken(req)))];
+                }
+                catch (error) {
+                    console.log("Error in getting logged in user - " + error);
+                    throw error;
+                }
+                return [2 /*return*/];
             });
         });
     };

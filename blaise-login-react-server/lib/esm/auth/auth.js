@@ -44,15 +44,18 @@ var Auth = /** @class */ (function () {
         this.Middleware = this.Middleware.bind(this);
     }
     Auth.prototype.SignToken = function (user) {
+        console.log("SignToken for user - " + user.name + " with secret " + this.config.SessionSecret);
         return jwt.sign({
             user: user
         }, this.config.SessionSecret, { expiresIn: this.config.SessionTimeout });
     };
     Auth.prototype.ValidateToken = function (token) {
         if (!token) {
+            console.log("ValidateToken - no token");
             return false;
         }
         try {
+            console.log("ValidateToken - " + token + " with secret " + this.config.SessionSecret);
             var decodedToken = jwt.verify(token, this.config.SessionSecret);
             return this.UserHasRole(decodedToken["user"]);
         }
@@ -61,6 +64,8 @@ var Auth = /** @class */ (function () {
         }
     };
     Auth.prototype.UserHasRole = function (user) {
+        console.log("UserHasRole - " + user.name + " has role " + user.role);
+        console.log("UserHasRole - Roles available " + JSON.stringify(this.config.Roles));
         return this.config.Roles.includes(user.role);
     };
     Auth.prototype.GetUser = function (token) {
@@ -75,6 +80,7 @@ var Auth = /** @class */ (function () {
         if (!token) {
             token = request.get("Authorization");
         }
+        console.log("GetToken - " + token);
         return token;
     };
     Auth.prototype.Middleware = function (request, response, next) {
