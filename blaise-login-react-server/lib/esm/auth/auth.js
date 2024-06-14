@@ -71,6 +71,7 @@ var Auth = /** @class */ (function () {
         return this.config.Roles.includes(user.role);
     };
     Auth.prototype.GetUser = function (token) {
+        console.log("GetUser - token = '" + token + "'");
         if (!token) {
             throw "Must provide a token to get a user";
         }
@@ -78,9 +79,12 @@ var Auth = /** @class */ (function () {
         return decodedToken["user"];
     };
     Auth.prototype.GetToken = function (request) {
+        console.log("GetToken - request = '" + JSON.stringify(request) + "'");
         var token = request.get("authorization");
+        console.log("GetToken 1 - authorization = '" + token + "'");
         if (!token) {
             token = request.get("Authorization");
+            console.log("GetToken 2 - Authorization = '" + token + "'");
         }
         console.log("GetToken - " + token);
         return token;
@@ -88,6 +92,7 @@ var Auth = /** @class */ (function () {
     Auth.prototype.Middleware = function (request, response, next) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
+                console.log("Middleware - " + JSON.stringify(request));
                 if (!this.ValidateToken(this.GetToken(request))) {
                     return [2 /*return*/, response.status(403).json()];
                 }

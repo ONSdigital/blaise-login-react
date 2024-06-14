@@ -46,6 +46,7 @@ export class Auth {
   }
 
   GetUser(token: string | undefined): User {
+    console.log(`GetUser - token = '${token}'`);
     if (!token) {
       throw "Must provide a token to get a user";
     }
@@ -54,16 +55,19 @@ export class Auth {
   }
 
   GetToken(request: Request): string | undefined {
+    console.log(`GetToken - request = '${JSON.stringify(request)}'`);
     let token = request.get("authorization");
+    console.log(`GetToken 1 - authorization = '${token}'`);
     if (!token) {
       token = request.get("Authorization");
+      console.log(`GetToken 2 - Authorization = '${token}'`);
     }
     console.log(`GetToken - ${token}`);
     return token;
   }
 
   async Middleware(request: Request, response: Response, next: NextFunction): Promise<Response | void> {
-
+    console.log(`Middleware - ${JSON.stringify(request)}`);
     if (!this.ValidateToken(this.GetToken(request))) {
       return response.status(403).json();
     }
