@@ -37,6 +37,8 @@ export class Auth {
   }
 
   UserHasRole(user: User): boolean {
+    console.log(`UserHasRole - ${user.name} has role ${user.role}`);
+    console.log(`UserHasRole - Roles available ${JSON.stringify(this.config.Roles)}`);
     return this.config.Roles.includes(user.role);
   }
 
