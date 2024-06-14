@@ -38,7 +38,6 @@ export class LoginHandler {
   }
 
   async GetCurrentUser(req: Request, res: Response): Promise<Response> {
-    console.log(`Getting current logged in user - ${JSON.stringify(req)}`);
     try {
       return res.status(200).json(this.auth.GetUser(this.auth.GetToken(req)));
     } catch (error) {
