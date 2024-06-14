@@ -51,9 +51,11 @@ var Auth = /** @class */ (function () {
     }
     Auth.prototype.SignToken = function (user) {
         console.log("SignToken for user - " + user.name + " with secret " + this.config.SessionSecret);
-        return jsonwebtoken_1.default.sign({
+        var signedToken = jsonwebtoken_1.default.sign({
             user: user
         }, this.config.SessionSecret, { expiresIn: this.config.SessionTimeout });
+        console.log("SignToken for user - " + user.name + " signed with signedToken");
+        return signedToken;
     };
     Auth.prototype.ValidateToken = function (token) {
         if (!token) {

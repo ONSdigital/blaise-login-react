@@ -113,7 +113,7 @@ var LoginHandler = /** @class */ (function () {
     };
     LoginHandler.prototype.ValidateRoles = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var user;
+            var user, signedToken;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -122,7 +122,9 @@ var LoginHandler = /** @class */ (function () {
                     case 1:
                         user = _a.sent();
                         if (this.auth.UserHasRole(user)) {
-                            return [2 /*return*/, res.status(200).json({ token: this.auth.SignToken(user) })];
+                            signedToken = this.auth.SignToken(user);
+                            console.log("ValidateRoles - signed token = " + signedToken);
+                            return [2 /*return*/, res.status(200).json({ token: signedToken })];
                         }
                         return [2 /*return*/, res.status(403).json({ "error": "Not authorised" })];
                 }

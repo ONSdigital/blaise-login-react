@@ -17,9 +17,12 @@ export class Auth {
 
   SignToken(user: User): string {
     console.log(`SignToken for user - ${user.name} with secret ${this.config.SessionSecret}`);
-    return jwt.sign({
+    let signedToken = jwt.sign({
       user: user
     }, this.config.SessionSecret, { expiresIn: this.config.SessionTimeout });
+
+    console.log(`SignToken for user - ${user.name} signed with signedToken`);
+    return signedToken;
   }
 
   ValidateToken(token: string | undefined): boolean {

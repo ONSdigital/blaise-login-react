@@ -64,7 +64,9 @@ export class LoginHandler {
     console.log("Validating user roles");
     const user = await this.blaiseApiClient.getUser(req.params.username);
     if (this.auth.UserHasRole(user)) {
-      return res.status(200).json({ token: this.auth.SignToken(user) });
+      let signedToken = this.auth.SignToken(user);
+      console.log(`ValidateRoles - signed token = ${signedToken}`);
+      return res.status(200).json({ token: signedToken });
     }
 
     return res.status(403).json({ "error": "Not authorised" });
