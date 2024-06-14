@@ -85,7 +85,6 @@ var Auth = /** @class */ (function () {
         return decodedToken["user"];
     };
     Auth.prototype.GetToken = function (request) {
-        console.log("GetToken - request = '" + JSON.stringify(request) + "'");
         var token = request.get("authorization");
         console.log("GetToken 1 - authorization = '" + token + "'");
         if (!token) {

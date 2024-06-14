@@ -55,7 +55,6 @@ export class Auth {
   }
 
   GetToken(request: Request): string | undefined {
-    console.log(`GetToken - request = '${JSON.stringify(request)}'`);
     let token = request.get("authorization");
     console.log(`GetToken 1 - authorization = '${token}'`);
     if (!token) {
