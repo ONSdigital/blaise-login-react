@@ -38,7 +38,13 @@ export class LoginHandler {
   }
 
   async GetCurrentUser(req: Request, res: Response): Promise<Response> {
-    return res.status(200).json(this.auth.GetUser(this.auth.GetToken(req)));
+    console.log("Getting current logged in user");
+    try {
+      return res.status(200).json(this.auth.GetUser(this.auth.GetToken(req)));
+    } catch (error) {
+      console.log(`Error in getting logged in user - ${error}`)
+     throw error;
+    }       
   }
 
   async ValidatePassword(req: Request, res: Response): Promise<Response> {
