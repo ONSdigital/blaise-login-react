@@ -63,7 +63,7 @@ export class AuthManager {
       maxAge: 60 * 60 * 12, // 12 hours
       domain: domain,
       secure: secure,
-      sameSite: "strict",
+      sameSite: "none",
     };
   }
 }
