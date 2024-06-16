@@ -35,9 +35,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import express from "express";
+var cors = require("cors");
 export default function newLoginHandler(auth, blaiseApiClient) {
     var router = express.Router();
     router.use(express.json());
+    router.use(cors());
     var loginHandler = new LoginHandler(auth, blaiseApiClient);
     router.get("/api/login/users/:username", loginHandler.GetUser);
     router.get("/api/login/current-user", loginHandler.GetCurrentUser);

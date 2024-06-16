@@ -1,12 +1,14 @@
 import BlaiseApiClient from "blaise-api-node-client";
 import express, { Router, Request, Response } from "express";
 import { Auth } from "../auth/auth";
+const cors = require("cors") 
 
 
 export default function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): Router {
   const router = express.Router();
 
   router.use(express.json());
+  router.use(cors())
 
   const loginHandler = new LoginHandler(auth, blaiseApiClient);
   router.get("/api/login/users/:username", loginHandler.GetUser);
