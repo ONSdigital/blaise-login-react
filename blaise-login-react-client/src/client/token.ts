@@ -45,6 +45,7 @@ export class AuthManager {
   authHeader(): Record<string, string> {
     const token = this.getToken();
     if (!token) {
+      console.log("authHeader - No headers found so return empty")
       return {};
     }
 
@@ -63,7 +64,7 @@ export class AuthManager {
       maxAge: 60 * 60 * 12, // 12 hours
       domain: domain,
       secure: secure,
-      sameSite: "none",
+      sameSite: "lax",
     };
   }
 }
