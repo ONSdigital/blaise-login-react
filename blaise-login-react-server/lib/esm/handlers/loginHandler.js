@@ -85,7 +85,6 @@ var LoginHandler = /** @class */ (function () {
                     case 0:
                         console.log("Validating password");
                         _a = req.body, username = _a.username, password = _a.password;
-                        console.log("username " + username + " password " + password);
                         if (username === undefined || username === "" || password === undefined || password === "") {
                             return [2 /*return*/, res.status(400).json({ "error": "Username or password has not been supplied" })];
                         }

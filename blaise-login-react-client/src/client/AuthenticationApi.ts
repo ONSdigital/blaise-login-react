@@ -8,16 +8,17 @@ export default class AuthenticationApi extends AuthManager {
     this.getLoggedInUser = this.getLoggedInUser.bind(this);
   }
 
-  logOut(setLoggedIn:(loggedIn: boolean) => void) {
+  logOut(setLoggedIn: (loggedIn: boolean) => void) {
     super.clearToken();
     setLoggedIn(false);
   }
 
-  async getLoggedInUser():Promise<User> {
+  async getLoggedInUser(): Promise<User | null> {
     try {
       return await getCurrentUser(this);
     } catch (error) {
-      throw new Error("Unable to retrieve logged in user");
+      console.error("Unable to retrieve logged in user" + error)
+      return null;
     }
   }
 }

@@ -4,8 +4,8 @@ import { getCurrentUser } from "./user";
 
 // define mocks
 jest.mock("./user");
-const getLoggedInUserMock = getCurrentUser as jest.Mock<Promise<User>>;
-const userMockObject:User = {
+const getLoggedInUserMock = getCurrentUser as jest.Mock<Promise<User | null>>;
+const userMockObject: User = {
   name: "Jake Bullet",
   role: "Manager",
   serverParks: ["gusty"],
@@ -28,9 +28,12 @@ describe("GetUser from Blaise", () => {
 
   it("Should throw an error if getCurrentUser errors", async () => {
     // arrange
-    getLoggedInUserMock.mockImplementation(() => Promise.reject());
+    getLoggedInUserMock.mockImplementation(() => Promise.resolve(null));
 
-    // act && assert
-    expect(() => sut.getLoggedInUser()).rejects.toThrow("Unable to retrieve logged in user");
+    // act 
+    const user = await sut.getLoggedInUser();
+
+    // assert
+    expect(user).toEqual(null);
   });
 });

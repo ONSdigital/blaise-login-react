@@ -27,7 +27,10 @@ export class Auth {
     }
     try {
       const decodedToken = jwt.verify(token, this.config.SessionSecret);
-      return this.UserHasRole(decodedToken["user"]);
+      if (typeof decodedToken === 'object' && decodedToken !== null) {
+        return this.UserHasRole(decodedToken["user"]);
+      }
+      return false;
     } catch {
       return false;
     }
@@ -37,12 +40,29 @@ export class Auth {
     return this.config.Roles.includes(user.role);
   }
 
-  GetUser(token: string | undefined): User {
+  GetUser(token: string | undefined): User | null {
     if (!token) {
-      throw "Must provide a token to get a user";
+      //throw "Must provide a token to get a user";
+      console.log("Invalid Token.")
+      return null;
     }
-    const decodedToken = jwt.verify(token, this.config.SessionSecret);
-    return decodedToken["user"];
+    try {
+      const decodedToken = jwt.verify(token, this.config.SessionSecret);
+      if (typeof decodedToken === 'object' && decodedToken !== null) {
+        console.log("User from token: " + decodedToken["user"]);
+        return decodedToken["user"];
+      }
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        console.error('Token has expired');
+      } else if (error instanceof jwt.JsonWebTokenError) {
+        console.error('Invalid token');
+      } else {
+        console.error('Some other error occurred');
+      }
+    }
+    return null;
+
   }
 
   GetToken(request: Request): string | undefined {
