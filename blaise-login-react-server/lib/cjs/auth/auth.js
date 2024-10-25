@@ -74,29 +74,10 @@ var Auth = /** @class */ (function () {
     };
     Auth.prototype.GetUser = function (token) {
         if (!token) {
-            //throw "Must provide a token to get a user";
-            console.log("Invalid Token.");
-            return null;
+            throw "Must provide a token to get a user";
         }
-        try {
-            var decodedToken = jsonwebtoken_1.default.verify(token, this.config.SessionSecret);
-            if (typeof decodedToken === 'object' && decodedToken !== null) {
-                console.log("User from token: " + decodedToken["user"]);
-                return decodedToken["user"];
-            }
-        }
-        catch (error) {
-            if (error instanceof jsonwebtoken_1.default.TokenExpiredError) {
-                console.error('Token has expired');
-            }
-            else if (error instanceof jsonwebtoken_1.default.JsonWebTokenError) {
-                console.error('Invalid token');
-            }
-            else {
-                console.error('Some other error occurred');
-            }
-        }
-        return null;
+        var decodedToken = jsonwebtoken_1.default.verify(token, this.config.SessionSecret);
+        return decodedToken["user"];
     };
     Auth.prototype.GetToken = function (request) {
         var token = request.get("authorization");
