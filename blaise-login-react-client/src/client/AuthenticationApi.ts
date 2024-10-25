@@ -13,12 +13,12 @@ export default class AuthenticationApi extends AuthManager {
     setLoggedIn(false);
   }
 
-  async getLoggedInUser(): Promise<User | null> {
+  async getLoggedInUser(): Promise<User> {
     try {
       return await getCurrentUser(this);
     } catch (error) {
       console.error("Unable to retrieve logged in user" + error)
-      return null;
+      return { name: "", role: "", serverParks: [""], defaultServerPark: "" };
     }
   }
 }

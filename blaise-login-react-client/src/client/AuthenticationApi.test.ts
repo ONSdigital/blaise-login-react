@@ -4,7 +4,7 @@ import { getCurrentUser } from "./user";
 
 // define mocks
 jest.mock("./user");
-const getLoggedInUserMock = getCurrentUser as jest.Mock<Promise<User | null>>;
+const getLoggedInUserMock = getCurrentUser as jest.Mock<Promise<User>>;
 const userMockObject: User = {
   name: "Jake Bullet",
   role: "Manager",

@@ -6,7 +6,7 @@ import AuthenticateUser from "./AuthenticateUser";
 
 interface AuthenticateUserHandlerProps {
   title: string;
-  children: (user: User | null, loggedIn: boolean, logOutFunction: () => void) => React.ReactNode;
+  children: (user: User, loggedIn: boolean, logOutFunction: () => void) => React.ReactNode;
 }
 
 export default function AuthenticateUserHandler({ title, children }: AuthenticateUserHandlerProps): ReactElement {

@@ -2,7 +2,7 @@ import axios from "axios";
 import { User } from "blaise-api-node-client";
 import { AuthManager } from "./token";
 
-export async function getCurrentUser(authManager: AuthManager): Promise<User | null> {
+export async function getCurrentUser(authManager: AuthManager): Promise<User> {
   const response = await axios.get("/api/login/current-user", {
     headers: authManager.authHeader()
   });

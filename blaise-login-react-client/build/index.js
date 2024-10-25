@@ -5809,7 +5809,7 @@ var AuthenticationApi = /** @class */ (function (_super) {
                     case 2:
                         error_1 = _a.sent();
                         console.error("Unable to retrieve logged in user" + error_1);
-                        return [2 /*return*/, null];
+                        return [2 /*return*/, { name: "", role: "", serverParks: [""], defaultServerPark: "" }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -5876,8 +5876,9 @@ function RenderAuthenticatedContent(_a) {
     var authenticationApi = _a.authenticationApi, children = _a.children, setLoggedIn = _a.setLoggedIn;
     var getUser = useAsyncRequestWithParam(getLoggedInUser, authenticationApi);
     return (React__default["default"].createElement(AsyncContent, { content: getUser }, function (user) {
-        var isValidUser = user !== null && typeof user !== "undefined";
-        return children(isValidUser ? user : null, isValidUser, function () { return authenticationApi.logOut(setLoggedIn); });
+        return user.name !== ""
+            ? (children(user, true, function () { return authenticationApi.logOut(setLoggedIn); }))
+            : (children(user, false, function () { return authenticationApi.logOut(setLoggedIn); }));
     }));
 }
 

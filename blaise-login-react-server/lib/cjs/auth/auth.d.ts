@@ -7,7 +7,7 @@ export declare class Auth {
     SignToken(user: User): string;
     ValidateToken(token: string | undefined): boolean;
     UserHasRole(user: User): boolean;
-    GetUser(token: string | undefined): User | null;
+    GetUser(token: string | undefined): User;
     GetToken(request: Request): string | undefined;
     Middleware(request: Request, response: Response, next: NextFunction): Promise<Response | void>;
 }
