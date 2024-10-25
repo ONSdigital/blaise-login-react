@@ -82,7 +82,7 @@ var LoginHandler = /** @class */ (function () {
             var user;
             return __generator(this, function (_a) {
                 user = this.auth.GetUser(this.auth.GetToken(req));
-                console.log("User from jwt token" + user);
+                console.log("User from jwt token" + JSON.stringify(user));
                 return [2 /*return*/, res.status(200).json(user)];
             });
         });
