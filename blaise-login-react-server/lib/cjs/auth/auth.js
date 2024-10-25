@@ -74,7 +74,8 @@ var Auth = /** @class */ (function () {
     };
     Auth.prototype.GetUser = function (token) {
         if (!token) {
-            throw "Must provide a token to get a user";
+            return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
+            console.error("Must provide a token to get a user");
         }
         var decodedToken = jsonwebtoken_1.default.verify(token, this.config.SessionSecret);
         return decodedToken["user"];

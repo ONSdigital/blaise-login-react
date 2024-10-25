@@ -42,7 +42,8 @@ export class Auth {
 
   GetUser(token: string | undefined): User {
     if (!token) {
-      throw "Must provide a token to get a user";
+      return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
+      console.error("Must provide a token to get a user");
     }
     const decodedToken = jwt.verify(token, this.config.SessionSecret);
     return decodedToken["user"];
