@@ -54,7 +54,10 @@ var Auth = /** @class */ (function () {
         }
         try {
             var decodedToken = jwt.verify(token, this.config.SessionSecret);
-            return this.UserHasRole(decodedToken["user"]);
+            if (typeof decodedToken === 'object' && decodedToken !== null) {
+                return this.UserHasRole(decodedToken["user"]);
+            }
+            return false;
         }
         catch (_a) {
             return false;
@@ -65,10 +68,17 @@ var Auth = /** @class */ (function () {
     };
     Auth.prototype.GetUser = function (token) {
         if (!token) {
-            throw "Must provide a token to get a user";
+            console.error("Must provide a token to get a user");
+            return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
         }
-        var decodedToken = jwt.verify(token, this.config.SessionSecret);
-        return decodedToken["user"];
+        try {
+            var decodedToken = jwt.verify(token, this.config.SessionSecret);
+            return decodedToken["user"];
+        }
+        catch (_a) {
+            console.error("Must provide a valid token to get a user");
+            return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
+        }
     };
     Auth.prototype.GetToken = function (request) {
         var token = request.get("authorization");

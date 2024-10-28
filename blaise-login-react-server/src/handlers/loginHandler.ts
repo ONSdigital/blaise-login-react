@@ -38,15 +38,17 @@ export class LoginHandler {
   }
 
   async GetCurrentUser(req: Request, res: Response): Promise<Response> {
-    return res.status(200).json(this.auth.GetUser(this.auth.GetToken(req)));
+    const user = this.auth.GetUser(this.auth.GetToken(req));
+    console.log("User from jwt token" + JSON.stringify(user));
+    return res.status(200).json(user);
   }
 
   async ValidatePassword(req: Request, res: Response): Promise<Response> {
     console.log("Validating password");
     const { username, password } = req.body;
 
-    if(username === undefined || username === "" || password === undefined || password === "") {
-      return res.status(400).json({"error": "Username or password has not been supplied"});
+    if (username === undefined || username === "" || password === undefined || password === "") {
+      return res.status(400).json({ "error": "Username or password has not been supplied" });
     }
 
     return res.status(200).json(await this.blaiseApiClient.validatePassword(username, password));

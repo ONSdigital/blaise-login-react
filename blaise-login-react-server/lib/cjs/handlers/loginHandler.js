@@ -79,8 +79,11 @@ var LoginHandler = /** @class */ (function () {
     };
     LoginHandler.prototype.GetCurrentUser = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
+            var user;
             return __generator(this, function (_a) {
-                return [2 /*return*/, res.status(200).json(this.auth.GetUser(this.auth.GetToken(req)))];
+                user = this.auth.GetUser(this.auth.GetToken(req));
+                console.log("User from jwt token" + JSON.stringify(user));
+                return [2 /*return*/, res.status(200).json(user)];
             });
         });
     };
@@ -92,7 +95,6 @@ var LoginHandler = /** @class */ (function () {
                     case 0:
                         console.log("Validating password");
                         _a = req.body, username = _a.username, password = _a.password;
-                        console.log("username " + username + " password " + password);
                         if (username === undefined || username === "" || password === undefined || password === "") {
                             return [2 /*return*/, res.status(400).json({ "error": "Username or password has not been supplied" })];
                         }

@@ -27,7 +27,10 @@ export class Auth {
     }
     try {
       const decodedToken = jwt.verify(token, this.config.SessionSecret);
-      return this.UserHasRole(decodedToken["user"]);
+      if (typeof decodedToken === 'object' && decodedToken !== null) {
+        return this.UserHasRole(decodedToken["user"]);
+      }
+      return false;
     } catch {
       return false;
     }
@@ -39,10 +42,18 @@ export class Auth {
 
   GetUser(token: string | undefined): User {
     if (!token) {
-      throw "Must provide a token to get a user";
+      console.error("Must provide a token to get a user");
+      return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
     }
-    const decodedToken = jwt.verify(token, this.config.SessionSecret);
-    return decodedToken["user"];
+    try {
+      const decodedToken = jwt.verify(token, this.config.SessionSecret);
+      return decodedToken["user"];
+    }
+    catch {
+      console.error("Must provide a valid token to get a user");
+      return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
+    }
+
   }
 
   GetToken(request: Request): string | undefined {

@@ -5,11 +5,11 @@ import RenderAuthenticatedContent from "./RenderAuthenticatedContent";
 import AuthenticateUser from "./AuthenticateUser";
 
 interface AuthenticateUserHandlerProps {
-  title:string;
-  children: (user: User, loggedIn:boolean, logOutFunction: () => void) => React.ReactNode;
+  title: string;
+  children: (user: User, loggedIn: boolean, logOutFunction: () => void) => React.ReactNode;
 }
 
-export default function AuthenticateUserHandler({ title, children }:AuthenticateUserHandlerProps): ReactElement {
+export default function AuthenticateUserHandler({ title, children }: AuthenticateUserHandlerProps): ReactElement {
   const [loggedIn, setLoggedIn] = useState(false);
   const authenticationApi = new AuthenticationApi();
 
