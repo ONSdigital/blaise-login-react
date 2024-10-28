@@ -5876,9 +5876,10 @@ function RenderAuthenticatedContent(_a) {
     var authenticationApi = _a.authenticationApi, children = _a.children, setLoggedIn = _a.setLoggedIn;
     var getUser = useAsyncRequestWithParam(getLoggedInUser, authenticationApi);
     return (React__default["default"].createElement(AsyncContent, { content: getUser }, function (user) {
-        return user.name !== ""
-            ? (children(user, true, function () { return authenticationApi.logOut(setLoggedIn); }))
-            : (children(user, false, function () { return authenticationApi.logOut(setLoggedIn); }));
+        if (user.name === "") {
+            authenticationApi.logOut(setLoggedIn);
+        }
+        return children(user, true, function () { return authenticationApi.logOut(setLoggedIn); });
     }));
 }
 

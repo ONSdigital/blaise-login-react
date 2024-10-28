@@ -21,15 +21,12 @@ export default function RenderAuthenticatedContent({ authenticationApi, children
   return (
     <AsyncContent content={getUser}>
       {
-        (user) =>
-          user.name !== ""
-            ? (
-              children(user, true, () => authenticationApi.logOut(setLoggedIn))
-            )
-            : (
-              children(user, false, () => authenticationApi.logOut(setLoggedIn))
-            )
-      }
+        (user) => {
+          if (user.name === "") {
+            authenticationApi.logOut(setLoggedIn);
+          }
+          return children(user, true, () => authenticationApi.logOut(setLoggedIn));
+        }}
     </AsyncContent >
   );
 }
