@@ -45,8 +45,15 @@ export class Auth {
       console.error("Must provide a token to get a user");
       return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
     }
-    const decodedToken = jwt.verify(token, this.config.SessionSecret);
-    return decodedToken["user"];
+    try {
+      const decodedToken = jwt.verify(token, this.config.SessionSecret);
+      return decodedToken["user"];
+    }
+    catch {
+      console.error("Must provide a valid token to get a user");
+      return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
+    }
+
   }
 
   GetToken(request: Request): string | undefined {

@@ -77,8 +77,14 @@ var Auth = /** @class */ (function () {
             console.error("Must provide a token to get a user");
             return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
         }
-        var decodedToken = jsonwebtoken_1.default.verify(token, this.config.SessionSecret);
-        return decodedToken["user"];
+        try {
+            var decodedToken = jsonwebtoken_1.default.verify(token, this.config.SessionSecret);
+            return decodedToken["user"];
+        }
+        catch (_a) {
+            console.error("Must provide a valid token to get a user");
+            return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
+        }
     };
     Auth.prototype.GetToken = function (request) {
         var token = request.get("authorization");
