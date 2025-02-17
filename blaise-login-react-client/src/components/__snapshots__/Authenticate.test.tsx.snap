@@ -134,13 +134,14 @@ exports[`Renders the correct screen depending if the user has recently logged in
                 Username
               </label>
               <span
-                class="ons-label__description  ons-input--with-description"
+                class="ons-label__description ons-input--with-description"
                 id="description-hint"
               >
                 Your Blaise username
               </span>
               <input
-                class="ons-input ons-input--text ons-input-type__input "
+                class="ons-input ons-input--text ons-input-type__input"
+                form="[object Object]"
                 id="username"
                 initial_value=""
                 name="Username"
@@ -158,13 +159,14 @@ exports[`Renders the correct screen depending if the user has recently logged in
                 Password
               </label>
               <span
-                class="ons-label__description  ons-input--with-description"
+                class="ons-label__description ons-input--with-description"
                 id="description-hint"
               >
                 Your Blaise password
               </span>
               <input
-                class="ons-input ons-input--text ons-input-type__input "
+                class="ons-input ons-input--text ons-input-type__input"
+                form="[object Object]"
                 id="Password"
                 initial_value=""
                 name="Password"
@@ -463,13 +465,14 @@ exports[`Renders the correct screen depending if the user has recently logged in
               Username
             </label>
             <span
-              class="ons-label__description  ons-input--with-description"
+              class="ons-label__description ons-input--with-description"
               id="description-hint"
             >
               Your Blaise username
             </span>
             <input
-              class="ons-input ons-input--text ons-input-type__input "
+              class="ons-input ons-input--text ons-input-type__input"
+              form="[object Object]"
               id="username"
               initial_value=""
               name="Username"
@@ -487,13 +490,14 @@ exports[`Renders the correct screen depending if the user has recently logged in
               Password
             </label>
             <span
-              class="ons-label__description  ons-input--with-description"
+              class="ons-label__description ons-input--with-description"
               id="description-hint"
             >
               Your Blaise password
             </span>
             <input
-              class="ons-input ons-input--text ons-input-type__input "
+              class="ons-input ons-input--text ons-input-type__input"
+              form="[object Object]"
               id="Password"
               initial_value=""
               name="Password"
