@@ -27,7 +27,7 @@ export class Auth {
     }
     try {
       const decodedToken = jwt.verify(token, this.config.SessionSecret);
-      if (typeof decodedToken === 'object' && decodedToken !== null) {
+      if (typeof decodedToken === "object" && decodedToken !== null) {
         return this.UserHasRole(decodedToken["user"]);
       }
       return false;
@@ -46,7 +46,7 @@ export class Auth {
       return { "name": "", "role": "", "serverParks": [], "defaultServerPark": "" };
     }
     try {
-      const decodedToken = jwt.verify(token, this.config.SessionSecret);
+      const decodedToken = jwt.verify(token, this.config.SessionSecret) as { user: User };
       return decodedToken["user"];
     }
     catch {

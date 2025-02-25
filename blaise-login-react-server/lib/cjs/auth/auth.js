@@ -60,7 +60,7 @@ var Auth = /** @class */ (function () {
         }
         try {
             var decodedToken = jsonwebtoken_1.default.verify(token, this.config.SessionSecret);
-            if (typeof decodedToken === 'object' && decodedToken !== null) {
+            if (typeof decodedToken === "object" && decodedToken !== null) {
                 return this.UserHasRole(decodedToken["user"]);
             }
             return false;
