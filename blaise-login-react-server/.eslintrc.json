@@ -2,7 +2,8 @@
   "ignorePatterns": [
     "node_modules/*",
     "dist/*",
-    "build/*"
+    "build/*",
+    "lib/*"
   ],
   "env": {
     "browser": true,
