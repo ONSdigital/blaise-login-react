@@ -186,7 +186,7 @@ describe("LoginHandler", () => {
         expect(response.status).toEqual(200);
         expect(mockGetUser).toHaveBeenCalled();
         const myJwt = response.body.token;
-        const decodedJwt = jwt.decode(myJwt);
+        const decodedJwt = jwt.decode(myJwt) as { user: { role: string } };
         if (decodedJwt) {
           expect(decodedJwt["user"]).toEqual({ "role": "DST" });
         } else {
