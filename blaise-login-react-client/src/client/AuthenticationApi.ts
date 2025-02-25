@@ -17,7 +17,7 @@ export default class AuthenticationApi extends AuthManager {
     try {
       return await getCurrentUser(this);
     } catch (error) {
-      console.error("Unable to retrieve logged in user" + error)
+      console.error("Unable to retrieve logged in user" + error);
       return { name: "", role: "", serverParks: [""], defaultServerPark: "" };
     }
   }

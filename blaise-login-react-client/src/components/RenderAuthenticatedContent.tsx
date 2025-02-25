@@ -3,7 +3,6 @@ import React, { ReactElement } from "react";
 import AuthenticationApi from "../client/AuthenticationApi";
 import { useAsyncRequestWithParam } from "../hooks/useAsyncRequest";
 import AsyncContent from "./AsyncContent";
-import AuthenticateUserHandler from "./AuthenticateUserHandler";
 
 interface RenderAuthenticatedContentProps {
   authenticationApi: AuthenticationApi;
