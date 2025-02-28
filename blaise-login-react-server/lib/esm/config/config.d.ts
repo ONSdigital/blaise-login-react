@@ -1,4 +1,4 @@
-export declare type AuthConfig = {
+export type AuthConfig = {
     SessionSecret: string;
     SessionTimeout: string;
     Roles: string[];

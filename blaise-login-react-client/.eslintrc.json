@@ -2,7 +2,10 @@
   "ignorePatterns": [
     "node_modules/*",
     "dist/*",
-    "build/*"
+    "build/*",
+    "coverage/*",
+    "jest.config.js",
+    "rollup.config.js"
   ],
   "env": {
     "browser": true,
@@ -44,6 +47,9 @@
       ],
       "rules": {
         "@typescript-eslint/no-var-requires": "off"
+      },
+      "parserOptions": {
+        "project": "tsconfig.test.json"
       }
     }
   ],

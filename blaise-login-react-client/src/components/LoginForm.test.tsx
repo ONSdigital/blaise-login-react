@@ -1,6 +1,6 @@
 
 import React from "react";
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import { cleanup, waitFor } from "@testing-library/react";
 import LoginForm from "./LoginForm";
 import { screen } from "@testing-library/dom";
@@ -58,10 +58,12 @@ describe("Login form", () => {
         <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
       );
 
-      userEvent.type(screen.getByLabelText("Username"), "test");
-      userEvent.type(screen.getByLabelText("Password"), "test");
+      act(() => { 
+        userEvent.type(screen.getByLabelText("Username"), "test");
+        userEvent.type(screen.getByLabelText("Password"), "test");
 
-      userEvent.click(screen.getByTestId("submit-button"));
+        userEvent.click(screen.getByTestId("submit-button"));
+      });
 
       await waitFor(() => {
         expect(screen.queryByText("Incorrect username or password")).toBeVisible();
@@ -80,10 +82,12 @@ describe("Login form", () => {
         <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
       );
 
-      userEvent.type(screen.getByLabelText("Username"), "test");
-      userEvent.type(screen.getByLabelText("Password"), "test");
+      act(() => { 
+        userEvent.type(screen.getByLabelText("Username"), "test");
+        userEvent.type(screen.getByLabelText("Password"), "test");
 
-      userEvent.click(screen.getByTestId("submit-button"));
+        userEvent.click(screen.getByTestId("submit-button"));
+      });
 
       await waitFor(() => {
         expect(screen.queryByText("You do not have the correct permissions")).toBeVisible();
@@ -101,11 +105,13 @@ describe("Login form", () => {
       render(
         <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
       );
+      
+      act(() => { 
+        userEvent.type(screen.getByLabelText("Username"), "test");
+        userEvent.type(screen.getByLabelText("Password"), "test");
 
-      userEvent.type(screen.getByLabelText("Username"), "test");
-      userEvent.type(screen.getByLabelText("Password"), "test");
-
-      userEvent.click(screen.getByTestId("submit-button"));
+        userEvent.click(screen.getByTestId("submit-button"));
+      });
 
       await waitFor(async () => {
         await new Promise(process.nextTick);

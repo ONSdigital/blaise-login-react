@@ -23,13 +23,14 @@ exports[`Login form matches snapshot 1`] = `
             Username
           </label>
           <span
-            class="ons-label__description  ons-input--with-description"
+            class="ons-label__description ons-input--with-description"
             id="description-hint"
           >
             Your Blaise username
           </span>
           <input
-            class="ons-input ons-input--text ons-input-type__input "
+            class="ons-input ons-input--text ons-input-type__input"
+            form="[object Object]"
             id="username"
             initial_value=""
             name="Username"
@@ -47,13 +48,14 @@ exports[`Login form matches snapshot 1`] = `
             Password
           </label>
           <span
-            class="ons-label__description  ons-input--with-description"
+            class="ons-label__description ons-input--with-description"
             id="description-hint"
           >
             Your Blaise password
           </span>
           <input
-            class="ons-input ons-input--text ons-input-type__input "
+            class="ons-input ons-input--text ons-input-type__input"
+            form="[object Object]"
             id="Password"
             initial_value=""
             name="Password"
@@ -95,13 +97,14 @@ exports[`Login form matches snapshot 1`] = `
           Username
         </label>
         <span
-          class="ons-label__description  ons-input--with-description"
+          class="ons-label__description ons-input--with-description"
           id="description-hint"
         >
           Your Blaise username
         </span>
         <input
-          class="ons-input ons-input--text ons-input-type__input "
+          class="ons-input ons-input--text ons-input-type__input"
+          form="[object Object]"
           id="username"
           initial_value=""
           name="Username"
@@ -119,13 +122,14 @@ exports[`Login form matches snapshot 1`] = `
           Password
         </label>
         <span
-          class="ons-label__description  ons-input--with-description"
+          class="ons-label__description ons-input--with-description"
           id="description-hint"
         >
           Your Blaise password
         </span>
         <input
-          class="ons-input ons-input--text ons-input-type__input "
+          class="ons-input ons-input--text ons-input-type__input"
+          form="[object Object]"
           id="Password"
           initial_value=""
           name="Password"
