@@ -14,8 +14,9 @@ module.exports = {
     "**/src/**/*.test.(ts|tsx|js|jsx)",
   ],
   modulePathIgnorePatterns: [
-    "<rootDir>/build/",
-    "<rootDir>/dist/",
-    "<rootDir>/lib/",
+    "node_modules",
+    "build",
+    "dist",
+    "lib",
   ],
 };

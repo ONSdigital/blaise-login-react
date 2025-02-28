@@ -35,8 +35,8 @@
   },
   "dependencies": {
     "axios": "^1.7.9",
-    "blaise-api-node-client": "git+https://github.com/ONSdigital/blaise-api-node-client#33f292122091a9798a737347cac0417f2b7a8c61",
-    "blaise-design-system-react-components": "git+https://github.com/ONSdigital/blaise-design-system-react-components#f2290cfa2872f07bde685da1493f5186c07a1e84",
+    "blaise-api-node-client": "git+https://github.com/ONSdigital/blaise-api-node-client#188bebbd427ed229453a48f5d108780e336dcb1c",
+    "blaise-design-system-react-components": "git+https://github.com/ONSdigital/blaise-design-system-react-components#1.0.0",
     "formik": "^2.2.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

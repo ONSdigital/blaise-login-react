@@ -3,7 +3,10 @@
     "node_modules/*",
     "dist/*",
     "build/*",
-    "lib/*"
+    "lib/*",
+    "coverage/*",
+    "jest.config.js",
+    "babel.config.js"
   ],
   "env": {
     "browser": true,
@@ -44,6 +47,9 @@
       ],
       "rules": {
         "@typescript-eslint/no-var-requires": "off"
+      },
+      "parserOptions": {
+        "project": "tsconfig.test.json"
       }
     }
   ],
