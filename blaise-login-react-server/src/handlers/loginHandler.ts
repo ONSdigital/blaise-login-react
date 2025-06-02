@@ -39,6 +39,8 @@ export class LoginHandler {
 
   async GetCurrentUser(req: Request, res: Response): Promise<Response> {
     const user = this.auth.GetUser(this.auth.GetToken(req));
+    // TODO: BL
+    console.log("User performing action: " + user.name);
     console.log("User from jwt token" + JSON.stringify(user));
     return res.status(200).json(user);
   }

@@ -65,12 +65,9 @@ export class Auth {
   }
 
   async Middleware(request: Request, response: Response, next: NextFunction): Promise<Response | void> {
-    // Return error straight away to see if method is getting called
-    return response.status(403).json();
     if (!this.ValidateToken(this.GetToken(request))) {
       return response.status(403).json();
     }
-    request.body.user = "BENNY10";//this.GetUser(this.GetToken(request));
     next();
   }
 }
