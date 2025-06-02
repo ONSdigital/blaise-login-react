@@ -69,7 +69,7 @@ export class Auth {
     if (!this.ValidateToken(this.GetToken(request))) {
       return response.status(403).json();
     }
-    request.body.user = this.GetUser(this.GetToken(request));
+    request.body.user = this.GetUser(this.GetToken(request)).name;
     next();
   }
 }
