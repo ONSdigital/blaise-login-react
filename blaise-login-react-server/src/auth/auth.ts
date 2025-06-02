@@ -65,9 +65,11 @@ export class Auth {
   }
 
   async Middleware(request: Request, response: Response, next: NextFunction): Promise<Response | void> {
+    console.log("Entering auth middleware");
     if (!this.ValidateToken(this.GetToken(request))) {
       return response.status(403).json();
     }
+    request.body.user = this.GetUser(this.GetToken(request));
     next();
   }
 }

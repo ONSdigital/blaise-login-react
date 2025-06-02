@@ -90,9 +90,11 @@ var Auth = /** @class */ (function () {
     Auth.prototype.Middleware = function (request, response, next) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
+                console.log("Entering auth middleware");
                 if (!this.ValidateToken(this.GetToken(request))) {
                     return [2 /*return*/, response.status(403).json()];
                 }
+                request.body.user = this.GetUser(this.GetToken(request));
                 next();
                 return [2 /*return*/];
             });
