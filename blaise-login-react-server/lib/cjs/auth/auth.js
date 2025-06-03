@@ -101,9 +101,13 @@ var Auth = /** @class */ (function () {
                     return [2 /*return*/, response.status(403).json()];
                 }
                 console.log("Before injection: :", request.body);
+                if (typeof request.body !== 'object' || request.body === null) {
+                    request.body = {};
+                }
                 currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
                 console.error("Adding currently logged in user to request body as '" + currentlyloggedinuser + "'");
                 request.body.currentlyloggedinuser = currentlyloggedinuser;
+                console.log("After injection: :", request.body);
                 next();
                 return [2 /*return*/];
             });
