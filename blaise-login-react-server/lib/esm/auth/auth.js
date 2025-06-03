@@ -89,11 +89,14 @@ var Auth = /** @class */ (function () {
     };
     Auth.prototype.Middleware = function (request, response, next) {
         return __awaiter(this, void 0, void 0, function () {
+            var currentlyloggedinuser;
             return __generator(this, function (_a) {
                 if (!this.ValidateToken(this.GetToken(request))) {
                     return [2 /*return*/, response.status(403).json()];
                 }
-                request.body.currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
+                currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
+                console.error("Adding currently logged in user to request body as '" + currentlyloggedinuser + "'");
+                request.body.currentlyloggedinuser = currentlyloggedinuser;
                 next();
                 return [2 /*return*/];
             });
