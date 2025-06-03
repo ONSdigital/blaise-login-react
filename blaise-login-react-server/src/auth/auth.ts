@@ -68,6 +68,9 @@ export class Auth {
     if (!this.ValidateToken(this.GetToken(request))) {
       return response.status(403).json();
     }
+
+    console.log("Before injection: :", request.body);
+
     let currentlyloggedinuser = this.GetUser(this.GetToken(request)).name
     console.error("Adding currently logged in user to request body as '" + currentlyloggedinuser + "'");
     request.body.currentlyloggedinuser = currentlyloggedinuser;
