@@ -95,14 +95,14 @@ var Auth = /** @class */ (function () {
     };
     Auth.prototype.Middleware = function (request, response, next) {
         return __awaiter(this, void 0, void 0, function () {
-            var currentlyloggedinuser;
+            var currentlyloggedinuser, sanitizedBody;
             return __generator(this, function (_a) {
                 if (!this.ValidateToken(this.GetToken(request))) {
                     return [2 /*return*/, response.status(403).json()];
                 }
                 currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
-                console.log("AUDIT_LOG: " + currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl + " with body: " + JSON.stringify(request.body));
-                request.body.currentlyloggedinuser = currentlyloggedinuser;
+                sanitizedBody = JSON.stringify(request.body).replace(/"password"\s*:\s*"[^"]*"/, '"password":"***"');
+                console.log("AUDIT_LOG: " + currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl + " with body: " + sanitizedBody);
                 next();
                 return [2 /*return*/];
             });

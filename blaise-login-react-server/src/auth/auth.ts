@@ -70,8 +70,8 @@ export class Auth {
     }
 
     let currentlyloggedinuser = this.GetUser(this.GetToken(request)).name
-    console.log("AUDIT_LOG: " + currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl + " with body: " + JSON.stringify(request.body));
-    request.body.currentlyloggedinuser = currentlyloggedinuser;
+    const sanitizedBody = JSON.stringify(request.body).replace(/"password"\s*:\s*"[^"]*"/, '"password":"***"');
+    console.log("AUDIT_LOG: " + currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl + " with body: " + sanitizedBody);
     next();
   }
 }
