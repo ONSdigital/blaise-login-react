@@ -94,15 +94,9 @@ var Auth = /** @class */ (function () {
                 if (!this.ValidateToken(this.GetToken(request))) {
                     return [2 /*return*/, response.status(403).json()];
                 }
-                console.log("Before injection: :", request.body);
-                if (typeof request.body !== 'object' || request.body === null) {
-                    request.body = {};
-                }
                 currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
-                console.log(currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl);
-                console.error("Adding currently logged in user to request body as '" + currentlyloggedinuser + "'");
+                console.log("AUDIT_LOG: " + currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl + " with body: " + JSON.stringify(request.body));
                 request.body.currentlyloggedinuser = currentlyloggedinuser;
-                console.log("After injection: :", request.body);
                 next();
                 return [2 /*return*/];
             });
