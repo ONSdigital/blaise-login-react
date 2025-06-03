@@ -69,6 +69,7 @@ export class Auth {
       return response.status(403).json();
     }
 
+
     console.log("Before injection: :", request.body);
 
     if (typeof request.body !== 'object' || request.body === null) {
@@ -76,6 +77,10 @@ export class Auth {
     }
 
     let currentlyloggedinuser = this.GetUser(this.GetToken(request)).name
+
+
+    console.log(currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl);
+
     console.error("Adding currently logged in user to request body as '" + currentlyloggedinuser + "'");
     request.body.currentlyloggedinuser = currentlyloggedinuser;
 

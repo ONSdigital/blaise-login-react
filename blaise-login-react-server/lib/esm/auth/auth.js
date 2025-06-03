@@ -99,6 +99,7 @@ var Auth = /** @class */ (function () {
                     request.body = {};
                 }
                 currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
+                console.log(currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl);
                 console.error("Adding currently logged in user to request body as '" + currentlyloggedinuser + "'");
                 request.body.currentlyloggedinuser = currentlyloggedinuser;
                 console.log("After injection: :", request.body);
