@@ -72,8 +72,13 @@ export class Auth {
     const currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
     const sanitizedBody = JSON.stringify(request.body).replace(/"password"\s*:\s*"[^"]*"/, "\"password\":\"***\"");
     console.log("AUDIT_LOG: " + currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl + " " + request.headers.referer + " with body: " + sanitizedBody);
+    
+    // Set the currently logged in user in the response header and request body for further use
     response.setHeader("currentlyloggedinuser", currentlyloggedinuser);
-    request.body.currentlyloggedinuser = currentlyloggedinuser;
+    if (typeof request.body === 'object' && request.body !== null) {
+      request.body.currentlyloggedinuser = currentlyloggedinuser;
+    }
+    
     next();
   }
 }
