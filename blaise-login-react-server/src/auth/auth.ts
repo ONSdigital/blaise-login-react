@@ -65,10 +65,13 @@ export class Auth {
   }
 
   async Middleware(request: Request, response: Response, next: NextFunction): Promise<Response | void> {
-
     if (!this.ValidateToken(this.GetToken(request))) {
       return response.status(403).json();
     }
+
+    const currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
+    const sanitizedBody = JSON.stringify(request.body).replace(/"password"\s*:\s*"[^"]*"/, "\"password\":\"***\"");
+    console.log("AUDIT_LOG: " + currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl + " " + request.headers.referer + " with body: " + sanitizedBody);
     next();
   }
 }
