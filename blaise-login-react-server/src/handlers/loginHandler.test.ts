@@ -280,5 +280,47 @@ describe("LoginHandler", () => {
         expect(response.body).toEqual("Hello, world!");
       });
     });
+
+    describe("with a valid jwt auth header and password", () => {
+      it("should log message blanking out password", async () => {
+        // Setup
+        const body = {username: "Benny", password: "super secret" };
+        const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+        const token = jwt.sign({ user: { role: "DST" } }, config.SessionSecret);
+
+        // Act
+        const response: Response = await request.get("/authtest").send(body)
+          .set("Authorization", token);
+
+        // Assert
+        expect(response.status).toEqual(200);
+        expect(response.body).toEqual("Hello, world!");
+        expect(consoleSpy).toHaveBeenCalledWith(
+          expect.stringContaining("AUDIT_LOG: undefined is making the following request: GET /authtest undefined with body: {\"username\":\"Benny\",\"password\":\"***\"}")
+        );
+        consoleSpy.mockRestore();
+      });
+    });
+
+    describe("with a valid jwt auth header and role", () => {
+      it("should log message with both username and role", async () => {
+        // Setup
+        const body = {username: "Benny", role: "super role" };
+        const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+        const token = jwt.sign({ user: { role: "DST" } }, config.SessionSecret);
+
+        // Act
+        const response: Response = await request.get("/authtest").send(body)
+          .set("Authorization", token);
+
+        // Assert
+        expect(response.status).toEqual(200);
+        expect(response.body).toEqual("Hello, world!");
+        expect(consoleSpy).toHaveBeenCalledWith(
+          expect.stringContaining("AUDIT_LOG: undefined is making the following request: GET /authtest undefined with body: {\"username\":\"Benny\",\"role\":\"super role\"}")
+        );
+        consoleSpy.mockRestore();
+      });
+    });
   });
 });

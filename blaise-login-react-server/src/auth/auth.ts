@@ -69,8 +69,8 @@ export class Auth {
       return response.status(403).json();
     }
 
-    let currentlyloggedinuser = this.GetUser(this.GetToken(request)).name
-    const sanitizedBody = JSON.stringify(request.body).replace(/"password"\s*:\s*"[^"]*"/, '"password":"***"');
+    const currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
+    const sanitizedBody = JSON.stringify(request.body).replace(/"password"\s*:\s*"[^"]*"/, "\"password\":\"***\"");
     console.log("AUDIT_LOG: " + currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl + " " + request.headers.referer + " with body: " + sanitizedBody);
     next();
   }
