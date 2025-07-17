@@ -70,7 +70,13 @@ export class Auth {
     }
 
     const currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
-    const sanitizedBody = JSON.stringify(request.body).replace(/"password"\s*:\s*"[^"]*"/, "\"password\":\"***\"");
+    
+    const body = { ...request.body };
+    if (body.password) {
+      body.password = '***';
+    }
+    const sanitizedBody = JSON.stringify(body);
+
     console.log("AUDIT_LOG: " + currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl + " " + request.headers.referer + " with body: " + sanitizedBody);
     
     // Set the currently logged in user in the response header and request body for further use
