@@ -1,3 +1,14 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -89,19 +100,23 @@ var Auth = /** @class */ (function () {
     };
     Auth.prototype.Middleware = function (request, response, next) {
         return __awaiter(this, void 0, void 0, function () {
-            var currentlyloggedinuser, sanitizedBody;
+            var currentlyloggedinuser, body, sanitizedBody;
             return __generator(this, function (_a) {
                 if (!this.ValidateToken(this.GetToken(request))) {
                     return [2 /*return*/, response.status(403).json()];
                 }
                 currentlyloggedinuser = this.GetUser(this.GetToken(request)).name;
-                sanitizedBody = JSON.stringify(request.body).replace(/"password"\s*:\s*"[^"]*"/, "\"password\":\"***\"");
+                body = __assign({}, request.body);
+                if (body.password) {
+                    body.password = '***';
+                }
+                sanitizedBody = JSON.stringify(body);
                 console.log("AUDIT_LOG: " + currentlyloggedinuser + " is making the following request: " + request.method + " " + request.originalUrl + " " + request.headers.referer + " with body: " + sanitizedBody);
                 // Set the currently logged in user in the response header and request body for further use
                 if (currentlyloggedinuser !== undefined && currentlyloggedinuser !== null) {
                     response.setHeader("currentlyloggedinuser", currentlyloggedinuser);
                 }
-                if (typeof request.body === 'object' && request.body !== null) {
+                if (typeof request.body === "object" && request.body !== null) {
                     request.body.currentlyloggedinuser = currentlyloggedinuser;
                 }
                 next();
