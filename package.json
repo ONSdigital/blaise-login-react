@@ -1,0 +1,20 @@
+{
+    "name": "blaise-login-react",
+    "version": "1.1.5",
+    "exports": {
+        "./blaise-login-react-client": {
+            "import": "./blaise-login-react-client/dist/index.js",
+            "require": "./blaise-login-react-client/dist/index.js",
+            "types": "./blaise-login-react-client/dist/index.d.ts"
+        },
+        "./blaise-login-react-server": {
+            "import": "./blaise-login-react-server/dist/index.js",
+            "require": "./blaise-login-react-server/dist/index.js",
+            "types": "./blaise-login-react-server/dist/index.d.ts"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ONSdigital/blaise-login-react.git"
+    }
+}
