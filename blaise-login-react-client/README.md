@@ -110,8 +110,8 @@ To utilize this mock component in your tests, insert the following lines at the 
 
 ```ts 
   // create mocks
-  jest.mock('blaise-login-react/blaise-login-react-client');
-  const { MockAuthenticate } = jest.requireActual('blaise-login-react/blaise-login-react-client');
+  vi.mock('blaise-login-react/blaise-login-react-client');
+  const { MockAuthenticate } = vi.requireActual('blaise-login-react/blaise-login-react-client');
   Authenticate.prototype.render = MockAuthenticate.prototype.render;
 ```
 

@@ -1,20 +1,15 @@
-import LoginForm from "./components/LoginForm";
+export { default as Authenticate } from "./components/Authenticate";
 
-import { AuthManager } from "./client/token";
-import { getUser, getCurrentUser, validatePassword, validateUserPermissions, validateToken } from "./client/user";
-import Authenticate from "./components/Authenticate";
-import AuthenticationApi from "./client/AuthenticationApi";
-import MockAuthenticate from "./mockComponents/mockAuthenticate";
+export { default as LoginForm } from "./components/LoginForm";
+
+export { default as AuthenticationApi } from "./services/AuthenticationApi";
+
+export { AuthManager } from "./services/AuthManager";
 
 export {
-  Authenticate,
-  LoginForm,
-  AuthenticationApi,
-  AuthManager,
-  MockAuthenticate,
   getUser,
   getCurrentUser,
   validatePassword,
   validateUserPermissions,
   validateToken,
-};
+} from "./services/user";

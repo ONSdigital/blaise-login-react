@@ -5,9 +5,9 @@ import BlaiseApiClient from "blaise-api-node-client";
 import newLoginHandler from "./loginHandler";
 import express, { Express, Request, Response as ExpressResponse } from "express";
 
-const mockGetUser = jest.fn();
-const mockValidatePassword = jest.fn();
-jest.mock("blaise-api-node-client");
+const mockGetUser = vi.fn();
+const mockValidatePassword = vi.fn();
+vi.mock("blaise-api-node-client");
 BlaiseApiClient.prototype.getUser = mockGetUser;
 BlaiseApiClient.prototype.validatePassword = mockValidatePassword;
 
@@ -285,7 +285,7 @@ describe("LoginHandler", () => {
       it("should log message blanking out password", async () => {
         // Setup
         const body = {username: "Benny", password: "super secret" };
-        const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+        const consoleSpy = vi.spyOn(console, "log").mockImplementation();
         const token = jwt.sign({ user: { role: "DST" } }, config.SessionSecret);
 
         // Act
@@ -306,7 +306,7 @@ describe("LoginHandler", () => {
       it("should log message with both username and role", async () => {
         // Setup
         const body = {username: "Benny", role: "super role" };
-        const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+        const consoleSpy = vi.spyOn(console, "log").mockImplementation();
         const token = jwt.sign({ user: { role: "DST" } }, config.SessionSecret);
 
         // Act

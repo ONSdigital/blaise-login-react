@@ -1,81 +1,74 @@
-import React, { ReactElement } from "react";
-import { FormFieldObject, ONSPanel, StyledForm } from "blaise-design-system-react-components";
-import { Component } from "react";
-import { validatePassword, validateUserPermissions } from "../client/user";
-import { AuthManager } from "../client/token";
+import { useState, useCallback, ReactElement } from "react";
+import { type FormFieldObject, ONSPanel, StyledForm } from "blaise-design-system-react-components";
+import { validatePassword, validateUserPermissions } from "../services/user";
+import type { AuthManager } from "../services/AuthManager";
 
-
-type LoginFormProps = {
-  authManager: AuthManager
-  setLoggedIn: (loggedIn: boolean) => void
+interface LoginFormProps {
+  authManager: AuthManager;
+  setLoggedIn: (loggedIn: boolean) => void;
 }
 
-type LoginFormState = {
-  error: string
-}
+export default function LoginForm({ authManager, setLoggedIn }: LoginFormProps): ReactElement {
+  const [error, setError] = useState<string>("");
 
-export default class LoginForm extends Component<LoginFormProps, LoginFormState> {
-  constructor(props: LoginFormProps) {
-    super(props);
-    this.login = this.login.bind(this);
-    this.state = {
-      error: ""
-    };
-  }
+  const fields: FormFieldObject[] = [
+    {
+      name: "Username",
+      id: "username",
+      description: "Your Blaise username",
+      type: "username",
+      initial_value: "",
+    },
+    {
+      name: "Password",
+      description: "Your Blaise password",
+      type: "password",
+      initial_value: "",
+    },
+  ];
 
-  formFields(): FormFieldObject[] {
-    return [
-      {
-        name: "Username",
-        id: "username",
-        description: "Your Blaise username",
-        type: "username",
-        initial_value: ""
-      },
-      {
-        name: "Password",
-        description: "Your Blaise password",
-        type: "password",
-        initial_value: ""
+  const login = useCallback(
+    async (
+      form: Record<string, string>,
+      setSubmitting: (isSubmitting: boolean) => void,
+    ): Promise<void> => {
+      setError("");
+
+      const valid = await validatePassword(form.Username, form.Password);
+
+      if (!valid) {
+        setError("Incorrect username or password");
+        setSubmitting(false);
+
+        return;
       }
-    ];
-  }
 
-  async login(form: Record<string, string>, setSubmitting: (isSubmitting: boolean) => void): Promise<void> {
-    const valid = await validatePassword(form.Username, form.Password);
-    if (!valid) {
-      this.setState({
-        error: "Incorrect username or password"
-      });
-      setSubmitting(false);
-      return;
-    }
-    const [authorised, token] = await validateUserPermissions(form.Username);
-    if (!authorised) {
-      this.setState({
-        error: "You do not have the correct permissions"
-      });
-      setSubmitting(false);
-      return;
-    }
-    this.props.authManager.setToken(token);
-    this.props.setLoggedIn(authorised);
-  }
+      const [authorised, token] = await validateUserPermissions(form.Username);
 
-  error(): ReactElement | undefined {
-    if (this.state.error != "") {
-      return <ONSPanel status="error">{this.state.error}</ONSPanel>;
-    }
-    return undefined;
-  }
+      if (!authorised) {
+        setError("You do not have the correct permissions");
+        setSubmitting(false);
 
-  render(): ReactElement {
-    return (
-      <>
-        <h1 className="ons-u-mt-m">Sign in</h1>
-        {this.error()}
-        <StyledForm fields={this.formFields()} onSubmitFunction={this.login} submitLabel="Sign in" />
-      </>
-    );
-  }
+        return;
+      }
+
+      authManager.setToken(token);
+      setLoggedIn(authorised);
+    },
+    [authManager, setLoggedIn],
+  );
+
+  return (
+    <>
+      <h1 className="ons-u-mt-m">Sign in</h1>
+
+      {error && <ONSPanel status="error">{error}</ONSPanel>}
+
+      <StyledForm
+        fields={fields}
+        onSubmitFunction={login}
+        submitLabel="Sign in"
+      />
+    </>
+  );
 }

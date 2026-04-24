@@ -1,123 +1,101 @@
-
-import React from "react";
-import { act, render } from "@testing-library/react";
-import { cleanup, waitFor } from "@testing-library/react";
-import LoginForm from "./LoginForm";
-import { screen } from "@testing-library/dom";
-import "@testing-library/jest-dom";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
-import jwt from "jsonwebtoken";
-import { AuthManager } from "../client/token";
+import LoginForm from "./LoginForm";
+import { AuthManager } from "../services/AuthManager";
 
 const mockAdapter = new MockAdapter(axios);
 
-let loggedIn = false;
-
-function setLoggedIn(isLoggedIn: boolean) {
-  loggedIn = isLoggedIn;
-}
-
-describe("Login form", () => {
+describe("LoginForm", () => {
+  const mockSetLoggedIn = vi.fn();
   const authManager = new AuthManager();
 
-  afterEach(() => {
-    cleanup();
-    setLoggedIn(false);
+  beforeEach(() => {
+    mockSetLoggedIn.mockClear();
     mockAdapter.reset();
   });
 
-  it("matches snapshot", async () => {
-    const wrapper = render(
-      <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
-    );
-
-    await waitFor(() => {
-      expect(wrapper).toMatchSnapshot();
-    });
+  afterEach(() => {
+    mockAdapter.reset();
   });
 
-  it("renders correctly", async () => {
-    render(
-      <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
+  it("renders correctly and matches snapshot", async () => {
+    const { asFragment } = render(
+      <LoginForm
+        authManager={authManager}
+        setLoggedIn={mockSetLoggedIn}
+      />,
     );
 
-    await waitFor(() => {
-      expect(screen.queryAllByText("Sign in")).toHaveLength(2);
-      expect(screen.queryByText("Username")).toBeVisible();
-      expect(screen.queryByText("Password")).toBeVisible();
-    });
+    expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument();
+    expect(asFragment()).toMatchSnapshot();
   });
 
-  describe("when the username or password is incorrect", () => {
-    it("renders an error and does not set the token", async () => {
+  describe("when authentication fails", () => {
+    it("renders an error for incorrect credentials", async () => {
+      const user = userEvent.setup();
+
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, false);
 
       render(
-        <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
+        <LoginForm
+          authManager={authManager}
+          setLoggedIn={mockSetLoggedIn}
+        />,
       );
 
-      act(() => { 
-        userEvent.type(screen.getByLabelText("Username"), "test");
-        userEvent.type(screen.getByLabelText("Password"), "test");
+      await user.type(screen.getByLabelText(/username/i), "test");
+      await user.type(screen.getByLabelText(/password/i), "password");
+      await user.click(screen.getByRole("button", { name: /sign in/i }));
 
-        userEvent.click(screen.getByTestId("submit-button"));
-      });
+      expect(await screen.findByText(/incorrect username or password/i)).toBeVisible();
+      expect(mockSetLoggedIn).not.toHaveBeenCalled();
+    });
 
-      await waitFor(() => {
-        expect(screen.queryByText("Incorrect username or password")).toBeVisible();
-      });
+    it("renders an error for unauthorized users", async () => {
+      const user = userEvent.setup();
 
-      expect(loggedIn).toBeFalsy();
+      mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
+      mockAdapter.onGet("/api/login/users/test/authorised").reply(403);
+
+      render(
+        <LoginForm
+          authManager={authManager}
+          setLoggedIn={mockSetLoggedIn}
+        />,
+      );
+
+      await user.type(screen.getByLabelText(/username/i), "test");
+      await user.click(screen.getByRole("button", { name: /sign in/i }));
+
+      expect(await screen.findByText(/do not have the correct permissions/i)).toBeVisible();
+      expect(mockSetLoggedIn).not.toHaveBeenCalled();
     });
   });
 
-  describe("when the username and password are correct but the user does not have permission", () => {
-    it("renders an error and does not set the token", async () => {
+  describe("when authentication succeeds", () => {
+    it("sets the user as logged in", async () => {
+      const user = userEvent.setup();
+
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
-      mockAdapter.onGet("/api/login/users/test/authorised").reply(403, { "error": "Not authorised" });
+      mockAdapter.onGet("/api/login/users/test/authorised").reply(200, { token: "fake-jwt" });
 
       render(
-        <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
+        <LoginForm
+          authManager={authManager}
+          setLoggedIn={mockSetLoggedIn}
+        />,
       );
 
-      act(() => { 
-        userEvent.type(screen.getByLabelText("Username"), "test");
-        userEvent.type(screen.getByLabelText("Password"), "test");
+      await user.type(screen.getByLabelText(/username/i), "test");
+      await user.type(screen.getByLabelText(/password/i), "password");
+      await user.click(screen.getByRole("button", { name: /sign in/i }));
 
-        userEvent.click(screen.getByTestId("submit-button"));
-      });
-
-      await waitFor(() => {
-        expect(screen.queryByText("You do not have the correct permissions")).toBeVisible();
-      });
-
-      expect(loggedIn).toBeFalsy();
+      expect(mockSetLoggedIn).toHaveBeenCalledWith(true);
     });
   });
-
-  describe("when the username and password are correct and the user has permission", () => {
-    it("sets the token", async () => {
-      mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
-      mockAdapter.onGet("/api/login/users/test/authorised").reply(200, { token: jwt.sign({ data: { "role": "test" } }, "test-secret") });
-
-      render(
-        <LoginForm authManager={authManager} setLoggedIn={setLoggedIn} />
-      );
-      
-      act(() => { 
-        userEvent.type(screen.getByLabelText("Username"), "test");
-        userEvent.type(screen.getByLabelText("Password"), "test");
-
-        userEvent.click(screen.getByTestId("submit-button"));
-      });
-
-      await waitFor(async () => {
-        await new Promise(process.nextTick);
-      });
-
-      expect(loggedIn).toBeTruthy();
-    });
-  }); 
 });

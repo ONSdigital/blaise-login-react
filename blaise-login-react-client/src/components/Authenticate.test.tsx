@@ -1,132 +1,102 @@
-import {
-  RenderResult, act, render,
-} from "@testing-library/react";
-import Authenticate from "./Authenticate";
-import  AuthenticationApi from "../client/AuthenticationApi";
-import React from "react";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BrowserRouter } from "react-router-dom";
-import userMockObject from "../mockObjects/mockUserObject";
+import Authenticate from "./Authenticate";
+import mockUser from "../mocks/user.mock";
 
-let view:RenderResult;
+const { mockLoggedIn, mockGetLoggedInUser } = vi.hoisted(() => {
+  return {
+    mockLoggedIn: vi.fn(),
+    mockGetLoggedInUser: vi.fn(),
+  };
+});
 
-// create mocks
-jest.mock("../client/AuthenticationApi");
-const mockLoggedIn = jest.fn();
-const mockLoggedInUser = jest.fn();
-AuthenticationApi.prototype.loggedIn = mockLoggedIn;
-AuthenticationApi.prototype.getLoggedInUser = mockLoggedInUser;
+vi.mock("../services/AuthenticationApi", () => {
+  return {
+    default: class {
+      loggedIn = mockLoggedIn;
+      getLoggedInUser = mockGetLoggedInUser;
+    },
+  };
+});
 
-describe("Renders the correct screen depending if the user has recently logged in", () => {
-  
-    it("Should display a message asking the user to enter their Blaise user credentials if they are not logged in", async () => {
-      // arrange
-      mockLoggedIn.mockImplementation(() => Promise.resolve(false));
-  
-      // act
-      await act(async () => {
-        view = render(
-        <BrowserRouter>
+describe("Authenticate Component - Renders the correct screen depending if the user has recently logged in", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should display a message asking the user to enter their Blaise user credentials if they are not logged in", async () => {
+    mockLoggedIn.mockResolvedValue(false);
+
+    render(
+      <BrowserRouter>
+        <Authenticate>{() => <></>}</Authenticate>
+      </BrowserRouter>,
+    );
+
+    const contentView = await screen.findByTestId("login-page-content");
+
+    expect(contentView).toHaveTextContent("Enter your Blaise username and password");
+  });
+
+  it("should display a default title if one is not supplied and they are not logged in", async () => {
+    mockLoggedIn.mockResolvedValue(false);
+
+    render(
+      <BrowserRouter>
+        <Authenticate>{() => <></>}</Authenticate>
+      </BrowserRouter>,
+    );
+
+    const headerView = await screen.findByTestId("login-page");
+
+    expect(headerView).toHaveTextContent("Blaise login");
+  });
+
+  it("should display the title if one is supplied and they are not logged in", async () => {
+    mockLoggedIn.mockResolvedValue(false);
+
+    render(
+      <BrowserRouter>
+        <Authenticate title="This is the title of your application">{() => <></>}</Authenticate>
+      </BrowserRouter>,
+    );
+
+    const headerView = await screen.findByTestId("login-page");
+
+    expect(headerView).toHaveTextContent("This is the title of your application");
+  });
+
+  it("should render the login page correctly (Snapshot)", async () => {
+    mockLoggedIn.mockResolvedValue(false);
+
+    const { container } = render(
+      <BrowserRouter>
+        <Authenticate>{() => <></>}</Authenticate>
+      </BrowserRouter>,
+    );
+
+    await screen.findByTestId("login-page");
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it("should display the authenticated content if the user is already logged in", async () => {
+    mockLoggedIn.mockResolvedValue(true);
+    mockGetLoggedInUser.mockResolvedValue(mockUser);
+
+    render(
+      <BrowserRouter>
         <Authenticate>
-        {() => (
-          <></>
-        )}
+          {(user) => (
+            <div data-testid="authenticated">Authenticated content for user {user.name}</div>
+          )}
         </Authenticate>
-        </BrowserRouter>
-        );
-      });
-  
-      // assert
-      const contentView = view.getByTestId("login-page-content");
-      expect(contentView).toHaveTextContent("Enter your Blaise username and password");
-    });
+      </BrowserRouter>,
+    );
 
-    it("Should display a default title if one is not supplied and they are not logged in", async () => {
-      // arrange
-      mockLoggedIn.mockImplementation(() => Promise.resolve(false));
-  
-      // act
-      await act(async () => {
-        view = render(
-        <BrowserRouter>
-        <Authenticate>
-        {() => (
-          <></>
-        )}
-        </Authenticate>
-        </BrowserRouter>
-        );
-      });
-  
-      // assert
-      const headerView = view.getByTestId("login-page");
-      expect(headerView).toHaveTextContent("Blaise login");
-    });    
+    const appView = await screen.findByTestId("authenticated");
 
-    it("Should display the title if one  not supplied and they are not logged in", async () => {
-      // arrange
-      mockLoggedIn.mockImplementation(() => Promise.resolve(false));
-  
-      // act
-      await act(async () => {
-        view = render(
-        <BrowserRouter>
-        <Authenticate title="This is the title of your application">
-        {() => (
-          <></>
-        )}
-        </Authenticate>
-        </BrowserRouter>
-        );
-      });
-  
-      // assert
-      const headerView = view.getByTestId("login-page");
-      expect(headerView).toHaveTextContent("This is the title of your application");
-    });       
-
-    it("Should render the login page correctly", async () => {
-      // arrange
-      mockLoggedIn.mockImplementation(() => Promise.resolve(false));
-  
-      // act
-      await act(async () => {
-        view = render(
-        <BrowserRouter>
-        <Authenticate>
-        {() => (
-           <></>
-        )}
-        </Authenticate>
-        </BrowserRouter>
-        );
-      });
-  
-      // assert
-      expect(view).toMatchSnapshot();
-    });
-
-    it("Should display the authenticated content if the user is already logged in",  async () => {
-      // arrange
-      const user = userMockObject;
-      mockLoggedIn.mockImplementation(() => Promise.resolve(true));
-      mockLoggedInUser.mockImplementation(() => Promise.resolve(user));
-  
-      // act
-      await act(async () => {
-        view = render(
-        <BrowserRouter>
-        <Authenticate>
-        {(user) => (
-           <div data-testid="authenticated">
-            Authenticated content for user {user.name}</div>
-        )}
-        </Authenticate>
-        </BrowserRouter>
-        );
-      });
-  
-      // assert
-      const appView = view.getByTestId("authenticated");
-      expect(appView).toHaveTextContent(`Authenticated content for user ${user.name}`);
-    });    
+    expect(appView).toHaveTextContent(`Authenticated content for user ${mockUser.name}`);
+  });
 });

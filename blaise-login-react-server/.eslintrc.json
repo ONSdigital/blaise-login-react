@@ -5,7 +5,7 @@
     "build/*",
     "lib/*",
     "coverage/*",
-    "jest.config.js",
+    "vi.config.js",
     "babel.config.js"
   ],
   "env": {
