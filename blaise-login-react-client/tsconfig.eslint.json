@@ -5,7 +5,7 @@
   },
   "include": [
     "src",
-    "eslint.config.js",
+    "eslint.config.ts",
     "vite.config.ts"
   ]
 }

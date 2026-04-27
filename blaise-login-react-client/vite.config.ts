@@ -11,14 +11,14 @@ export default defineConfig({
     react(),
     dts({
       rollupTypes: true,
-      exclude: ["**/*.test.ts", "**/*.test.tsx", "**/setupTests.ts"],
+      exclude: ["src/mocks/**", "**/*.test.ts", "**/*.test.tsx", "**/setupTests.ts"],
     }),
   ],
   build: {
     outDir: "dist",
     sourcemap: true,
     lib: {
-      entry: resolve(currentDir, "src/index.tsx"),
+      entry: resolve(currentDir, "src/index.ts"),
       name: "BlaiseLoginReactClient",
       fileName: (format) => `index.${format === "es" ? "es.js" : "js"}`,
     },
