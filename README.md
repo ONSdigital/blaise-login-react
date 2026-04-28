@@ -85,15 +85,20 @@ Once authenticated, you can use the `AuthManager` utility to automatically appen
 
 ```typescript
 import { AuthManager } from "blaise-login-react/blaise-login-react-client";
-import axios from "axios";
 
 const authManager = new AuthManager();
 
 export async function fetchProtectedData() {
-  const response = await axios.get("/my-protected-endpoint", {
-    headers: authManager.authHeader(),
+  const response = await fetch("/my-protected-endpoint", {
+    method: "GET",
+    headers: authManager.authHeader(), 
   });
-  return response.data;
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch protected data: HTTP ${response.status}`);
+  }
+
+  return await response.json();
 }
 ```
 

@@ -1977,11 +1977,11 @@ __metadata:
   linkType: hard
 
 "baseline-browser-mapping@npm:^2.10.12":
-  version: 2.10.23
-  resolution: "baseline-browser-mapping@npm:2.10.23"
+  version: 2.10.24
+  resolution: "baseline-browser-mapping@npm:2.10.24"
   bin:
     baseline-browser-mapping: dist/cli.cjs
-  checksum: 10c0/b2c167b9b46dc1c0c6a2c2ccc24469910f22ca953fa591dcff7a222a69aa864b8172f3fdff851da00de307732752b87b1e23a0b4b416f024e5608facdbc461c4
+  checksum: 10c0/ae41f20b7d594909eac68e54b876127a456c99e85f49ba928a79c97ea288007617ad6638ddd1e36db45bbacef7b95b0f436d347602b2e1be2047099fcbbd5f37
   languageName: node
   linkType: hard
 
@@ -2003,26 +2003,26 @@ __metadata:
 
 "blaise-api-node-client@git+https://github.com/ONSdigital/blaise-api-node-client.git#BLAIS5-5177":
   version: 1.0.0
-  resolution: "blaise-api-node-client@https://github.com/ONSdigital/blaise-api-node-client.git#commit=f578478520ab06485576b4e66a3378506e82a416"
+  resolution: "blaise-api-node-client@https://github.com/ONSdigital/blaise-api-node-client.git#commit=d058b0d093760621e51a84bb6002237e563b9006"
   dependencies:
     "@types/node": "npm:^25.6.0"
     axios: "npm:^1.15.2"
     blaise-iap-node-provider: "git+https://github.com/ONSdigital/blaise-iap-node-provider.git#BLAIS5-5177"
     typescript: "npm:^6.0.3"
-  checksum: 10c0/be7ae9e4f4524f035c867e55498a3ae051af29ccd3e9a78374e396f21e2c5ef7e97cb574e9ea73a96f30b373d62be870817bab3e1bb752fc7187349b15a0abca
+  checksum: 10c0/0578d1a6e1bfddf5ecbbd496e843602301d0010db23a5aebe326fe02f9956ceb5112bf14ed03d95da7108b4e3a4b07a5293f8e767bfb12700158b1314e5da0f4
   languageName: node
   linkType: hard
 
 "blaise-design-system-react-components@git+https://github.com/ONSdigital/blaise-design-system-react-components.git#BLAIS5-5177":
   version: 1.0.0
-  resolution: "blaise-design-system-react-components@https://github.com/ONSdigital/blaise-design-system-react-components.git#commit=e36f5de432eec6c2778627689c68919a1b83033f"
+  resolution: "blaise-design-system-react-components@https://github.com/ONSdigital/blaise-design-system-react-components.git#commit=31fa2b417ef05a820ff43d1512e434d2eae12411"
   dependencies:
     react-csv: "npm:^2.2.2"
   peerDependencies:
     formik: ">=2.4.0"
     react: ^19.0.0
     react-dom: ^19.0.0
-  checksum: 10c0/35739892697fe45863bd541565a7160308dd0c61f47efce1f03970d45591411a8ae2883b7d7b1baf5fca837f182563109cbbde7acaa91df5e7c01d64ae69dacd
+  checksum: 10c0/dca94b20a861141d5b28a9faae4b63f65615f86820fc4c0003e968d4edc02cdead395967fe802d7406b06ab5987fc7eed7ba16fec96e6589f338638917c9e5bf
   languageName: node
   linkType: hard
 

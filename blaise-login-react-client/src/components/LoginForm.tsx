@@ -1,9 +1,5 @@
 import { useState, useCallback, ReactElement } from "react";
-import {
-  type FormFieldObject,
-  ErrorPanel,
-  StyledForm,
-} from "blaise-design-system-react-components";
+import { type FormField, ErrorPanel, StyledForm } from "blaise-design-system-react-components";
 import { validatePassword, validateUserPermissions } from "../services/user";
 import type { AuthManager } from "../services/AuthManager";
 
@@ -15,7 +11,7 @@ interface LoginFormProps {
 export default function LoginForm({ authManager, setLoggedIn }: LoginFormProps): ReactElement {
   const [error, setError] = useState<string>("");
 
-  const fields: FormFieldObject[] = [
+  const fields: FormField[] = [
     {
       name: "Username",
       id: "username",
