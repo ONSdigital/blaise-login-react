@@ -30,7 +30,7 @@ describe("AuthenticateUserHandler", () => {
     vi.clearAllMocks();
   });
 
-  it("renders AuthenticateUser initially because loggedIn defaults to false", () => {
+  it("displays AuthenticateUser when loggedIn is initially false", () => {
     render(
       <AuthenticateUserHandler title="Handler Title">
         {() => <div>Secure Content</div>}
@@ -41,7 +41,7 @@ describe("AuthenticateUserHandler", () => {
     expect(screen.queryByTestId("render-authenticated-content")).not.toBeInTheDocument();
   });
 
-  it("switches to RenderAuthenticatedContent when loggedIn becomes true", async () => {
+  it("displays RenderAuthenticatedContent when loggedIn becomes true", async () => {
     const user = userEvent.setup();
 
     render(

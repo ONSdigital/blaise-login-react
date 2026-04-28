@@ -27,7 +27,7 @@ describe("AuthenticateUser", () => {
     vi.clearAllMocks();
   });
 
-  it("renders the layout and login form when the async state succeeds", () => {
+  it("displays layout and login form when async state is 'succeeded'", () => {
     vi.spyOn(asyncHook, "useAsyncRequest").mockReturnValue({ state: "succeeded", data: undefined });
 
     render(
@@ -44,7 +44,7 @@ describe("AuthenticateUser", () => {
     expect(screen.getByTestId("login-form")).toBeInTheDocument();
   });
 
-  it("executes the checkAuthStatus side effect and updates loggedIn state", async () => {
+  it("calls checkAuthStatus and updates loggedIn state", async () => {
     vi.spyOn(asyncHook, "useAsyncRequest").mockImplementation((fn) => {
       fn();
 

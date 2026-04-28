@@ -20,12 +20,12 @@ vi.mock("../services/AuthenticationApi", () => {
   };
 });
 
-describe("Authenticate Component - Renders the correct screen depending if the user has recently logged in", () => {
+describe("Authenticate", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("should display a message asking the user to enter their Blaise user credentials if they are not logged in", async () => {
+  it("displays login prompt when user is not logged in", async () => {
     mockLoggedIn.mockResolvedValue(false);
 
     render(
@@ -39,7 +39,7 @@ describe("Authenticate Component - Renders the correct screen depending if the u
     expect(contentView).toHaveTextContent("Enter your Blaise username and password");
   });
 
-  it("should display a default title if one is not supplied and they are not logged in", async () => {
+  it("displays default title if none is supplied and user is not logged in", async () => {
     mockLoggedIn.mockResolvedValue(false);
 
     render(
@@ -53,7 +53,7 @@ describe("Authenticate Component - Renders the correct screen depending if the u
     expect(headerView).toHaveTextContent("Blaise login");
   });
 
-  it("should display the title if one is supplied and they are not logged in", async () => {
+  it("displays supplied title if provided and user is not logged in", async () => {
     mockLoggedIn.mockResolvedValue(false);
 
     render(
@@ -67,7 +67,7 @@ describe("Authenticate Component - Renders the correct screen depending if the u
     expect(headerView).toHaveTextContent("This is the title of your application");
   });
 
-  it("should render the login page correctly (Snapshot)", async () => {
+  it("matches snapshot for login page when not logged in", async () => {
     mockLoggedIn.mockResolvedValue(false);
 
     const { container } = render(
@@ -81,7 +81,7 @@ describe("Authenticate Component - Renders the correct screen depending if the u
     expect(container).toMatchSnapshot();
   });
 
-  it("should display the authenticated content if the user is already logged in", async () => {
+  it("displays authenticated content when user is logged in", async () => {
     mockLoggedIn.mockResolvedValue(true);
     mockGetLoggedInUser.mockResolvedValue(mockUser);
 

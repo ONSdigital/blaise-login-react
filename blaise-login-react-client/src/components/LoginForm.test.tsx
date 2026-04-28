@@ -21,7 +21,7 @@ describe("LoginForm", () => {
     mockAdapter.reset();
   });
 
-  it("renders correctly and matches snapshot", async () => {
+  it("matches snapshot for initial render", async () => {
     const { asFragment } = render(
       <LoginForm
         authManager={authManager}
@@ -36,7 +36,7 @@ describe("LoginForm", () => {
   });
 
   describe("when authentication fails", () => {
-    it("renders an error for incorrect credentials", async () => {
+    it("displays error for incorrect credentials", async () => {
       const user = userEvent.setup();
 
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, false);
@@ -56,7 +56,7 @@ describe("LoginForm", () => {
       expect(mockSetLoggedIn).not.toHaveBeenCalled();
     });
 
-    it("renders an error for unauthorized users", async () => {
+    it("displays error for unauthorized users", async () => {
       const user = userEvent.setup();
 
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
@@ -78,7 +78,7 @@ describe("LoginForm", () => {
   });
 
   describe("when authentication succeeds", () => {
-    it("sets the user as logged in", async () => {
+    it("calls setLoggedIn(true) after successful login", async () => {
       const user = userEvent.setup();
 
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);

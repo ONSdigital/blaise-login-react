@@ -18,7 +18,7 @@ describe("LayoutTemplate", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders the development warning when not on the production domain", () => {
+  it("displays development warning when not on production domain", () => {
     vi.stubGlobal("window", { location: { hostname: "localhost" } });
 
     render(
@@ -33,7 +33,7 @@ describe("LayoutTemplate", () => {
     expect(screen.getByTestId("child-content")).toBeInTheDocument();
   });
 
-  it("does not render the development warning on the production domain", () => {
+  it("does not display development warning on production domain", () => {
     vi.stubGlobal("window", {
       location: { hostname: "survey.blaise.gcp.onsdigital.uk" },
     });
@@ -47,7 +47,7 @@ describe("LayoutTemplate", () => {
     expect(screen.queryByTestId("ons-not-production-warning")).not.toBeInTheDocument();
   });
 
-  it("does not render the warning during Server-Side Rendering (window is undefined)", () => {
+  it("does not display warning during server-side rendering (window is undefined)", () => {
     vi.stubGlobal("window", undefined);
 
     const html = renderToString(

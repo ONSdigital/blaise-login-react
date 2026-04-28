@@ -16,7 +16,7 @@ describe("RenderAuthenticatedContent", () => {
   const setLoggedIn = vi.fn();
   const mockUser: User = { name: "Bob", role: "Admin", serverParks: ["A"], defaultServerPark: "A" };
 
-  it("renders children when user is successfully loaded", async () => {
+  it("displays children when user is successfully loaded", async () => {
     getLoggedInUserMock.mockResolvedValue(mockUser);
 
     render(
@@ -31,7 +31,7 @@ describe("RenderAuthenticatedContent", () => {
     expect(await screen.findByText("Bob")).toBeInTheDocument();
   });
 
-  it("triggers logOut when user name is empty", async () => {
+  it("calls logOut when user name is empty", async () => {
     const invalidUser = { ...mockUser, name: "" };
 
     getLoggedInUserMock.mockResolvedValue(invalidUser);

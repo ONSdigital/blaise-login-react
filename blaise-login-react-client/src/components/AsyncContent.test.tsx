@@ -11,7 +11,7 @@ vi.mock("blaise-design-system-react-components", () => ({
 }));
 
 describe("AsyncContent", () => {
-  it("renders the loading panel when the state is loading", () => {
+  it("displays the loading panel when state is 'loading'", () => {
     const loadingState: AsyncState<string> = { state: "loading" };
 
     render(
@@ -21,7 +21,7 @@ describe("AsyncContent", () => {
     expect(screen.getByTestId("ons-loading-panel")).toBeInTheDocument();
   });
 
-  it("renders the error panel with a string error", () => {
+  it("displays the error panel with a string error", () => {
     const errorState: AsyncState<string> = { state: "errored", error: "A string error" };
 
     render(<AsyncContent content={errorState}>{(data: string) => <div>{data}</div>}</AsyncContent>);
@@ -30,7 +30,7 @@ describe("AsyncContent", () => {
     expect(screen.getByText("A string error")).toBeInTheDocument();
   });
 
-  it("renders the children function with the resolved data when the state has succeeded", () => {
+  it("displays children with resolved data when state is 'succeeded'", () => {
     const successState: AsyncState<string> = { state: "succeeded", data: "Target Data" };
 
     render(
