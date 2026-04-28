@@ -72,7 +72,7 @@ describe("userService", () => {
 
   describe("validateUserPermissions", () => {
     it("returns true and jwt on success", async () => {
-      mock.onGet("/api/login/users/bob/authorised").reply(200, { token: "token" });
+      mock.onGet("/api/login/users/bob/authorized").reply(200, { token: "token" });
       const [validated, token] = await validateUserPermissions("bob");
 
       expect(validated).toBe(true);
@@ -80,7 +80,7 @@ describe("userService", () => {
     });
 
     it("returns false on network error", async () => {
-      mock.onGet("/api/login/users/bob/authorised").networkError();
+      mock.onGet("/api/login/users/bob/authorized").networkError();
       const [validated, token] = await validateUserPermissions("bob");
 
       expect(validated).toBe(false);
@@ -88,7 +88,7 @@ describe("userService", () => {
     });
 
     it("returns false on throw/rejection", async () => {
-      mock.onGet("/api/login/users/bob/authorised").reply(() => {
+      mock.onGet("/api/login/users/bob/authorized").reply(() => {
         throw new Error("Rejection");
       });
 

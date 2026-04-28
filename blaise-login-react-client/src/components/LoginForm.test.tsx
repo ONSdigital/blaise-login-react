@@ -60,7 +60,7 @@ describe("LoginForm", () => {
       const user = userEvent.setup();
 
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
-      mockAdapter.onGet("/api/login/users/test/authorised").reply(403);
+      mockAdapter.onGet("/api/login/users/test/authorized").reply(403);
 
       render(
         <LoginForm
@@ -82,7 +82,7 @@ describe("LoginForm", () => {
       const user = userEvent.setup();
 
       mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
-      mockAdapter.onGet("/api/login/users/test/authorised").reply(200, { token: "fake-jwt" });
+      mockAdapter.onGet("/api/login/users/test/authorized").reply(200, { token: "fake-jwt" });
 
       render(
         <LoginForm

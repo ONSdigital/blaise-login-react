@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from "vitest";
 import { useAsyncRequest } from "./useAsyncRequest";
 
 describe("useAsyncRequest", () => {
-  it("should initialize in a loading state", () => {
+  it("should initialise in a loading state", () => {
     const mockRequest = vi.fn().mockReturnValue(new Promise(() => {}));
     const { result } = renderHook(() => useAsyncRequest(mockRequest));
 

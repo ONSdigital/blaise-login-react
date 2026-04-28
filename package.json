@@ -12,9 +12,6 @@
     },
     "blaise-design-system-react-components": {
       "built": true
-    },
-    "blaise-iap-node-provider": {
-      "built": true
     }
   },
   "scripts": {

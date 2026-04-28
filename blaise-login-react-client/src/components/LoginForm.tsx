@@ -47,9 +47,9 @@ export default function LoginForm({ authManager, setLoggedIn }: LoginFormProps):
         return;
       }
 
-      const [authorised, token] = await validateUserPermissions(form.Username);
+      const [authorized, token] = await validateUserPermissions(form.Username);
 
-      if (!authorised) {
+      if (!authorized) {
         setError("You do not have the correct permissions");
         setSubmitting(false);
 
@@ -57,7 +57,7 @@ export default function LoginForm({ authManager, setLoggedIn }: LoginFormProps):
       }
 
       authManager.setToken(token);
-      setLoggedIn(authorised);
+      setLoggedIn(authorized);
     },
     [authManager, setLoggedIn],
   );

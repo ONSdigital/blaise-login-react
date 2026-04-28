@@ -39,7 +39,7 @@ export async function validatePassword(username: string, password: string): Prom
 
 export async function validateUserPermissions(username: string): Promise<[boolean, string | null]> {
   try {
-    const response = await axios.get<{ token: string }>(`/api/login/users/${username}/authorised`);
+    const response = await axios.get<{ token: string }>(`/api/login/users/${username}/authorized`);
 
     return [true, response.data.token];
   } catch {

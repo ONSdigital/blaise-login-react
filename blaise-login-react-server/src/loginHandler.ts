@@ -11,7 +11,7 @@ export default function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiCl
 
   router.get("/api/login/users/:username", loginHandler.GetUser);
   router.get("/api/login/current-user", loginHandler.GetCurrentUser);
-  router.get("/api/login/users/:username/authorised", loginHandler.ValidateRoles);
+  router.get("/api/login/users/:username/authorized", loginHandler.ValidateRoles);
   router.post("/api/login/token/validate", loginHandler.ValidateToken);
   router.post("/api/login/users/password/validate", loginHandler.ValidatePassword);
 
@@ -99,7 +99,7 @@ export class LoginHandler {
         return res.status(200).json({ token: this.auth.SignToken(user) });
       }
 
-      return res.status(403).json({ error: "Not authorised" });
+      return res.status(403).json({ error: "Not authorized" });
     } catch (error) {
       console.error(`Error validating roles for user ${req.params.username}:`, error);
 

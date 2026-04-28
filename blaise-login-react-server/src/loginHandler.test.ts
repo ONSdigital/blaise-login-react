@@ -153,11 +153,11 @@ describe("LoginHandler", () => {
       it("should return a 403", async () => {
         mockBlaiseApiClient.getUser.mockResolvedValue({ role: "test" } as unknown as User);
 
-        const response = await request.get("/api/login/users/bob/authorised");
+        const response = await request.get("/api/login/users/bob/authorized");
 
         expect(response.status).toEqual(403);
         expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("bob");
-        expect(response.body).toEqual({ error: "Not authorised" });
+        expect(response.body).toEqual({ error: "Not authorized" });
       });
     });
 
@@ -165,7 +165,7 @@ describe("LoginHandler", () => {
       it("should return a 200 and the user details as an encoded jwt", async () => {
         mockBlaiseApiClient.getUser.mockResolvedValue({ role: "DST" } as unknown as User);
 
-        const response = await request.get("/api/login/users/bob/authorised");
+        const response = await request.get("/api/login/users/bob/authorized");
 
         expect(response.status).toEqual(200);
         expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("bob");
@@ -182,7 +182,7 @@ describe("LoginHandler", () => {
       it("should return a 500", async () => {
         mockBlaiseApiClient.getUser.mockRejectedValue(new Error("API Client Error"));
 
-        const response = await request.get("/api/login/users/bob/authorised");
+        const response = await request.get("/api/login/users/bob/authorized");
 
         expect(response.status).toEqual(500);
         expect(response.body).toEqual({ error: "Internal server error" });
