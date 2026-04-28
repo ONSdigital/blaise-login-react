@@ -6,10 +6,6 @@ export { default as AuthenticationApi } from "./services/AuthenticationApi";
 
 export { AuthManager } from "./services/AuthManager";
 
-export {
-  getUser,
-  getCurrentUser,
-  validatePassword,
-  validateUserPermissions,
-  validateToken,
-} from "./services/user";
+export { authenticateUser, getUser, getCurrentUser, validateToken } from "./services/user";
+
+export type { LoginFailureReason, LoginResult } from "./services/user";

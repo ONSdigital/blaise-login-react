@@ -1,6 +1,6 @@
 import { useState, useCallback, ReactElement } from "react";
 import { type FormField, ErrorPanel, StyledForm } from "blaise-design-system-react-components";
-import { validatePassword, validateUserPermissions } from "../services/user";
+import { authenticateUser } from "../services/user";
 import type { AuthManager } from "../services/AuthManager";
 
 interface LoginFormProps {
@@ -34,26 +34,24 @@ export default function LoginForm({ authManager, setLoggedIn }: LoginFormProps):
     ): Promise<void> => {
       setError("");
 
-      const valid = await validatePassword(form.Username, form.Password);
+      const loginResult = await authenticateUser(form.Username, form.Password);
 
-      if (!valid) {
-        setError("Incorrect username or password");
+      if (!loginResult.authenticated) {
+        if (loginResult.reason === "not-authorized") {
+          setError("You do not have the correct permissions");
+        } else if (loginResult.reason === "request-failed") {
+          setError("Unable to sign in. Please try again.");
+        } else {
+          setError("Incorrect username or password");
+        }
+
         setSubmitting(false);
 
         return;
       }
 
-      const [authorized, token] = await validateUserPermissions(form.Username);
-
-      if (!authorized) {
-        setError("You do not have the correct permissions");
-        setSubmitting(false);
-
-        return;
-      }
-
-      authManager.setToken(token);
-      setLoggedIn(authorized);
+      authManager.setToken(loginResult.token);
+      setLoggedIn(true);
     },
     [authManager, setLoggedIn],
   );

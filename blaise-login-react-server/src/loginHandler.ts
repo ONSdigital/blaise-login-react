@@ -2,6 +2,14 @@ import { BlaiseApiClient } from "blaise-api-node-client";
 import express, { Router, Request, Response } from "express";
 import { Auth } from "./auth";
 
+export function getStringValue(value: unknown): string | undefined {
+  if (Array.isArray(value)) {
+    return typeof value[0] === "string" ? value[0] : undefined;
+  }
+
+  return typeof value === "string" ? value : undefined;
+}
+
 export default function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): Router {
   const router = express.Router();
 
@@ -11,9 +19,8 @@ export default function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiCl
 
   router.get("/api/login/users/:username", loginHandler.GetUser);
   router.get("/api/login/current-user", loginHandler.GetCurrentUser);
-  router.get("/api/login/users/:username/authorized", loginHandler.ValidateRoles);
+  router.post("/api/login", loginHandler.Login);
   router.post("/api/login/token/validate", loginHandler.ValidateToken);
-  router.post("/api/login/users/password/validate", loginHandler.ValidatePassword);
 
   return router;
 }
@@ -61,47 +68,32 @@ export class LoginHandler {
     }
   };
 
-  ValidatePassword = async (req: Request, res: Response): Promise<Response> => {
+  Login = async (req: Request, res: Response): Promise<Response> => {
     try {
-      console.log("Validating password");
+      console.log("Authenticating user");
 
-      const username = req.body?.username as string | undefined;
-      const password = req.body?.password as string | undefined;
+      const username = getStringValue(req.body?.username);
+      const password = getStringValue(req.body?.password);
 
       if (!username || !password) {
         return res.status(400).json({ error: "Username or password has not been supplied" });
       }
 
-      const safeUsername = Array.isArray(username) ? username[0] : username;
-      const safePassword = Array.isArray(password) ? password[0] : password;
+      const isValid = await this.blaiseApiClient.validatePassword(username, password);
 
-      const isValid = await this.blaiseApiClient.validatePassword(safeUsername, safePassword);
-
-      return res.status(200).json(isValid);
-    } catch (error) {
-      console.error("Error validating password:", error);
-
-      return res.status(500).json({ error: "Internal server error" });
-    }
-  };
-
-  ValidateRoles = async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const username = Array.isArray(req.params.username)
-        ? req.params.username[0]
-        : req.params.username;
-
-      console.log(`Validating user roles for: ${username}`);
+      if (!isValid) {
+        return res.status(401).json({ error: "Incorrect username or password" });
+      }
 
       const user = await this.blaiseApiClient.getUser(username);
 
-      if (this.auth.UserHasRole(user)) {
-        return res.status(200).json({ token: this.auth.SignToken(user) });
+      if (!this.auth.UserHasRole(user)) {
+        return res.status(403).json({ error: "Not authorized" });
       }
 
-      return res.status(403).json({ error: "Not authorized" });
+      return res.status(200).json({ token: this.auth.SignToken(user) });
     } catch (error) {
-      console.error(`Error validating roles for user ${req.params.username}:`, error);
+      console.error("Error authenticating user:", error);
 
       return res.status(500).json({ error: "Internal server error" });
     }
@@ -109,8 +101,7 @@ export class LoginHandler {
 
   ValidateToken = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const rawToken = req.body?.token;
-      const token = Array.isArray(rawToken) ? rawToken[0] : (rawToken as string);
+      const token = getStringValue(req.body?.token);
 
       if (!token) {
         return res.sendStatus(403);

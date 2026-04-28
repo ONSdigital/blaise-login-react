@@ -1,3 +1,25 @@
+import { getStringValue } from "./loginHandler";
+
+describe("getStringValue", () => {
+  it("returns the first string if value is a string array", () => {
+    expect(getStringValue(["foo", "bar"])).toBe("foo");
+  });
+
+  it("returns undefined if value is an array but first element is not a string", () => {
+    expect(getStringValue([123, "bar"])).toBeUndefined();
+  });
+
+  it("returns the string if value is a string", () => {
+    expect(getStringValue("baz")).toBe("baz");
+  });
+
+  it("returns undefined for non-string, non-array values", () => {
+    expect(getStringValue(123)).toBeUndefined();
+    expect(getStringValue({})).toBeUndefined();
+    expect(getStringValue(undefined)).toBeUndefined();
+    expect(getStringValue(null)).toBeUndefined();
+  });
+});
 import supertest from "supertest";
 import jwt from "jsonwebtoken";
 import { Auth } from "./auth";
@@ -106,16 +128,28 @@ describe("LoginHandler", () => {
     });
   });
 
-  describe("Validate Password", () => {
-    it("should return a 200 and true", async () => {
+  describe("Login", () => {
+    it("should return a token when the credentials are valid and the user has a permitted role", async () => {
       const body = { username: "Jake", password: "2342388" };
+      const user = {
+        name: "Jake",
+        role: "DST",
+        defaultServerPark: "gusty",
+        serverParks: ["gusty"],
+      } as unknown as User;
 
       mockBlaiseApiClient.validatePassword.mockResolvedValue(true);
+      mockBlaiseApiClient.getUser.mockResolvedValue(user);
 
-      const response = await request.post("/api/login/users/password/validate").send(body);
+      const response = await request.post("/api/login").send(body);
 
       expect(response.status).toEqual(200);
-      expect(response.body).toBeTruthy();
+      expect(mockBlaiseApiClient.validatePassword).toHaveBeenCalledWith("Jake", "2342388");
+      expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("Jake");
+
+      const decodedJwt = jwt.verify(response.body.token, config.SessionSecret) as { user: User };
+
+      expect(decodedJwt.user).toEqual(user);
     });
 
     const invalidInputs = [
@@ -128,66 +162,77 @@ describe("LoginHandler", () => {
     it.each(invalidInputs)("should return a 400 if $condition", async ({ body }) => {
       mockBlaiseApiClient.validatePassword.mockResolvedValue(true);
 
-      const response = await request.post("/api/login/users/password/validate").send(body);
+      const response = await request.post("/api/login").send(body);
 
       expect(response.status).toEqual(400);
       expect(response.body).toEqual({ error: "Username or password has not been supplied" });
       expect(mockBlaiseApiClient.validatePassword).not.toHaveBeenCalled();
+      expect(mockBlaiseApiClient.getUser).not.toHaveBeenCalled();
     });
 
-    it("should return a 500 if the api client throws an error", async () => {
+    it("should return a 401 when the password is invalid", async () => {
+      const body = { username: "Jake", password: "wrong-password" };
+
+      mockBlaiseApiClient.validatePassword.mockResolvedValue(false);
+
+      const response = await request.post("/api/login").send(body);
+
+      expect(response.status).toEqual(401);
+      expect(response.body).toEqual({ error: "Incorrect username or password" });
+      expect(mockBlaiseApiClient.getUser).not.toHaveBeenCalled();
+    });
+
+    it("should return a 403 when the user does not have a permitted role", async () => {
+      const body = { username: "Jake", password: "2342388" };
+      const user = {
+        name: "Jake",
+        role: "Interviewer",
+        defaultServerPark: "gusty",
+        serverParks: ["gusty"],
+      } as unknown as User;
+
+      mockBlaiseApiClient.validatePassword.mockResolvedValue(true);
+      mockBlaiseApiClient.getUser.mockResolvedValue(user);
+
+      const response = await request.post("/api/login").send(body);
+
+      expect(response.status).toEqual(403);
+      expect(response.body).toEqual({ error: "Not authorized" });
+    });
+
+    it("should return a 500 if password validation throws an error", async () => {
       const body = { username: "Jake", password: "2342388" };
 
       mockBlaiseApiClient.validatePassword.mockRejectedValue(new Error("API Client Error"));
 
-      const response = await request.post("/api/login/users/password/validate").send(body);
+      const response = await request.post("/api/login").send(body);
 
       expect(response.status).toEqual(500);
       expect(response.body).toEqual({ error: "Internal server error" });
       expect(console.error).toHaveBeenCalled();
     });
-  });
 
-  describe("Validate Roles", () => {
-    describe("with an invalid role", () => {
-      it("should return a 403", async () => {
-        mockBlaiseApiClient.getUser.mockResolvedValue({ role: "test" } as unknown as User);
+    it("should return a 500 if user lookup throws an error", async () => {
+      const body = { username: "Jake", password: "2342388" };
 
-        const response = await request.get("/api/login/users/bob/authorized");
+      mockBlaiseApiClient.validatePassword.mockResolvedValue(true);
+      mockBlaiseApiClient.getUser.mockRejectedValue(new Error("API Client Error"));
 
-        expect(response.status).toEqual(403);
-        expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("bob");
-        expect(response.body).toEqual({ error: "Not authorized" });
-      });
+      const response = await request.post("/api/login").send(body);
+
+      expect(response.status).toEqual(500);
+      expect(response.body).toEqual({ error: "Internal server error" });
+      expect(console.error).toHaveBeenCalled();
     });
 
-    describe("with a valid role", () => {
-      it("should return a 200 and the user details as an encoded jwt", async () => {
-        mockBlaiseApiClient.getUser.mockResolvedValue({ role: "DST" } as unknown as User);
+    it("should not expose the legacy split login endpoints", async () => {
+      const validatePasswordResponse = await request
+        .post("/api/login/users/password/validate")
+        .send({ username: "Jake", password: "2342388" });
+      const authorizeUserResponse = await request.get("/api/login/users/Jake/authorized");
 
-        const response = await request.get("/api/login/users/bob/authorized");
-
-        expect(response.status).toEqual(200);
-        expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("bob");
-
-        const myJwt = response.body.token;
-        const decodedJwt = jwt.decode(myJwt) as { user: { role: string } };
-
-        expect(decodedJwt).not.toBeNull();
-        expect(decodedJwt.user).toEqual({ role: "DST" });
-      });
-    });
-
-    describe("when the api client fails", () => {
-      it("should return a 500", async () => {
-        mockBlaiseApiClient.getUser.mockRejectedValue(new Error("API Client Error"));
-
-        const response = await request.get("/api/login/users/bob/authorized");
-
-        expect(response.status).toEqual(500);
-        expect(response.body).toEqual({ error: "Internal server error" });
-        expect(console.error).toHaveBeenCalled();
-      });
+      expect(validatePasswordResponse.status).toEqual(404);
+      expect(authorizeUserResponse.status).toEqual(404);
     });
   });
 
@@ -374,22 +419,15 @@ describe("LoginHandler", () => {
       expect(mockRes.json).toHaveBeenCalledWith({ name: "ArrayUser" });
     });
 
-    it("ValidatePassword should extract the first item if username and password are arrays", async () => {
+    it("Login should extract the first item if username and password are arrays", async () => {
       mockReq = { body: { username: ["Jake", "other"], password: ["2342388", "other"] } };
       mockBlaiseApiClient.validatePassword.mockResolvedValue(true);
-
-      await directHandler.ValidatePassword(mockReq as Request, mockRes as ExpressResponse);
-
-      expect(mockBlaiseApiClient.validatePassword).toHaveBeenCalledWith("Jake", "2342388");
-    });
-
-    it("ValidateRoles should extract the first item if username is an array", async () => {
-      mockReq = { params: { username: ["array-user"] } } as unknown as Request;
       mockBlaiseApiClient.getUser.mockResolvedValue({ role: "DST" } as unknown as User);
 
-      await directHandler.ValidateRoles(mockReq as Request, mockRes as ExpressResponse);
+      await directHandler.Login(mockReq as Request, mockRes as ExpressResponse);
 
-      expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("array-user");
+      expect(mockBlaiseApiClient.validatePassword).toHaveBeenCalledWith("Jake", "2342388");
+      expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("Jake");
     });
 
     it("ValidateToken should extract the first item if token is an array", async () => {
