@@ -1,4 +1,4 @@
-import type { User } from "blaise-api-node-client";
+import type { User } from "../types/User";
 import { ReactElement, useCallback, useEffect } from "react";
 import type AuthenticationApi from "../services/AuthenticationApi";
 import { useAsyncRequest } from "../hooks/useAsyncRequest";

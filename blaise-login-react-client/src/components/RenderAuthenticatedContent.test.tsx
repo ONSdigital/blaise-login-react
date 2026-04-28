@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, type Mock } from "vitest"; // 1. Import Mock
 import RenderAuthenticatedContent from "./RenderAuthenticatedContent";
 import AuthenticationApi from "../services/AuthenticationApi";
-import type { User } from "blaise-api-node-client";
+import type { User } from "../types/User";
 
 describe("RenderAuthenticatedContent", () => {
   const mockAuthApi = {

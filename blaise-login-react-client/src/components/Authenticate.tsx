@@ -1,5 +1,5 @@
 import { ReactElement, ReactNode } from "react";
-import type { User } from "blaise-api-node-client";
+import type { User } from "../types/User";
 import AuthenticateUserHandler from "./AuthenticateUserHandler";
 
 interface AuthenticateProps {

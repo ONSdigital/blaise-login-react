@@ -1,24 +1,21 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import MockAdapter from "axios-mock-adapter";
-import axios from "axios";
 import LoginForm from "./LoginForm";
 import { AuthManager } from "../services/AuthManager";
-
-const mockAdapter = new MockAdapter(axios);
 
 describe("LoginForm", () => {
   const mockSetLoggedIn = vi.fn();
   const authManager = new AuthManager();
+  const mockFetch = vi.fn();
 
   beforeEach(() => {
     mockSetLoggedIn.mockClear();
-    mockAdapter.reset();
+    vi.stubGlobal("fetch", mockFetch);
   });
 
   afterEach(() => {
-    mockAdapter.reset();
+    vi.restoreAllMocks();
   });
 
   it("matches snapshot for initial render", async () => {
@@ -39,7 +36,11 @@ describe("LoginForm", () => {
     it("displays error for incorrect credentials", async () => {
       const user = userEvent.setup();
 
-      mockAdapter.onPost("/api/login/users/password/validate").reply(200, false);
+      // Mock validatePassword failure
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => false,
+      });
 
       render(
         <LoginForm
@@ -59,8 +60,10 @@ describe("LoginForm", () => {
     it("displays error for unauthorized users", async () => {
       const user = userEvent.setup();
 
-      mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
-      mockAdapter.onGet("/api/login/users/test/authorized").reply(403);
+      // Mock validatePassword success, then validateUserPermissions failure
+      mockFetch
+        .mockResolvedValueOnce({ ok: true, json: async () => true }) // validatePassword
+        .mockResolvedValueOnce({ ok: false, status: 403 }); // validateUserPermissions
 
       render(
         <LoginForm
@@ -70,6 +73,7 @@ describe("LoginForm", () => {
       );
 
       await user.type(screen.getByLabelText(/username/i), "test");
+      await user.type(screen.getByLabelText(/password/i), "password"); // Adding password type to ensure first mock is hit correctly
       await user.click(screen.getByRole("button", { name: /sign in/i }));
 
       expect(await screen.findByText(/do not have the correct permissions/i)).toBeVisible();
@@ -81,8 +85,13 @@ describe("LoginForm", () => {
     it("calls setLoggedIn(true) after successful login", async () => {
       const user = userEvent.setup();
 
-      mockAdapter.onPost("/api/login/users/password/validate").reply(200, true);
-      mockAdapter.onGet("/api/login/users/test/authorized").reply(200, { token: "fake-jwt" });
+      // Mock both calls succeeding
+      mockFetch
+        .mockResolvedValueOnce({ ok: true, json: async () => true }) // validatePassword
+        .mockResolvedValueOnce({ ok: true, json: async () => ({ token: "fake-jwt" }) }); // validateUserPermissions
+
+      // Ensure the authManager mock accepts the token
+      vi.spyOn(authManager, "setToken").mockImplementation(() => {});
 
       render(
         <LoginForm

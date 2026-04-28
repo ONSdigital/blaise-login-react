@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import AuthenticateUserHandler from "./AuthenticateUserHandler";
 import userEvent from "@testing-library/user-event";
-import type { User } from "blaise-api-node-client";
+import type { User } from "../types/User";
 import type { ReactNode } from "react";
 
 vi.mock("./AuthenticateUser", () => ({

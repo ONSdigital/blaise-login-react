@@ -1,4 +1,4 @@
-import type { User } from "blaise-api-node-client";
+import type { User } from "../types/User";
 import { AuthManager } from "./AuthManager";
 import { getCurrentUser } from "./user";
 

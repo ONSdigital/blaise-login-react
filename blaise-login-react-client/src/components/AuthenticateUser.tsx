@@ -1,4 +1,4 @@
-import { ONSPanel } from "blaise-design-system-react-components";
+import { Panel } from "blaise-design-system-react-components";
 import { ReactElement, useCallback } from "react";
 import { useAsyncRequest } from "../hooks/useAsyncRequest";
 import AsyncContent from "./AsyncContent";
@@ -29,7 +29,7 @@ export default function AuthenticateUser({
     <AsyncContent content={authState}>
       {() => (
         <LayoutTemplate title={title}>
-          <ONSPanel status="info">Enter your Blaise username and password</ONSPanel>
+          <Panel status="info">Enter your Blaise username and password</Panel>
           <LoginForm
             authManager={authenticationApi}
             setLoggedIn={setLoggedIn}

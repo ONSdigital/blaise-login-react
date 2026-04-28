@@ -1,5 +1,5 @@
 import { ReactElement, useState, useMemo } from "react";
-import type { User } from "blaise-api-node-client";
+import type { User } from "../types/User";
 import AuthenticationApi from "../services/AuthenticationApi";
 import RenderAuthenticatedContent from "./RenderAuthenticatedContent";
 import AuthenticateUser from "./AuthenticateUser";

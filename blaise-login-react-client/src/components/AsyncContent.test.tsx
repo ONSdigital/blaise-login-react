@@ -4,8 +4,8 @@ import AsyncContent from "./AsyncContent";
 import type { AsyncState } from "../hooks/useAsyncRequest";
 
 vi.mock("blaise-design-system-react-components", () => ({
-  ONSLoadingPanel: () => <div data-testid="ons-loading-panel">Loading...</div>,
-  ONSPanel: ({ status, children }: { status: string; children: React.ReactNode }) => (
+  LoadingPanel: () => <div data-testid="ons-loading-panel">Loading...</div>,
+  Panel: ({ status, children }: { status: string; children: React.ReactNode }) => (
     <div data-testid={`ons-panel-${status}`}>{children}</div>
   ),
 }));

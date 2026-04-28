@@ -34,11 +34,9 @@ export default defineConfig({
           "react-dom": "ReactDOM",
           "react-router-dom": "ReactRouterDOM",
           "react/jsx-runtime": "jsxRuntime",
-          axios: "axios",
           formik: "Formik",
           "universal-cookie": "UniversalCookie",
-          "blaise-design-system-react-components": "BlaiseDesignSystem",
-          "blaise-api-node-client": "BlaiseApiClient",
+          "blaise-design-system-react-components": "BlaiseDesignSystemReactComponents",
         },
       },
     },
@@ -53,11 +51,6 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
       include: ["src/**/*.{ts,tsx}"],
       exclude: ["src/mocks/**", "src/**/*.test.{ts,tsx}", "src/setupTests.ts"],
-    },
-    server: {
-      deps: {
-        inline: ["react-loader-spinner"],
-      },
     },
   },
 });

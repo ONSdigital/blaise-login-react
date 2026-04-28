@@ -1,5 +1,4 @@
-import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { AuthManager } from "./AuthManager";
 import {
   getCurrentUser,
@@ -9,56 +8,73 @@ import {
   validateUserPermissions,
 } from "./user";
 
-const mock = new MockAdapter(axios);
-
 describe("userService", () => {
+  const mockFetch = vi.fn();
+
+  beforeEach(() => {
+    vi.stubGlobal("fetch", mockFetch);
+  });
+
   afterEach(() => {
-    mock.reset();
+    vi.restoreAllMocks();
   });
 
   describe("getCurrentUser", () => {
     it("returns the user details", async () => {
       const authManager = new AuthManager();
 
-      mock.onGet("/api/login/current-user").reply(200, { role: "test" });
+      // Stub the auth header method to avoid testing AuthManager logic here
+      vi.spyOn(authManager, "authHeader").mockReturnValue({ Authorization: "Bearer token" });
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ role: "test" }),
+      });
+
       expect(await getCurrentUser(authManager)).toEqual({ role: "test" });
+      expect(mockFetch).toHaveBeenCalledWith("/api/login/current-user", expect.any(Object));
     });
   });
 
   describe("getUser", () => {
     it("returns user details on success", async () => {
-      mock.onGet("/api/login/users/bob").reply(200, { role: "test" });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ role: "test" }),
+      });
+
       expect(await getUser("bob")).toEqual({ role: "test" });
     });
 
     it("returns undefined when the API call fails", async () => {
-      mock.onGet("/api/login/users/bob").reply(500);
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
+
       expect(await getUser("bob")).toBeUndefined();
     });
   });
 
   describe("validatePassword", () => {
     it("returns true on success", async () => {
-      mock.onPost("/api/login/users/password/validate").reply(200, true);
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => true,
+      });
+
       expect(await validatePassword("bob", "password")).toBeTruthy();
     });
 
     it("returns false and logs error on network failure", async () => {
-      mock.onPost("/api/login/users/password/validate").reply(() => {
-        throw new Error("Network fail");
-      });
+      mockFetch.mockRejectedValueOnce(new Error("Network fail"));
       const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       expect(await validatePassword("bob", "password")).toBe(false);
 
-      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith(expect.stringContaining("Network fail"));
       spy.mockRestore();
     });
 
     it("handles non-error objects thrown in catch", async () => {
-      mock.onPost("/api/login/users/password/validate").reply(() => {
-        throw "Just a string error";
-      });
+      mockFetch.mockRejectedValueOnce("Just a string error");
       const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await validatePassword("bob", "password");
@@ -72,7 +88,11 @@ describe("userService", () => {
 
   describe("validateUserPermissions", () => {
     it("returns true and jwt on success", async () => {
-      mock.onGet("/api/login/users/bob/authorized").reply(200, { token: "token" });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ token: "token" }),
+      });
+
       const [validated, token] = await validateUserPermissions("bob");
 
       expect(validated).toBe(true);
@@ -80,17 +100,16 @@ describe("userService", () => {
     });
 
     it("returns false on network error", async () => {
-      mock.onGet("/api/login/users/bob/authorized").networkError();
+      mockFetch.mockRejectedValueOnce(new Error("Network failure"));
+
       const [validated, token] = await validateUserPermissions("bob");
 
       expect(validated).toBe(false);
       expect(token).toBeNull();
     });
 
-    it("returns false on throw/rejection", async () => {
-      mock.onGet("/api/login/users/bob/authorized").reply(() => {
-        throw new Error("Rejection");
-      });
+    it("returns false on throw/rejection (HTTP error)", async () => {
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 403 });
 
       const [validated, token] = await validateUserPermissions("bob");
 
@@ -101,7 +120,7 @@ describe("userService", () => {
 
   describe("validateToken", () => {
     it("returns true for a valid token", async () => {
-      mock.onPost("/api/login/token/validate").reply(200);
+      mockFetch.mockResolvedValueOnce({ ok: true, status: 200 });
 
       const result = await validateToken("valid-token");
 
@@ -109,7 +128,7 @@ describe("userService", () => {
     });
 
     it("returns false for an invalid token", async () => {
-      mock.onPost("/api/login/token/validate").reply(403);
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 403 });
 
       const result = await validateToken("invalid-token");
 

@@ -141,27 +141,57 @@ Clone the repository:
 git clone https://github.com/ONSdigital/blaise-login-react.git
 ```
 
+Install dependencies for client and server from root:
+
+```shell
+yarn install
+```
+
+Packages for client and server are controlled from single `yarn.lock` in the root.
+
 ### Quality Control
 
 Ensure any changes to token logic or routing are strictly covered by unit tests in their respective directories.
 
-#### Client
+Client:
 
 ```shell
 cd blaise-login-react-client
-yarn install
+yarn build
 yarn test
 yarn lint
 ```
 
-#### Server
+Server:
 
 ```shell
 cd blaise-login-react-server
-yarn install
+yarn build
 yarn test
 yarn lint
 ```
+
+Can also be run for client and server from the root:
+
+```shell
+yarn build:all
+yarn test:all
+yarn lint:all
+```
+
+### Dependency Management
+
+If you add or update internal packages consumed via Git URLs (e.g., `blaise-design-system-react-components`), you must ensure they are whitelisted in the root `package.json` under the `dependenciesMeta` block.
+
+```json
+"dependenciesMeta": {
+  "blaise-design-system-react-components": {
+    "built": true
+  }
+}
+```
+
+Yarn v4 strictly blocks build lifecycle scripts (`prepack`, `build`) for remote Git dependencies unless they are explicitly authorised here. Omitting a repository from this list will result in empty, uncompiled dependencies being installed.
 
 ### Releasing
 
