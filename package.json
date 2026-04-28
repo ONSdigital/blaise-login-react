@@ -10,6 +10,9 @@
     "blaise-api-node-client": {
       "built": true
     },
+    "blaise-iap-node-provider": {
+      "built": true
+    },
     "blaise-design-system-react-components": {
       "built": true
     }

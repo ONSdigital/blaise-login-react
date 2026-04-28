@@ -2031,13 +2031,13 @@ __metadata:
 
 "blaise-api-node-client@git+https://github.com/ONSdigital/blaise-api-node-client.git#BLAIS5-5177":
   version: 1.0.0
-  resolution: "blaise-api-node-client@https://github.com/ONSdigital/blaise-api-node-client.git#commit=ddcede867f422228efb37afab420c9c9a5268130"
+  resolution: "blaise-api-node-client@https://github.com/ONSdigital/blaise-api-node-client.git#commit=f578478520ab06485576b4e66a3378506e82a416"
   dependencies:
     "@types/node": "npm:^25.6.0"
     axios: "npm:^1.15.2"
     blaise-iap-node-provider: "git+https://github.com/ONSdigital/blaise-iap-node-provider.git#BLAIS5-5177"
     typescript: "npm:^6.0.3"
-  checksum: 10c0/7bc76ec4584a06cb057d6943f9979ca45dad6c3492a784e94a5858cad410f673988ad158da1e3cd9a7af7603d5e46850655d67daa4c284151065598746d080dc
+  checksum: 10c0/be7ae9e4f4524f035c867e55498a3ae051af29ccd3e9a78374e396f21e2c5ef7e97cb574e9ea73a96f30b373d62be870817bab3e1bb752fc7187349b15a0abca
   languageName: node
   linkType: hard
 
@@ -2056,13 +2056,13 @@ __metadata:
 
 "blaise-iap-node-provider@git+https://github.com/ONSdigital/blaise-iap-node-provider.git#BLAIS5-5177":
   version: 1.0.0
-  resolution: "blaise-iap-node-provider@https://github.com/ONSdigital/blaise-iap-node-provider.git#commit=2192ce11e02ee21b5f2d0b6e8b67a8b61ab77901"
+  resolution: "blaise-iap-node-provider@https://github.com/ONSdigital/blaise-iap-node-provider.git#commit=3e1b8df5c30c798f28dcc8ea448d509d1e8f6a7a"
   dependencies:
     "@types/node": "npm:^25.6.0"
     google-auth-library: "npm:^10.6.2"
     jsonwebtoken: "npm:^9.0.3"
     typescript: "npm:^6.0.3"
-  checksum: 10c0/5fdfaf050f41d286123e958a7bbcbcea75f0c49341938a1558be692353346a6c356fe7084dae25ec7aaa38cfcfcf44ed48fbc38ef159e10f6257869b44bd0d3a
+  checksum: 10c0/8c618ddc14813bf48f0facdc2afab3a0070f6c201bcce5bdd795d6759a5ed968acd8b4befd8bd59745aad5f60beed4ed9ee0da74ec01eb8de0c28f7131290568
   languageName: node
   linkType: hard
 
@@ -2150,8 +2150,6 @@ __metadata:
     blaise-api-node-client:
       built: true
     blaise-design-system-react-components:
-      built: true
-    blaise-iap-node-provider:
       built: true
   languageName: unknown
   linkType: soft
@@ -6098,21 +6096,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tldts-core@npm:^7.0.28":
-  version: 7.0.28
-  resolution: "tldts-core@npm:7.0.28"
-  checksum: 10c0/1fde2a2806c758d13c7eb2bd285a9482bf905829b38c060d66127e9e0682a103c42e181509f0d3c6da046e9aa2f71fe9d61afadb1b85a6b6c557cb98d6b7dede
+"tldts-core@npm:^7.0.29":
+  version: 7.0.29
+  resolution: "tldts-core@npm:7.0.29"
+  checksum: 10c0/14fbd1806c8eb04cd08951feeaf463b4f280a00bc343c2a33b72cad1c4e7881eda7f30629cefcf443486ea4adfe058529ecacdb0c167723e85935dedc15b8a9b
   languageName: node
   linkType: hard
 
 "tldts@npm:^7.0.5":
-  version: 7.0.28
-  resolution: "tldts@npm:7.0.28"
+  version: 7.0.29
+  resolution: "tldts@npm:7.0.29"
   dependencies:
-    tldts-core: "npm:^7.0.28"
+    tldts-core: "npm:^7.0.29"
   bin:
     tldts: bin/cli.js
-  checksum: 10c0/37f92481bc7276f60f06d93d2671a67fd94dc8e245c232a50c69b8704d34c908658968f7298810e1b4df68a84be9ff6248867981d1cc7ddb08755565edd3f496
+  checksum: 10c0/f2999cba3060a36af7c72f2b756a4c00edb0aa8b0885a368810a1c7ddc52aac6130cc63f2260821ed8cdda104b31434b896d9e9aafbb723ba985d6657160e6a5
   languageName: node
   linkType: hard
 
