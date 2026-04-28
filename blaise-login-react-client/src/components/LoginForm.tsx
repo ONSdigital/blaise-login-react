@@ -1,5 +1,9 @@
 import { useState, useCallback, ReactElement } from "react";
-import { type FormFieldObject, ONSPanel, StyledForm } from "blaise-design-system-react-components";
+import {
+  type FormFieldObject,
+  ErrorPanel,
+  StyledForm,
+} from "blaise-design-system-react-components";
 import { validatePassword, validateUserPermissions } from "../services/user";
 import type { AuthManager } from "../services/AuthManager";
 
@@ -16,7 +20,7 @@ export default function LoginForm({ authManager, setLoggedIn }: LoginFormProps):
       name: "Username",
       id: "username",
       description: "Your Blaise username",
-      type: "username",
+      type: "text",
       initial_value: "",
     },
     {
@@ -62,7 +66,7 @@ export default function LoginForm({ authManager, setLoggedIn }: LoginFormProps):
     <>
       <h1 className="ons-u-mt-m">Sign in</h1>
 
-      {error && <ONSPanel status="error">{error}</ONSPanel>}
+      {error && <ErrorPanel text={error} />}
 
       <StyledForm
         fields={fields}

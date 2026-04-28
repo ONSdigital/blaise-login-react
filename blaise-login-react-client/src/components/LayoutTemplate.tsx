@@ -1,9 +1,6 @@
 import { Footer, Header, NotProductionWarning } from "blaise-design-system-react-components";
 import { useMemo } from "react";
 
-// CHANGED: Moved styles outside the component.
-// Defining objects inside the component function causes them to be
-// re-created on every render, which is inefficient.
 const CONTENT_MIN_HEIGHT = {
   minHeight: "67vh",
 };
@@ -25,7 +22,7 @@ export default function LayoutTemplate({ title, children }: LayoutTemplateProps)
   return (
     <div data-testid="login-page">
       <a
-        className="ons-skip-link"
+        className="ons-skip-to-content ons-u-fs-r--b"
         href="#main-content"
       >
         Skip to content

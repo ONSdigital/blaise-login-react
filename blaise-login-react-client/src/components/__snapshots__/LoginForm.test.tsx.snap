@@ -11,52 +11,68 @@ exports[`LoginForm > renders correctly and matches snapshot 1`] = `
     action="#"
   >
     <div
-      class="ons-field"
+      class="ons-field ons-u-mb-m"
     >
-      <label
-        class="ons-label ons-label--with-description"
-        for="username"
+      <div
+        class="ons-grid"
       >
-        Username
-      </label>
-      <span
-        class="ons-label__description ons-input--with-description"
-        id="username-description-hint"
-      >
-        Your Blaise username
-      </span>
-      <input
-        form="[object Object]"
-        id="username"
-        initial_value=""
-        name="Username"
-        type="username"
-        value=""
-      />
+        <div
+          class="ons-grid__col ons-col-8@m ons-col-6@l"
+        >
+          <label
+            class="ons-label ons-label--with-description"
+            for="username"
+          >
+            Username
+          </label>
+          <span
+            class="ons-label__description ons-input--with-description"
+            id="username-description-hint"
+          >
+            Your Blaise username
+          </span>
+          <input
+            form="[object Object]"
+            id="username"
+            initial_value=""
+            name="Username"
+            type="text"
+            value=""
+          />
+        </div>
+      </div>
     </div>
     <div
-      class="ons-field"
+      class="ons-field ons-u-mb-m"
     >
-      <label
-        class="ons-label ons-label--with-description"
-        for="Password"
+      <div
+        class="ons-grid"
       >
-        Password
-      </label>
-      <span
-        class="ons-label__description ons-input--with-description"
-        id="Password-description-hint"
-      >
-        Your Blaise password
-      </span>
-      <input
-        form="[object Object]"
-        id="Password"
-        initial_value=""
-        name="Password"
-        type="password"
-        value=""
-      />
+        <div
+          class="ons-grid__col ons-col-8@m ons-col-6@l"
+        >
+          <label
+            class="ons-label ons-label--with-description"
+            for="Password"
+          >
+            Password
+          </label>
+          <span
+            class="ons-label__description ons-input--with-description"
+            id="Password-description-hint"
+          >
+            Your Blaise password
+          </span>
+          <input
+            form="[object Object]"
+            id="Password"
+            initial_value=""
+            name="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
     </div>
     <br />
     <button
@@ -67,7 +83,11 @@ exports[`LoginForm > renders correctly and matches snapshot 1`] = `
       <span
         class="ons-btn__inner"
       >
-        Sign in
+        <span
+          class="ons-btn__text"
+        >
+          Sign in
+        </span>
       </span>
     </button>
   </form>

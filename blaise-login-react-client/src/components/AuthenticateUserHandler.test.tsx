@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import AuthenticateUserHandler from "./AuthenticateUserHandler";
 import userEvent from "@testing-library/user-event";
-// ADDED: Import User and ReactNode types to replace the 'any' type
 import type { User } from "blaise-api-node-client";
 import type { ReactNode } from "react";
 

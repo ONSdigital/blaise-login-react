@@ -1,15 +1,35 @@
 {
-    "name": "blaise-login-react",
-    "version": "1.0.0",
-    "exports": {
-        "./blaise-login-react-client": {
-            "import": "./blaise-login-react-client/dist/index.es.js",
-            "require": "./blaise-login-react-client/dist/index.js",
-            "types": "./blaise-login-react-client/dist/index.d.ts"
-        },
-        "./blaise-login-react-server": {
-            "import": "./blaise-login-react-server/dist/esm/index.js",
-            "types": "./blaise-login-react-server/dist/esm/index.d.ts"
-        }
+  "name": "blaise-login-react",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "blaise-login-react-client",
+    "blaise-login-react-server"
+  ],
+  "dependenciesMeta": {
+    "blaise-api-node-client": {
+      "built": true
+    },
+    "blaise-design-system-react-components": {
+      "built": true
+    },
+    "blaise-iap-node-provider": {
+      "built": true
     }
+  },
+  "scripts": {
+    "build:client": "yarn workspace blaise-login-react-client build",
+    "build:server": "yarn workspace blaise-login-react-server build",
+    "build:all": "yarn build:client && yarn build:server",
+    "lint:client": "yarn workspace blaise-login-react-client lint",
+    "lint:server": "yarn workspace blaise-login-react-server lint",
+    "lint:all": "yarn lint:client && yarn lint:server",
+    "lint-fix:client": "yarn workspace blaise-login-react-client lint-fix",
+    "lint-fix:server": "yarn workspace blaise-login-react-server lint-fix",
+    "lint-fix:all": "yarn lint-fix:client && yarn lint-fix:server",
+    "test:client": "yarn workspace blaise-login-react-client test",
+    "test:server": "yarn workspace blaise-login-react-server test",
+    "test:all": "yarn test:client && yarn test:server"
+  },
+  "packageManager": "yarn@4.14.1"
 }
