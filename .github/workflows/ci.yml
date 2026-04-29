@@ -4,9 +4,9 @@ permissions:
   contents: read
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   push:
-    branches: [ main ]
+    branches: [main]
 jobs:
   run-ci-validation:
     runs-on: ubuntu-latest
@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 24.x
           cache: yarn
-          cache-dependency-path: 'yarn.lock'
+          cache-dependency-path: yarn.lock
       - name: 📦 Install Dependencies
         run: yarn install --immutable
       - name: 🧹 Run Linter
