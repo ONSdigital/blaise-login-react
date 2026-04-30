@@ -28,13 +28,13 @@
     "lint-fix": "eslint . --fix"
   },
   "peerDependencies": {
+    "formik": ">=2.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.0.0"
   },
   "dependencies": {
     "blaise-design-system-react-components": "git+https://github.com/ONSdigital/blaise-design-system-react-components.git#BLAIS5-5177",
-    "formik": "^2.4.9",
     "universal-cookie": "^8.1.0"
   },
   "devDependencies": {
@@ -55,6 +55,7 @@
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "formik": "^2.4.9",
     "globals": "^17.5.0",
     "jiti": "^2.6.1",
     "jsdom": "^29.1.0",
@@ -67,5 +68,6 @@
     "vite": "^8.0.10",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.1.5"
-  }
+  },
+  "packageManager": "yarn@4.14.1"
 }
