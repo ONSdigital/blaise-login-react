@@ -2,6 +2,7 @@ import jwt, { type SignOptions } from "jsonwebtoken";
 import type { User } from "blaise-api-node-client";
 import type { Request, Response, NextFunction } from "express";
 import type { AuthConfig } from "./config";
+import { sanitise } from "./sanitise";
 
 export class Auth {
   readonly config: AuthConfig;
@@ -87,10 +88,13 @@ export class Auth {
 
     const sanitisedBody = JSON.stringify(body);
 
-    const referer = request.headers.referer || "unknown-referer";
+    const referer = sanitise(request.headers.referer, "unknown-referer");
+    const safeUrl = sanitise(request.originalUrl, "unknown-url");
+    const safeMethod = sanitise(request.method, "unknown-method");
+    const safeUser = sanitise(currentlyloggedinuser, "Unknown User");
 
     console.log(
-      `AUDIT_LOG: ${currentlyloggedinuser} is making the following request: ${request.method} ${request.originalUrl} ${referer} with body: ${sanitisedBody}`,
+      `AUDIT_LOG: ${safeUser} is making the following request: ${safeMethod} ${safeUrl} ${referer} with body: ${sanitisedBody}`,
     );
 
     if (currentlyloggedinuser !== "Unknown User") {

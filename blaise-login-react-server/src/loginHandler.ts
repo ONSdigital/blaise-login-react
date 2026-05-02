@@ -1,6 +1,7 @@
 import { BlaiseApiClient } from "blaise-api-node-client";
 import express, { Router, Request, Response } from "express";
 import { Auth } from "./auth";
+import { sanitise } from "./sanitise";
 
 function getStringValue(value: unknown): string | undefined {
   if (Array.isArray(value)) {
@@ -8,12 +9,6 @@ function getStringValue(value: unknown): string | undefined {
   }
 
   return typeof value === "string" ? value : undefined;
-}
-
-function sanitise(value: unknown): string {
-  if (typeof value !== "string") return "unknown";
-
-  return value.replace(/[\r\n]/g, "");
 }
 
 export default function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): Router {
