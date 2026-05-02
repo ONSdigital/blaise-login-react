@@ -1,25 +1,3 @@
-import { getStringValue } from "./loginHandler";
-
-describe("getStringValue", () => {
-  it("returns the first string if value is a string array", () => {
-    expect(getStringValue(["foo", "bar"])).toBe("foo");
-  });
-
-  it("returns undefined if value is an array but first element is not a string", () => {
-    expect(getStringValue([123, "bar"])).toBeUndefined();
-  });
-
-  it("returns the string if value is a string", () => {
-    expect(getStringValue("baz")).toBe("baz");
-  });
-
-  it("returns undefined for non-string, non-array values", () => {
-    expect(getStringValue(123)).toBeUndefined();
-    expect(getStringValue({})).toBeUndefined();
-    expect(getStringValue(undefined)).toBeUndefined();
-    expect(getStringValue(null)).toBeUndefined();
-  });
-});
 import supertest from "supertest";
 import jwt from "jsonwebtoken";
 import { Auth } from "./auth";
@@ -45,7 +23,6 @@ const mockBlaiseApiClient = {
 
 function newServer(): Express {
   const server = express();
-
   const loginHandler = newLoginHandler(auth, mockBlaiseApiClient as unknown as BlaiseApiClient);
 
   server.use(loginHandler);
@@ -82,6 +59,24 @@ describe("LoginHandler", () => {
       expect(response.status).toEqual(200);
       expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("bob");
       expect(response.body).toEqual({ role: "test" });
+    });
+
+    it("should return a 400 if the username parameter is invalid", async () => {
+      const handler = new LoginHandler(auth, mockBlaiseApiClient as unknown as BlaiseApiClient);
+
+      const mockReq = {
+        params: { username: [] },
+      } as unknown as Request;
+
+      const mockRes = {
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn().mockReturnThis(),
+      } as unknown as ExpressResponse;
+
+      await handler.GetUser(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: "Username not provided" });
     });
 
     it("should return a 500 if the api client throws an error", async () => {
@@ -353,7 +348,6 @@ describe("LoginHandler", () => {
 
       it("should log message blanking out password", async () => {
         const body = { username: "Benny", password: "super secret" };
-
         const token = jwt.sign({ user: { name: "Benny", role: "DST" } }, config.SessionSecret);
 
         const response = await request.get("/authtest").send(body).set("Authorization", token);
@@ -369,7 +363,6 @@ describe("LoginHandler", () => {
 
       it("should log message with both username and role", async () => {
         const body = { username: "Benny", role: "super role" };
-
         const token = jwt.sign({ user: { name: "Benny", role: "DST" } }, config.SessionSecret);
 
         const response = await request.get("/authtest").send(body).set("Authorization", token);

@@ -2,7 +2,7 @@ import { BlaiseApiClient } from "blaise-api-node-client";
 import express, { Router, Request, Response } from "express";
 import { Auth } from "./auth";
 
-export function getStringValue(value: unknown): string | undefined {
+function getStringValue(value: unknown): string | undefined {
   if (Array.isArray(value)) {
     return typeof value[0] === "string" ? value[0] : undefined;
   }
@@ -36,16 +36,18 @@ export class LoginHandler {
 
   GetUser = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const username = Array.isArray(req.params.username)
-        ? req.params.username[0]
-        : req.params.username;
+      const username = getStringValue(req.params.username);
 
-      console.log(`Getting user: ${username}`);
+      if (!username) {
+        return res.status(400).json({ error: "Username not provided" });
+      }
+
+      console.log("Getting user:", username);
       const user = await this.blaiseApiClient.getUser(username);
 
       return res.status(200).json(user);
     } catch (error) {
-      console.error(`Error fetching user ${req.params.username}:`, error);
+      console.error("Error fetching user:", req.params.username, error);
 
       return res.status(500).json({ error: "Internal server error" });
     }
