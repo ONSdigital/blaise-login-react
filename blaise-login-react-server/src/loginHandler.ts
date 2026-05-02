@@ -10,6 +10,12 @@ function getStringValue(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
+function sanitise(value: unknown): string {
+  if (typeof value !== "string") return "unknown";
+
+  return value.replace(/[\r\n]/g, "");
+}
+
 export default function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): Router {
   const router = express.Router();
 
@@ -42,12 +48,12 @@ export class LoginHandler {
         return res.status(400).json({ error: "Username not provided" });
       }
 
-      console.log("Getting user:", username);
+      console.log("Getting user:", sanitise(username));
       const user = await this.blaiseApiClient.getUser(username);
 
       return res.status(200).json(user);
     } catch (error) {
-      console.error("Error fetching user:", req.params.username, error);
+      console.error("Error fetching user:", sanitise(req.params.username), error);
 
       return res.status(500).json({ error: "Internal server error" });
     }
@@ -84,6 +90,8 @@ export class LoginHandler {
       const isValid = await this.blaiseApiClient.validatePassword(username, password);
 
       if (!isValid) {
+        console.warn("Failed login attempt for user:", sanitise(username));
+
         return res.status(401).json({ error: "Incorrect username or password" });
       }
 

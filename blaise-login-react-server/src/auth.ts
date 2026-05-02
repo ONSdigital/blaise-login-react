@@ -85,12 +85,12 @@ export class Auth {
       body.password = "***";
     }
 
-    const sanitizedBody = JSON.stringify(body);
+    const sanitisedBody = JSON.stringify(body);
 
     const referer = request.headers.referer || "unknown-referer";
 
     console.log(
-      `AUDIT_LOG: ${currentlyloggedinuser} is making the following request: ${request.method} ${request.originalUrl} ${referer} with body: ${sanitizedBody}`,
+      `AUDIT_LOG: ${currentlyloggedinuser} is making the following request: ${request.method} ${request.originalUrl} ${referer} with body: ${sanitisedBody}`,
     );
 
     if (currentlyloggedinuser !== "Unknown User") {

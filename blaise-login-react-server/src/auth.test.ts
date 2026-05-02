@@ -201,7 +201,7 @@ describe("Auth", () => {
       consoleSpy.mockRestore();
     });
 
-    it("should sanitize passwords in the audit log payload", async () => {
+    it("should sanitise passwords in the audit log payload", async () => {
       const validToken = jwt.sign(
         { user: { name: "AdminUser", role: "Admin" } },
         mockConfig.SessionSecret,

@@ -41,9 +41,11 @@ const app = newServer();
 const request = supertest(app);
 
 describe("LoginHandler", () => {
+  let consoleErrorSpy: MockInstance;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
   });
 
   afterEach(() => {
@@ -79,6 +81,29 @@ describe("LoginHandler", () => {
       expect(mockRes.json).toHaveBeenCalledWith({ error: "Username not provided" });
     });
 
+    it("should return 'unknown' in logs if sanitise is called with a non-string", async () => {
+      const handler = new LoginHandler(auth, mockBlaiseApiClient as unknown as BlaiseApiClient);
+
+      const apiError = new Error("API Failure");
+
+      mockBlaiseApiClient.getUser.mockRejectedValue(apiError);
+
+      const mockReq = {
+        params: { username: ["valid-string", "poison"] },
+      } as unknown as Request;
+
+      const mockRes = {
+        status: vi.fn().mockReturnThis(),
+        json: vi.fn().mockReturnThis(),
+      } as unknown as ExpressResponse;
+
+      await handler.GetUser(mockReq, mockRes);
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Error fetching user:", "unknown", apiError);
+
+      expect(mockRes.status).toHaveBeenCalledWith(500);
+    });
+
     it("should return a 500 if the api client throws an error", async () => {
       mockBlaiseApiClient.getUser.mockRejectedValue(new Error("API Client Error"));
 
@@ -86,7 +111,7 @@ describe("LoginHandler", () => {
 
       expect(response.status).toEqual(500);
       expect(response.body).toEqual({ error: "Internal server error" });
-      expect(console.error).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalled();
     });
   });
 
@@ -119,7 +144,7 @@ describe("LoginHandler", () => {
 
       expect(response.status).toEqual(500);
       expect(response.body).toEqual({ error: "Internal server error" });
-      expect(console.error).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalled();
     });
   });
 
@@ -204,7 +229,7 @@ describe("LoginHandler", () => {
 
       expect(response.status).toEqual(500);
       expect(response.body).toEqual({ error: "Internal server error" });
-      expect(console.error).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
     it("should return a 500 if user lookup throws an error", async () => {
@@ -217,7 +242,7 @@ describe("LoginHandler", () => {
 
       expect(response.status).toEqual(500);
       expect(response.body).toEqual({ error: "Internal server error" });
-      expect(console.error).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
     it("should not expose the legacy split login endpoints", async () => {
@@ -302,7 +327,7 @@ describe("LoginHandler", () => {
           .set("Content-Type", "application/json");
 
         expect(response.status).toEqual(500);
-        expect(console.error).toHaveBeenCalled();
+        expect(consoleErrorSpy).toHaveBeenCalled();
       });
     });
   });
