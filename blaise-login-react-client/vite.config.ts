@@ -4,22 +4,23 @@ import dts from "vite-plugin-dts";
 import { resolve } from "path";
 import pkg from "./package.json" with { type: "json" };
 
-const currentDir = import.meta.dirname;
+const EXCLUDE_PATTERNS = ["src/mocks/**", "**/*.test.ts", "**/*.test.tsx", "**/setupTests.ts"];
 
 export default defineConfig({
   plugins: [
     react(),
     dts({
-      rollupTypes: true,
-      exclude: ["src/mocks/**", "**/*.test.ts", "**/*.test.tsx", "**/setupTests.ts"],
+      bundleTypes: true,
+      exclude: EXCLUDE_PATTERNS,
+      tsconfigPath: "./tsconfig.build.json",
     }),
   ],
   build: {
     outDir: "dist",
     sourcemap: true,
     lib: {
-      entry: resolve(currentDir, "src/index.ts"),
-      name: "BlaiseLoginReactClient",
+      entry: resolve(import.meta.dirname, "src/index.ts"),
+      formats: ["es", "cjs"],
       fileName: (format) => `index.${format === "es" ? "es.js" : "js"}`,
     },
     rollupOptions: {
@@ -28,17 +29,6 @@ export default defineConfig({
         ...Object.keys(pkg.dependencies || {}),
         "react/jsx-runtime",
       ],
-      output: {
-        globals: {
-          react: "React",
-          "react-dom": "ReactDOM",
-          "react-router-dom": "ReactRouterDOM",
-          "react/jsx-runtime": "jsxRuntime",
-          formik: "Formik",
-          "universal-cookie": "UniversalCookie",
-          "blaise-design-system-react-components": "BlaiseDesignSystemReactComponents",
-        },
-      },
     },
   },
   test: {
@@ -50,7 +40,7 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json", "html"],
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/mocks/**", "src/**/*.test.{ts,tsx}", "src/setupTests.ts"],
+      exclude: EXCLUDE_PATTERNS,
     },
   },
 });

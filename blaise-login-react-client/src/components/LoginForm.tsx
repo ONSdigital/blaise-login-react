@@ -17,13 +17,13 @@ export default function LoginForm({ authManager, setLoggedIn }: LoginFormProps):
       id: "username",
       description: "Your Blaise username",
       type: "text",
-      initial_value: "",
+      initialValue: "",
     },
     {
       name: "Password",
       description: "Your Blaise password",
       type: "password",
-      initial_value: "",
+      initialValue: "",
     },
   ];
 

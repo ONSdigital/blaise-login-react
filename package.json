@@ -18,18 +18,21 @@
     }
   },
   "scripts": {
+    "build:all": "yarn build:client && yarn build:server",
     "build:client": "yarn workspace blaise-login-react-client build",
     "build:server": "yarn workspace blaise-login-react-server build",
-    "build:all": "yarn build:client && yarn build:server",
+    "lint:all": "yarn lint:client && yarn lint:server",
     "lint:client": "yarn workspace blaise-login-react-client lint",
     "lint:server": "yarn workspace blaise-login-react-server lint",
-    "lint:all": "yarn lint:client && yarn lint:server",
+    "lint-fix:all": "yarn lint-fix:client && yarn lint-fix:server",
     "lint-fix:client": "yarn workspace blaise-login-react-client lint-fix",
     "lint-fix:server": "yarn workspace blaise-login-react-server lint-fix",
-    "lint-fix:all": "yarn lint-fix:client && yarn lint-fix:server",
+    "spellcheck:all": "yarn spellcheck:client && yarn spellcheck:server",
+    "spellcheck:client": "yarn workspace blaise-login-react-client spellcheck",
+    "spellcheck:server": "yarn workspace blaise-login-react-server spellcheck",
+    "test:all": "yarn test:client && yarn test:server",
     "test:client": "yarn workspace blaise-login-react-client test",
-    "test:server": "yarn workspace blaise-login-react-server test",
-    "test:all": "yarn test:client && yarn test:server"
+    "test:server": "yarn workspace blaise-login-react-server test"
   },
   "packageManager": "yarn@4.14.1"
 }

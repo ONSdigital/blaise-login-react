@@ -99,7 +99,7 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
                   class="ons-header__org-logo ons-header__org-logo--large"
                 >
                   <svg
-                    aria-labelledby="ons-logo-en-alt"
+                    aria-label="Office for National Statistics logo"
                     class="ons-icon--logo"
                     height="24"
                     role="img"
@@ -107,11 +107,6 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
                     width="250"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <title
-                      id="ons-logo-en-alt"
-                    >
-                      Office for National Statistics logo
-                    </title>
                     <g
                       class="ons-icon--logo__group ons-icon--logo__group--secondary"
                       fill="#a8bd3a"
@@ -220,7 +215,7 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
                   class="ons-header__org-logo ons-header__org-logo--small"
                 >
                   <svg
-                    aria-labelledby="ons-logo-stacked-en-alt"
+                    aria-label="Office for National Statistics logo"
                     class="ons-icon--logo"
                     height="27"
                     role="img"
@@ -228,11 +223,6 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
                     width="120"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <title
-                      id="ons-logo-stacked-en-alt"
-                    >
-                      Office for National Statistics logo
-                    </title>
                     <g
                       class="ons-icon--logo__group ons-icon--logo__group--secondary"
                       fill="#a8bd3a"
@@ -293,6 +283,7 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
     >
       <div
         class="ons-panel ons-panel--info ons-panel--no-title ons-u-mt-m"
+        id="panel-_r_p_"
       >
         <span
           class="ons-panel__assistive-text ons-u-vh"
@@ -313,6 +304,8 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
       </h1>
       <form
         action="#"
+        id="form-_r_q_"
+        novalidate=""
       >
         <div
           class="ons-field ons-u-mb-m"
@@ -336,7 +329,9 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
                 Your Blaise username
               </span>
               <input
-                form="[object Object]"
+                aria-describedby="username-description-hint"
+                class="ons-input ons-input--text ons-input-type__input"
+                data-testid="username-input"
                 id="username"
                 initial_value=""
                 name="Username"
@@ -357,19 +352,20 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
             >
               <label
                 class="ons-label ons-label--with-description"
-                for="Password"
+                for="form-_r_q_-Password"
               >
                 Password
               </label>
               <span
                 class="ons-label__description ons-input--with-description"
-                id="Password-description-hint"
+                id="form-_r_q_-Password-description-hint"
               >
                 Your Blaise password
               </span>
               <input
-                form="[object Object]"
-                id="Password"
+                aria-describedby="form-_r_q_-Password-description-hint"
+                class="ons-input ons-input--text ons-input-type__input"
+                id="form-_r_q_-Password"
                 initial_value=""
                 name="Password"
                 type="password"
@@ -381,7 +377,8 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
         <br />
         <button
           class="ons-btn"
-          data-testid="submit-button"
+          data-testid="form-_r_q_-submit-button"
+          id="form-_r_q_-submit"
           type="submit"
         >
           <span
@@ -426,7 +423,7 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
                     class="ons-footer__logo-large"
                   >
                     <svg
-                      aria-labelledby="ons-logo-en-footer-alt"
+                      aria-label="Office for National Statistics"
                       class="ons-icon--logo"
                       height="24"
                       role="img"
@@ -434,11 +431,6 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
                       width="250"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <title
-                        id="ons-logo-en-footer-alt"
-                      >
-                        Office for National Statistics
-                      </title>
                       <g
                         class="ons-icon--logo__group ons-icon--logo__group--secondary"
                         fill="#a8bd3a"
@@ -547,7 +539,7 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
                     class="ons-footer__logo-small"
                   >
                     <svg
-                      aria-labelledby="ons-logo-stacked-en-footer-alt"
+                      aria-label="Office for National Statistics"
                       class="ons-icon--logo"
                       height="27"
                       role="img"
@@ -555,11 +547,6 @@ exports[`Authenticate > matches snapshot for login page when not logged in 1`] =
                       width="120"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <title
-                        id="ons-logo-stacked-en-footer-alt"
-                      >
-                        Office for National Statistics
-                      </title>
                       <g
                         class="ons-icon--logo__group ons-icon--logo__group--secondary"
                         fill="#a8bd3a"

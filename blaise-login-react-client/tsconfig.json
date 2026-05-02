@@ -9,29 +9,16 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "types": [
-      "vitest/globals",
-      "@testing-library/jest-dom/vitest"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
     "rootDir": "src",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["vitest/globals", "@testing-library/jest-dom/vitest"]
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "coverage",
-    "dist",
-    "node_modules"
-  ]
+  "exclude": ["coverage", "dist", "node_modules"],
+  "include": ["src"]
 }
