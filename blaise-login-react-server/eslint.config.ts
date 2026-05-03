@@ -93,7 +93,7 @@ export default tseslint.config(
           ],
         },
         {
-          pathPattern: "^(?:dev|peer|optional|bundled)?[Dd]ependencies$|^scripts$|^exports$",
+          pathPattern: "^(?:dev|peer|optional|bundled)?[Dd]ependencies$|^scripts$",
           order: { type: "asc" },
         },
       ],
