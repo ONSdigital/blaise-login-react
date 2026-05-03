@@ -11,6 +11,7 @@
     "isolatedModules": true,
     "types": ["vitest/globals", "node"],
     "declaration": true,
+    "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist/esm",
     "rootDir": "src",
