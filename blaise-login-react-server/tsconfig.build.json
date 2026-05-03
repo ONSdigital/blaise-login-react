@@ -1,21 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",    
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,    
-    "verbatimModuleSyntax": true,
-    "resolveJsonModule": true,    
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "dist/esm",
-    "rootDir": "src",    
-    "types": ["vitest/globals", "node"]
+    "types": ["node"]
   },
-  "exclude": ["coverage", "dist", "node_modules"],
-  "include": ["src"]
+  "exclude": ["coverage", "dist", "node_modules", "src/**/*.test.ts"],
+  "extends": "./tsconfig.json"
 }
