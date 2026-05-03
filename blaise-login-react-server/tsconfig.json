@@ -4,9 +4,9 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "types": ["vitest/globals", "node"],
@@ -14,8 +14,7 @@
     "sourceMap": true,
     "outDir": "dist/esm",
     "rootDir": "src",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "esModuleInterop": true
   },
   "exclude": ["coverage", "dist", "node_modules"],
   "include": ["src"]
