@@ -92,7 +92,7 @@ export default tseslint.config(
       parser: jsoncParser,
     },
     rules: {
-      "jsonc/sort-keys": ["error", { pathPattern: "^$", order: { type: "asc" } }],
+      "jsonc/sort-keys": ["error", { pathPattern: ".*", order: { type: "asc" } }],
     },
   },
   {

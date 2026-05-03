@@ -9,8 +9,8 @@ import {
   type Mock,
 } from "vitest";
 import jwt from "jsonwebtoken";
-import { Auth } from "./auth";
-import type { AuthConfig } from "./config";
+import { Auth } from "./auth.js";
+import type { AuthConfig } from "./config.js";
 import type { Request, Response, NextFunction } from "express";
 import type { User } from "blaise-api-node-client";
 

@@ -61,7 +61,11 @@ export default tseslint.config(
       parser: jsoncParser,
     },
     rules: {
-      "jsonc/sort-keys": ["error", { pathPattern: "^$", order: { type: "asc" } }],
+      "jsonc/sort-keys": [
+        "error",
+        { pathPattern: "^$", order: { type: "asc" } },
+        { pathPattern: "^compilerOptions$", order: { type: "asc" } },
+      ],
     },
   },
   {
@@ -78,10 +82,10 @@ export default tseslint.config(
             "description",
             "author",
             "license",
+            "repository",
             "engines",
             "type",
             "types",
-            "main",
             "exports",
             "files",
             "sideEffects",

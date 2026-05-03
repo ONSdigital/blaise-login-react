@@ -1,9 +1,9 @@
 import supertest from "supertest";
 import jwt from "jsonwebtoken";
-import { Auth } from "./auth";
-import type { AuthConfig } from "./config";
+import { Auth } from "./auth.js";
+import type { AuthConfig } from "./config.js";
 import type { BlaiseApiClient, User } from "blaise-api-node-client";
-import newLoginHandler, { LoginHandler } from "./loginHandler";
+import newLoginHandler, { LoginHandler } from "./loginHandler.js";
 import express, { type Express, type Request, type Response as ExpressResponse } from "express";
 import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from "vitest";
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sanitise } from "./sanitise";
+import { sanitise } from "./sanitise.js";
 
 describe("sanitise", () => {
   it("returns fallback for non-string values", () => {

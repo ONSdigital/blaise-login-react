@@ -1,7 +1,7 @@
 import { BlaiseApiClient } from "blaise-api-node-client";
-import express, { Router, Request, Response } from "express";
-import { Auth } from "./auth";
-import { sanitise } from "./sanitise";
+import express, { Router, type Request, type Response } from "express";
+import { Auth } from "./auth.js";
+import { sanitise } from "./sanitise.js";
 
 function getStringValue(value: unknown): string | undefined {
   if (Array.isArray(value)) {

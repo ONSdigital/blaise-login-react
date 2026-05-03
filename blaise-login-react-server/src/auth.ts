@@ -1,8 +1,8 @@
 import jwt, { type SignOptions } from "jsonwebtoken";
 import type { User } from "blaise-api-node-client";
 import type { Request, Response, NextFunction } from "express";
-import type { AuthConfig } from "./config";
-import { sanitise } from "./sanitise";
+import type { AuthConfig } from "./config.js";
+import { sanitise } from "./sanitise.js";
 
 export class Auth {
   readonly config: AuthConfig;

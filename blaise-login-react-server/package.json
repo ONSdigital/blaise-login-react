@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ONSdigital/blaise-login-react-server.git"
+  },
   "engines": {
     "node": ">=24.0.0"
   },
