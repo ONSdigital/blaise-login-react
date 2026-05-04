@@ -23,14 +23,14 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "lint": "yarn typecheck && eslint . && prettier --check . && knip",
-    "lint-fix": "eslint . --fix && prettier --write . && knip --fix",
+    "build": "yarn tsc -p tsconfig.build.json && yarn publint --pack npm",
+    "lint": "yarn typecheck && yarn eslint . && yarn prettier --check . && yarn knip",
+    "lint-fix": "yarn eslint . --fix && yarn prettier --write . && yarn knip --fix",
     "prepack": "yarn build",
-    "spellcheck": "cspell \"**/*.{ts,tsx,json,jsonc,yml,yaml,md}\" --no-progress --no-summary",
-    "test": "vitest run --coverage",
-    "test-watch": "vitest",
-    "typecheck": "tsc --noEmit && tsc --project tsconfig.build.json --noEmit"
+    "spellcheck": "yarn cspell \"**/*.{ts,tsx,json,jsonc,yml,yaml,md}\" --no-progress --no-summary",
+    "test": "yarn vitest run --coverage",
+    "test-watch": "yarn vitest",
+    "typecheck": "yarn tsc --noEmit && yarn tsc --project tsconfig.build.json --noEmit"
   },
   "dependencies": {
     "blaise-api-node-client": "git+https://github.com/ONSdigital/blaise-api-node-client.git#BLAIS5-5177",
@@ -55,6 +55,7 @@
     "jsonc-eslint-parser": "^3.1.0",
     "knip": "^6.11.0",
     "prettier": "^3.8.3",
+    "publint": "^0.3.18",
     "supertest": "^7.2.2",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.1",
