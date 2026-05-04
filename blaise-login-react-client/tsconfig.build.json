@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "types": []
+  },
+  "exclude": ["coverage", "dist", "node_modules", "src/**/*.test.*", "src/setupTests.ts"],
+  "extends": "./tsconfig.json"
+}

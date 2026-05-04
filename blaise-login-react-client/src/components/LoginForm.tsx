@@ -1,81 +1,72 @@
-import React, { ReactElement } from "react";
-import { FormFieldObject, ONSPanel, StyledForm } from "blaise-design-system-react-components";
-import { Component } from "react";
-import { validatePassword, validateUserPermissions } from "../client/user";
-import { AuthManager } from "../client/token";
+import { useState, useCallback, ReactElement } from "react";
+import { type FormField, ErrorPanel, StyledForm } from "blaise-design-system-react-components";
+import { authenticateUser } from "../services/user";
+import type { AuthManager } from "../services/AuthManager";
 
-
-type LoginFormProps = {
-  authManager: AuthManager
-  setLoggedIn: (loggedIn: boolean) => void
+interface LoginFormProps {
+  authManager: AuthManager;
+  setLoggedIn: (loggedIn: boolean) => void;
 }
 
-type LoginFormState = {
-  error: string
-}
+export default function LoginForm({ authManager, setLoggedIn }: LoginFormProps): ReactElement {
+  const [error, setError] = useState<string>("");
 
-export default class LoginForm extends Component<LoginFormProps, LoginFormState> {
-  constructor(props: LoginFormProps) {
-    super(props);
-    this.login = this.login.bind(this);
-    this.state = {
-      error: ""
-    };
-  }
+  const fields: FormField[] = [
+    {
+      name: "Username",
+      id: "username",
+      description: "Your Blaise username",
+      type: "text",
+      initialValue: "",
+    },
+    {
+      name: "Password",
+      description: "Your Blaise password",
+      type: "password",
+      initialValue: "",
+    },
+  ];
 
-  formFields(): FormFieldObject[] {
-    return [
-      {
-        name: "Username",
-        id: "username",
-        description: "Your Blaise username",
-        type: "username",
-        initial_value: ""
-      },
-      {
-        name: "Password",
-        description: "Your Blaise password",
-        type: "password",
-        initial_value: ""
+  const login = useCallback(
+    async (
+      form: Record<string, string>,
+      setSubmitting: (isSubmitting: boolean) => void,
+    ): Promise<void> => {
+      setError("");
+
+      const loginResult = await authenticateUser(form.Username, form.Password);
+
+      if (!loginResult.authenticated) {
+        if (loginResult.reason === "not-authorized") {
+          setError("You do not have the correct permissions");
+        } else if (loginResult.reason === "request-failed") {
+          setError("Unable to sign in. Please try again.");
+        } else {
+          setError("Incorrect username or password");
+        }
+
+        setSubmitting(false);
+
+        return;
       }
-    ];
-  }
 
-  async login(form: Record<string, string>, setSubmitting: (isSubmitting: boolean) => void): Promise<void> {
-    const valid = await validatePassword(form.Username, form.Password);
-    if (!valid) {
-      this.setState({
-        error: "Incorrect username or password"
-      });
-      setSubmitting(false);
-      return;
-    }
-    const [authorised, token] = await validateUserPermissions(form.Username);
-    if (!authorised) {
-      this.setState({
-        error: "You do not have the correct permissions"
-      });
-      setSubmitting(false);
-      return;
-    }
-    this.props.authManager.setToken(token);
-    this.props.setLoggedIn(authorised);
-  }
+      authManager.setToken(loginResult.token);
+      setLoggedIn(true);
+    },
+    [authManager, setLoggedIn],
+  );
 
-  error(): ReactElement | undefined {
-    if (this.state.error != "") {
-      return <ONSPanel status="error">{this.state.error}</ONSPanel>;
-    }
-    return undefined;
-  }
+  return (
+    <>
+      <h1 className="ons-u-mt-m">Sign in</h1>
 
-  render(): ReactElement {
-    return (
-      <>
-        <h1 className="ons-u-mt-m">Sign in</h1>
-        {this.error()}
-        <StyledForm fields={this.formFields()} onSubmitFunction={this.login} submitLabel="Sign in" />
-      </>
-    );
-  }
+      {error && <ErrorPanel text={error} />}
+
+      <StyledForm
+        fields={fields}
+        onSubmitFunction={login}
+        submitLabel="Sign in"
+      />
+    </>
+  );
 }

@@ -1,6 +1,6 @@
-import React, { ReactElement, useState } from "react";
-import { User } from "blaise-api-node-client";
-import AuthenticationApi from "../client/AuthenticationApi";
+import { ReactElement, useState, useMemo } from "react";
+import type { User } from "../types/User";
+import AuthenticationApi from "../services/AuthenticationApi";
 import RenderAuthenticatedContent from "./RenderAuthenticatedContent";
 import AuthenticateUser from "./AuthenticateUser";
 
@@ -9,17 +9,30 @@ interface AuthenticateUserHandlerProps {
   children: (user: User, loggedIn: boolean, logOutFunction: () => void) => React.ReactNode;
 }
 
-export default function AuthenticateUserHandler({ title, children }: AuthenticateUserHandlerProps): ReactElement {
+export default function AuthenticateUserHandler({
+  title,
+  children,
+}: AuthenticateUserHandlerProps): ReactElement {
   const [loggedIn, setLoggedIn] = useState(false);
-  const authenticationApi = new AuthenticationApi();
+
+  const authenticationApi = useMemo(() => new AuthenticationApi(), []);
 
   return (
     <>
-      {
-        loggedIn
-          ? <RenderAuthenticatedContent authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} >{children}</RenderAuthenticatedContent>
-          : <AuthenticateUser title={title} authenticationApi={authenticationApi} setLoggedIn={setLoggedIn} />
-      }
+      {loggedIn ? (
+        <RenderAuthenticatedContent
+          authenticationApi={authenticationApi}
+          setLoggedIn={setLoggedIn}
+        >
+          {children}
+        </RenderAuthenticatedContent>
+      ) : (
+        <AuthenticateUser
+          title={title}
+          authenticationApi={authenticationApi}
+          setLoggedIn={setLoggedIn}
+        />
+      )}
     </>
   );
 }

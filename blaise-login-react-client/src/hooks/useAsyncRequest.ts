@@ -24,53 +24,45 @@ export function hasErrored<T>(state: AsyncState<T>): state is Errored {
   return state.state === "errored";
 }
 
-function loading(): Loading {
-  return { state: "loading" };
-}
+const loading = (): Loading => ({ state: "loading" });
+const errored = (error: string): Errored => ({ state: "errored", error });
+const succeeded = <T>(data: T): Succeeded<T> => ({ state: "succeeded", data });
 
-function errored(error: string): Errored {
-  return { state: "errored", error };
-}
+export function useAsyncRequest<T>(request: () => Promise<T>): AsyncState<T> {
+  const [state, setState] = useState<AsyncState<T>>(loading);
 
-function succeeded<T>(data: T): Succeeded<T> {
-  return { state: "succeeded", data };
-}
+  const [prevRequest, setPrevRequest] = useState(() => request);
 
-export function useAsyncRequest<T>(request: () => Promise<T>) {
-  const [state, setState] = useState<AsyncState<T>>(loading());
+  if (request !== prevRequest) {
+    setPrevRequest(() => request);
+    setState(loading());
+  }
 
   useEffect(() => {
-    setState(loading());
-    request()
-      .then((response) => setState(succeeded(response)))
-      .catch((error) => setState(errored(error.message)));
+    let ignore = false;
+
+    const executeAsyncRequest = async () => {
+      try {
+        const response = await request();
+
+        if (!ignore) {
+          setState(succeeded(response));
+        }
+      } catch (error: unknown) {
+        if (!ignore) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+
+          setState(errored(errorMessage));
+        }
+      }
+    };
+
+    executeAsyncRequest();
+
+    return () => {
+      ignore = true;
+    };
   }, [request]);
-
-  return state;
-}
-
-export function useAsyncRequestWithParam<T1, T2>(request:(param: T2) => Promise<T1>, param: T2) {
-  const [state, setState] = useState<AsyncState<T1>>(loading());
-
-  useEffect(() => {
-    setState(loading());
-    request(param)
-      .then((response) => setState(succeeded(response)))
-      .catch((error) => setState(errored(error.message)));
-  }, [request, param]);
-
-  return state;
-}
-
-export function useAsyncRequestWithTwoParams<T1, T2, T3>(request:(param1: T2, param2: T3) => Promise<T1>, param1: T2, param2: T3) {
-  const [state, setState] = useState<AsyncState<T1>>(loading());
-
-  useEffect(() => {
-    setState(loading());
-    request(param1, param2)
-      .then((response) => setState(succeeded(response)))
-      .catch((error) => setState(errored(error.message)));
-  }, [request, param1, param2]);
 
   return state;
 }

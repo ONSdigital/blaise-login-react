@@ -1,8 +1,7 @@
-.idea
+.idea/
+.vscode/
+.yarn/
+coverage/
+dist/
 node_modules/
-.DS_Store
-.env
-dist
-coverage
-yarn-error.log
-.eslintcache
+*.log

@@ -1,22 +1,14 @@
-import { User } from "blaise-api-node-client";
-import React, { Component, ReactElement } from "react";
+import { ReactElement, ReactNode } from "react";
+import type { User } from "../types/User";
 import AuthenticateUserHandler from "./AuthenticateUserHandler";
 
 interface AuthenticateProps {
   title?: string;
-  children: (user: User, loggedIn: boolean, logOutFunction: () => void) => React.ReactNode;
+  children: (user: User, loggedIn: boolean, logOutFunction: () => void) => ReactNode;
 }
 
-export default class Authenticate extends Component<AuthenticateProps> {
-  constructor(props: AuthenticateProps) {
-    super(props);
-  }
+const Authenticate = ({ title = "Blaise login", children }: AuthenticateProps): ReactElement => {
+  return <AuthenticateUserHandler title={title}>{children}</AuthenticateUserHandler>;
+};
 
-  render(): ReactElement {
-    return (
-      <AuthenticateUserHandler title={this.props.title ?? "Blaise login"}>
-        {this.props.children}
-      </AuthenticateUserHandler>
-    );
-  }
-}
+export default Authenticate;
