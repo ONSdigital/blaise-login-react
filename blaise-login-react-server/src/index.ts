@@ -1,7 +1,5 @@
-import newLoginHandler, { LoginHandler } from "./loginHandler.js";
-import { Auth } from "./auth.js";
-import type { AuthConfig } from "./config.js";
+export { newLoginHandler, LoginHandler } from "./loginHandler.js";
 
-export { newLoginHandler, LoginHandler, Auth };
+export { Auth } from "./auth.js";
 
-export type { AuthConfig };
+export type { AuthConfig } from "./auth.types.js";

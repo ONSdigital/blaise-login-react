@@ -1,14 +1,16 @@
-import { useState, useCallback, ReactElement } from "react";
-import { type FormField, ErrorPanel, StyledForm } from "blaise-design-system-react-components";
+import { ErrorPanel, type FormField, StyledForm } from "blaise-design-system-react-components";
+import { type ReactElement, useCallback, useState } from "react";
+
 import { authenticateUser } from "../services/user";
-import type { AuthManager } from "../services/AuthManager";
+
+import type { AuthManager } from "../services/authManager";
 
 interface LoginFormProps {
   authManager: AuthManager;
   setLoggedIn: (loggedIn: boolean) => void;
 }
 
-export default function LoginForm({ authManager, setLoggedIn }: LoginFormProps): ReactElement {
+export function LoginForm({ authManager, setLoggedIn }: LoginFormProps): ReactElement {
   const [error, setError] = useState<string>("");
 
   const fields: FormField[] = [

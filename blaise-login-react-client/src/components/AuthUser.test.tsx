@@ -1,8 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import AuthenticateUser from "./AuthenticateUser";
-import AuthenticationApi from "../services/AuthenticationApi";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import * as asyncHook from "../hooks/useAsyncRequest";
+import { type AuthClient } from "../services/authClient";
+
+import AuthUser from "./AuthUser";
 
 vi.mock("./LayoutTemplate", () => ({
   default: ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -14,14 +16,14 @@ vi.mock("./LayoutTemplate", () => ({
 }));
 
 vi.mock("./LoginForm", () => ({
-  default: () => <div data-testid="login-form">Login Form</div>,
+  LoginForm: () => <div data-testid="login-form">Login Form</div>,
 }));
 
-describe("AuthenticateUser", () => {
+describe("AuthUser", () => {
   const mockSetLoggedIn = vi.fn();
-  const mockAuthApi = {
+  const mockAuthClient = {
     loggedIn: vi.fn(),
-  } as unknown as AuthenticationApi;
+  } as unknown as AuthClient;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -31,9 +33,9 @@ describe("AuthenticateUser", () => {
     vi.spyOn(asyncHook, "useAsyncRequest").mockReturnValue({ state: "succeeded", data: undefined });
 
     render(
-      <AuthenticateUser
+      <AuthUser
         title="Sign In"
-        authenticationApi={mockAuthApi}
+        authClient={mockAuthClient}
         setLoggedIn={mockSetLoggedIn}
       />,
     );
@@ -51,18 +53,18 @@ describe("AuthenticateUser", () => {
       return { state: "loading" };
     });
 
-    (mockAuthApi.loggedIn as ReturnType<typeof vi.fn>).mockResolvedValue(true);
+    (mockAuthClient.loggedIn as ReturnType<typeof vi.fn>).mockResolvedValue(true);
 
     render(
-      <AuthenticateUser
+      <AuthUser
         title="Sign In"
-        authenticationApi={mockAuthApi}
+        authClient={mockAuthClient}
         setLoggedIn={mockSetLoggedIn}
       />,
     );
 
     await waitFor(() => {
-      expect(mockAuthApi.loggedIn).toHaveBeenCalled();
+      expect(mockAuthClient.loggedIn).toHaveBeenCalled();
       expect(mockSetLoggedIn).toHaveBeenCalledWith(true);
     });
   });

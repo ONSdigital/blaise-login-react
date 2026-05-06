@@ -1,10 +1,8 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "esModuleInterop": true,
+    "declarationMap": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
     "jsx": "react-jsx",
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "ESNext",
@@ -16,9 +14,10 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "ESNext",
-    "types": ["vitest/globals", "@testing-library/jest-dom/vitest"]
+    "target": "ES2022",
+    "types": ["vitest/globals", "@testing-library/jest-dom/vitest"],
+    "verbatimModuleSyntax": true
   },
-  "exclude": ["coverage", "dist", "node_modules"],
+  "exclude": ["coverage", "dist", "storybook-static", "node_modules"],
   "include": ["src"]
 }

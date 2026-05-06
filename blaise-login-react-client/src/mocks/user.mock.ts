@@ -1,4 +1,4 @@
-import type { User } from "../types/User";
+import type { User } from "../types/user.types";
 
 const mockUser: User = Object.freeze({
   name: "Jake Bullet",
@@ -7,4 +7,4 @@ const mockUser: User = Object.freeze({
   defaultServerPark: "gusty",
 });
 
-export default mockUser;
+export { mockUser };

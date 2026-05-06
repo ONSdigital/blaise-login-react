@@ -1,5 +1,5 @@
-import type { User } from "../types/User";
-import type { AuthManager } from "./AuthManager";
+import type { AuthManager } from "./authManager";
+import type { User } from "../types/user.types";
 
 export type LoginFailureReason = "invalid-credentials" | "not-authorized" | "request-failed";
 

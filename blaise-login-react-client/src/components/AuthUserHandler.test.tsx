@@ -1,11 +1,13 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import AuthenticateUserHandler from "./AuthenticateUserHandler";
 import userEvent from "@testing-library/user-event";
-import type { User } from "../types/User";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import AuthUserHandler from "./AuthUserHandler";
+
+import type { User } from "../types/user.types";
 import type { ReactNode } from "react";
 
-vi.mock("./AuthenticateUser", () => ({
+vi.mock("./AuthUser", () => ({
   default: ({ setLoggedIn }: { setLoggedIn: (state: boolean) => void }) => (
     <div data-testid="authenticate-user">
       <button onClick={() => setLoggedIn(true)}>Simulate Login</button>
@@ -25,16 +27,14 @@ vi.mock("./RenderAuthenticatedContent", () => ({
   ),
 }));
 
-describe("AuthenticateUserHandler", () => {
+describe("AuthUserHandler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("displays AuthenticateUser when loggedIn is initially false", () => {
+  it("displays AuthUser when loggedIn is initially false", () => {
     render(
-      <AuthenticateUserHandler title="Handler Title">
-        {() => <div>Secure Content</div>}
-      </AuthenticateUserHandler>,
+      <AuthUserHandler title="Handler Title">{() => <div>Secure Content</div>}</AuthUserHandler>,
     );
 
     expect(screen.getByTestId("authenticate-user")).toBeInTheDocument();
@@ -45,9 +45,9 @@ describe("AuthenticateUserHandler", () => {
     const user = userEvent.setup();
 
     render(
-      <AuthenticateUserHandler title="Handler Title">
+      <AuthUserHandler title="Handler Title">
         {(user) => <div data-testid="secure-content">Secure Content for {user.name}</div>}
-      </AuthenticateUserHandler>,
+      </AuthUserHandler>,
     );
 
     await user.click(screen.getByText("Simulate Login"));

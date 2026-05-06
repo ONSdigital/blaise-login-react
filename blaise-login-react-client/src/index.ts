@@ -1,10 +1,10 @@
-export { default as Authenticate } from "./components/Authenticate";
+export { Authenticate } from "./components/Authenticate";
 
-export { default as LoginForm } from "./components/LoginForm";
+export { LoginForm } from "./components/LoginForm";
 
-export { default as AuthenticationApi } from "./services/AuthenticationApi";
+export { AuthClient } from "./services/authClient";
 
-export { AuthManager } from "./services/AuthManager";
+export { AuthManager } from "./services/authManager";
 
 export { authenticateUser, getUser, getCurrentUser, validateToken } from "./services/user";
 

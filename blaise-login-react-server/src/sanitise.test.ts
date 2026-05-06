@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { sanitise } from "./sanitise.js";
 
 describe("sanitise", () => {

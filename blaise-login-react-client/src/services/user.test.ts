@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
-import { AuthManager } from "./AuthManager";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import { AuthManager } from "./authManager";
 import { authenticateUser, getCurrentUser, getUser, validateToken } from "./user";
 
 describe("userService", () => {

@@ -1,18 +1,20 @@
-import {
-  describe,
-  it,
-  expect,
-  vi,
-  beforeEach,
-  afterEach,
-  type MockInstance,
-  type Mock,
-} from "vitest";
 import jwt from "jsonwebtoken";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  type MockInstance,
+  vi,
+} from "vitest";
+
 import { Auth } from "./auth.js";
-import type { AuthConfig } from "./config.js";
-import type { Request, Response, NextFunction } from "express";
+
+import type { AuthConfig } from "./auth.types.js";
 import type { User } from "blaise-api-node-client";
+import type { NextFunction, Request, Response } from "express";
 
 const mockConfig: AuthConfig = {
   SessionSecret: "super-secret-test-key",

@@ -1,30 +1,30 @@
-import type { User } from "../types/User";
-import { ReactElement, useCallback, useEffect } from "react";
-import type AuthenticationApi from "../services/AuthenticationApi";
+import { type ReactElement, useCallback, useEffect } from "react";
+
 import { useAsyncRequest } from "../hooks/useAsyncRequest";
+
 import AsyncContent from "./AsyncContent";
 
+import type { AuthClient } from "../services/authClient";
+import type { User } from "../types/user.types";
+
 interface RenderAuthenticatedContentProps {
-  authenticationApi: AuthenticationApi;
+  authClient: AuthClient;
   setLoggedIn: (loggedIn: boolean) => void;
   children: (user: User, loggedIn: boolean, logOutFunction: () => void) => React.ReactNode;
 }
 
 export default function RenderAuthenticatedContent({
-  authenticationApi,
+  authClient,
   children,
   setLoggedIn,
 }: RenderAuthenticatedContentProps): ReactElement {
-  const fetchLoggedInUser = useCallback(
-    () => authenticationApi.getLoggedInUser(),
-    [authenticationApi],
-  );
+  const fetchLoggedInUser = useCallback(() => authClient.getLoggedInUser(), [authClient]);
 
   const getUserState = useAsyncRequest<User>(fetchLoggedInUser);
 
   const logOutFunction = useCallback(
-    () => authenticationApi.logOut(setLoggedIn),
-    [authenticationApi, setLoggedIn],
+    () => authClient.logOut(setLoggedIn),
+    [authClient, setLoggedIn],
   );
 
   return (

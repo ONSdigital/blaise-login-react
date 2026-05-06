@@ -1,5 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
 import { useAsyncRequest } from "./useAsyncRequest";
 
 describe("useAsyncRequest", () => {

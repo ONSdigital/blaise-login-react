@@ -1,27 +1,26 @@
 import { Panel } from "blaise-design-system-react-components";
-import { ReactElement, useCallback } from "react";
-import { useAsyncRequest } from "../hooks/useAsyncRequest";
-import AsyncContent from "./AsyncContent";
-import type AuthenticationApi from "../services/AuthenticationApi";
-import LoginForm from "./LoginForm";
-import LayoutTemplate from "./LayoutTemplate";
+import { type ReactElement, useCallback } from "react";
 
-interface AuthenticateUserProps {
+import { useAsyncRequest } from "../hooks/useAsyncRequest";
+
+import AsyncContent from "./AsyncContent";
+import LayoutTemplate from "./LayoutTemplate";
+import { LoginForm } from "./LoginForm";
+
+import type { AuthClient } from "../services/authClient";
+
+interface AuthUserProps {
   title: string;
-  authenticationApi: AuthenticationApi;
+  authClient: AuthClient;
   setLoggedIn: (loggedIn: boolean) => void;
 }
 
-export default function AuthenticateUser({
-  title,
-  authenticationApi,
-  setLoggedIn,
-}: AuthenticateUserProps): ReactElement {
+export default function AuthUser({ title, authClient, setLoggedIn }: AuthUserProps): ReactElement {
   const checkAuthStatus = useCallback(async () => {
-    const isLoggedIn = await authenticationApi.loggedIn();
+    const isLoggedIn = await authClient.loggedIn();
 
     setLoggedIn(isLoggedIn);
-  }, [authenticationApi, setLoggedIn]);
+  }, [authClient, setLoggedIn]);
 
   const authState = useAsyncRequest<void>(checkAuthStatus);
 
@@ -31,7 +30,7 @@ export default function AuthenticateUser({
         <LayoutTemplate title={title}>
           <Panel status="info">Enter your Blaise username and password</Panel>
           <LoginForm
-            authManager={authenticationApi}
+            authManager={authClient}
             setLoggedIn={setLoggedIn}
           />
         </LayoutTemplate>

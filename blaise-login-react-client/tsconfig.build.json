@@ -2,6 +2,12 @@
   "compilerOptions": {
     "types": []
   },
-  "exclude": ["coverage", "dist", "node_modules", "src/**/*.test.*", "src/setupTests.ts"],
+  "exclude": [
+    "src/**/*.mock.ts",
+    "src/**/*.stories.*",
+    "src/**/*.test.*",
+    "src/**/*.types.ts",
+    "src/setupTests.ts"
+  ],
   "extends": "./tsconfig.json"
 }

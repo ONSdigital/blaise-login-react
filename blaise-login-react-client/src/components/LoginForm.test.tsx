@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import LoginForm from "./LoginForm";
-import { AuthManager } from "../services/AuthManager";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import { AuthManager } from "../services/authManager";
+
+import { LoginForm } from "./LoginForm";
 
 vi.mock("blaise-design-system-react-components", () => ({
   ErrorPanel: ({ text }: { text: string }) => <div role="alert">{text}</div>,

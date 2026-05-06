@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
-import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
 import LayoutTemplate from "./LayoutTemplate";
 
 vi.mock("blaise-design-system-react-components", () => ({

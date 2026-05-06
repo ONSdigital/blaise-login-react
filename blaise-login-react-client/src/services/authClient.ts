@@ -1,8 +1,9 @@
-import type { User } from "../types/User";
-import { AuthManager } from "./AuthManager";
+import { AuthManager } from "./authManager";
 import { getCurrentUser } from "./user";
 
-export default class AuthenticationApi extends AuthManager {
+import type { User } from "../types/user.types";
+
+export class AuthClient extends AuthManager {
   constructor() {
     super();
   }

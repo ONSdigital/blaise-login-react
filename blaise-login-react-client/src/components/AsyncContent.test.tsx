@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
 import AsyncContent from "./AsyncContent";
+
 import type { AsyncState } from "../hooks/useAsyncRequest";
 
 vi.mock("blaise-design-system-react-components", () => ({

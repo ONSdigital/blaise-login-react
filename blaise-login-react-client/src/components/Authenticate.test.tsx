@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BrowserRouter } from "react-router-dom";
-import Authenticate from "./Authenticate";
-import mockUser from "../mocks/user.mock";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { mockUser } from "../mocks/user.mock";
+
+import { Authenticate } from "./Authenticate";
 
 const { mockLoggedIn, mockGetLoggedInUser } = vi.hoisted(() => {
   return {
@@ -11,9 +13,9 @@ const { mockLoggedIn, mockGetLoggedInUser } = vi.hoisted(() => {
   };
 });
 
-vi.mock("../services/AuthenticationApi", () => {
+vi.mock("../services/authClient", () => {
   return {
-    default: class {
+    AuthClient: class {
       loggedIn = mockLoggedIn;
       getLoggedInUser = mockGetLoggedInUser;
     },

@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { AuthManager } from "./AuthManager";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { AuthManager } from "./authManager";
 import * as userModule from "./user";
 
 vi.mock("./user");

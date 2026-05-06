@@ -1,11 +1,13 @@
-import supertest from "supertest";
+import express, { type Express, type Response as ExpressResponse, type Request } from "express";
 import jwt from "jsonwebtoken";
+import supertest from "supertest";
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+
 import { Auth } from "./auth.js";
-import type { AuthConfig } from "./config.js";
+import { LoginHandler, newLoginHandler } from "./loginHandler.js";
+
+import type { AuthConfig } from "./auth.types.js";
 import type { BlaiseApiClient, User } from "blaise-api-node-client";
-import newLoginHandler, { LoginHandler } from "./loginHandler.js";
-import express, { type Express, type Request, type Response as ExpressResponse } from "express";
-import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from "vitest";
 
 const config: AuthConfig = {
   SessionSecret: "fake-secret",

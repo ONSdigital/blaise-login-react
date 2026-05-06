@@ -1,17 +1,20 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, type Mock } from "vitest";
+import { describe, expect, it, type Mock, vi } from "vitest";
+
+import { type AuthClient } from "../services/authClient";
+
 import RenderAuthenticatedContent from "./RenderAuthenticatedContent";
-import AuthenticationApi from "../services/AuthenticationApi";
-import type { User } from "../types/User";
+
+import type { User } from "../types/user.types";
 
 describe("RenderAuthenticatedContent", () => {
-  const mockAuthApi = {
+  const mockAuthClient = {
     getLoggedInUser: vi.fn(),
     logOut: vi.fn(),
-  } as unknown as AuthenticationApi;
+  } as unknown as AuthClient;
 
-  const getLoggedInUserMock = mockAuthApi.getLoggedInUser as Mock;
-  const logOutMock = mockAuthApi.logOut as Mock;
+  const getLoggedInUserMock = mockAuthClient.getLoggedInUser as Mock;
+  const logOutMock = mockAuthClient.logOut as Mock;
 
   const setLoggedIn = vi.fn();
   const mockUser: User = { name: "Bob", role: "Admin", serverParks: ["A"], defaultServerPark: "A" };
@@ -21,7 +24,7 @@ describe("RenderAuthenticatedContent", () => {
 
     render(
       <RenderAuthenticatedContent
-        authenticationApi={mockAuthApi}
+        authClient={mockAuthClient}
         setLoggedIn={setLoggedIn}
       >
         {(user) => <div>{user.name}</div>}
@@ -38,7 +41,7 @@ describe("RenderAuthenticatedContent", () => {
 
     render(
       <RenderAuthenticatedContent
-        authenticationApi={mockAuthApi}
+        authClient={mockAuthClient}
         setLoggedIn={setLoggedIn}
       >
         {() => <div>Content</div>}

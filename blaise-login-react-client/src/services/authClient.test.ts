@@ -1,17 +1,19 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
-import AuthenticationApi from "./AuthenticationApi";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
+
+import { mockUser } from "../mocks/user.mock";
+
+import { AuthClient } from "./authClient";
 import { getCurrentUser } from "./user";
-import mockUser from "../mocks/user.mock";
 
 vi.mock("./user");
 
 const mockGetCurrentUser = getCurrentUser as Mock;
 
-describe("AuthenticationApi - getLoggedInUser", () => {
-  let sut: AuthenticationApi;
+describe("AuthClient - getLoggedInUser", () => {
+  let sut: AuthClient;
 
   beforeEach(() => {
-    sut = new AuthenticationApi();
+    sut = new AuthClient();
     vi.resetAllMocks();
   });
 

@@ -1,6 +1,7 @@
-import { BlaiseApiClient } from "blaise-api-node-client";
-import express, { Router, type Request, type Response } from "express";
-import { Auth } from "./auth.js";
+import { type BlaiseApiClient } from "blaise-api-node-client";
+import express, { type Request, type Response, type Router } from "express";
+
+import { type Auth } from "./auth.js";
 import { sanitise } from "./sanitise.js";
 
 function getStringValue(value: unknown): string | undefined {
@@ -11,7 +12,7 @@ function getStringValue(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
-export default function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): Router {
+export function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): Router {
   const router = express.Router();
 
   router.use(express.json());

@@ -1,4 +1,5 @@
-import Cookies, { CookieSetOptions } from "universal-cookie";
+import Cookies, { type CookieSetOptions } from "universal-cookie";
+
 import { validateToken } from "./user";
 
 const sessionKey = "blaise-user";
