@@ -55,7 +55,7 @@ vi.mock("blaise-design-system-react-components", () => ({
 
 describe("LoginForm", () => {
   const mockSetLoggedIn = vi.fn();
-  const authManager = new AuthManager();
+  const authManager = new AuthManager({ sessionKey: "blaise-user-test" });
   const mockFetch = vi.fn();
 
   beforeEach(() => {

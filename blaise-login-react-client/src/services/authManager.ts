@@ -2,22 +2,64 @@ import Cookies, { type CookieSetOptions } from "universal-cookie";
 
 import { validateToken } from "./user";
 
-const sessionKey = "blaise-user";
+const sessionKeyPrefix = "blaise-user";
+
+export interface AuthManagerOptions {
+  sessionKey: string;
+  cookieDomain?: string;
+}
+
+function requiredValue(settingName: string, value: string | undefined): string {
+  const normalisedValue = value?.trim() ?? "";
+
+  if (!normalisedValue) {
+    throw new Error(`${settingName} must be provided`);
+  }
+
+  return normalisedValue;
+}
+
+export function createSessionKey(environmentKey: string): string {
+  return `${sessionKeyPrefix}-${requiredValue("environmentKey", environmentKey)}`;
+}
+
+export function normaliseCookieDomain(cookieDomain: string): string {
+  const normalisedDomain = requiredValue("cookieDomain", cookieDomain).replace(/^\./, "");
+
+  if (
+    normalisedDomain.includes("://") ||
+    normalisedDomain.includes("/") ||
+    normalisedDomain.includes(":")
+  ) {
+    throw new Error("cookieDomain must be a bare domain name without a protocol, path, or port");
+  }
+
+  return normalisedDomain;
+}
 
 export class AuthManager {
   cookies: Cookies = new Cookies();
+  readonly sessionKey: string;
+  readonly cookieDomain?: string;
+
+  constructor(options: AuthManagerOptions) {
+    this.sessionKey = requiredValue("sessionKey", options.sessionKey);
+    this.cookieDomain = options.cookieDomain
+      ? normaliseCookieDomain(options.cookieDomain)
+      : undefined;
+  }
 
   public getToken = (): string | null => {
-    return this.cookies.get(sessionKey);
+    return this.cookies.get(this.sessionKey);
   };
 
   public setToken = (token: string | null): void => {
-    this.cookies.set(sessionKey, token, this.cookieSettings());
+    this.cookies.set(this.sessionKey, token, this.cookieSettings());
   };
 
   public clearToken = (): void => {
     this.setToken(null);
-    this.cookies.remove(sessionKey, this.cookieSettings());
+    this.cookies.remove(this.sessionKey, this.cookieSettings());
   };
 
   public loggedIn = async (): Promise<boolean> => {
@@ -45,16 +87,19 @@ export class AuthManager {
   };
 
   public cookieSettings = (): CookieSetOptions => {
-    const host = window.location.hostname;
-    const domain = host.substring(host.indexOf(".") + 1);
-    const secure = window.location.protocol === "https:";
+    const secure = typeof window !== "undefined" && window.location.protocol === "https:";
 
-    return {
+    const settings: CookieSetOptions = {
       path: "/",
       maxAge: 60 * 60 * 12, // 12 hours
-      domain: domain,
       secure: secure,
       sameSite: "strict",
     };
+
+    if (this.cookieDomain) {
+      settings.domain = this.cookieDomain;
+    }
+
+    return settings;
   };
 }

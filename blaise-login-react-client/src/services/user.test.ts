@@ -5,6 +5,7 @@ import { authenticateUser, getCurrentUser, getUser, validateToken } from "./user
 
 describe("userService", () => {
   const mockFetch = vi.fn();
+  const authManagerOptions = { sessionKey: "blaise-user-test" };
 
   beforeEach(() => {
     vi.stubGlobal("fetch", mockFetch);
@@ -16,7 +17,7 @@ describe("userService", () => {
 
   describe("getCurrentUser", () => {
     it("returns the user details", async () => {
-      const authManager = new AuthManager();
+      const authManager = new AuthManager(authManagerOptions);
 
       vi.spyOn(authManager, "authHeader").mockReturnValue({ Authorization: "Bearer token" });
 
@@ -30,7 +31,7 @@ describe("userService", () => {
     });
 
     it("throws if the response is not ok", async () => {
-      const authManager = new AuthManager();
+      const authManager = new AuthManager(authManagerOptions);
 
       vi.spyOn(authManager, "authHeader").mockReturnValue({ Authorization: "Bearer token" });
       mockFetch.mockResolvedValueOnce({ ok: false, statusText: "Unauthorized" });

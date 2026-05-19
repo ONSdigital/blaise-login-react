@@ -28,13 +28,20 @@ vi.mock("./RenderAuthenticatedContent", () => ({
 }));
 
 describe("AuthUserHandler", () => {
+  const authProps = { sessionKey: "blaise-user-ons-blaise-v2-dev-ben1" };
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("displays AuthUser when loggedIn is initially false", () => {
     render(
-      <AuthUserHandler title="Handler Title">{() => <div>Secure Content</div>}</AuthUserHandler>,
+      <AuthUserHandler
+        {...authProps}
+        title="Handler Title"
+      >
+        {() => <div>Secure Content</div>}
+      </AuthUserHandler>,
     );
 
     expect(screen.getByTestId("authenticate-user")).toBeInTheDocument();
@@ -45,7 +52,10 @@ describe("AuthUserHandler", () => {
     const user = userEvent.setup();
 
     render(
-      <AuthUserHandler title="Handler Title">
+      <AuthUserHandler
+        {...authProps}
+        title="Handler Title"
+      >
         {(user) => <div data-testid="secure-content">Secure Content for {user.name}</div>}
       </AuthUserHandler>,
     );

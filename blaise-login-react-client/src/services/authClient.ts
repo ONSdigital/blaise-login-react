@@ -1,11 +1,12 @@
 import { AuthManager } from "./authManager";
 import { getCurrentUser } from "./user";
 
+import type { AuthManagerOptions } from "./authManager";
 import type { User } from "../types/user.types";
 
 export class AuthClient extends AuthManager {
-  constructor() {
-    super();
+  constructor(options: AuthManagerOptions) {
+    super(options);
   }
 
   public logOut = (setLoggedIn: (loggedIn: boolean) => void): void => {

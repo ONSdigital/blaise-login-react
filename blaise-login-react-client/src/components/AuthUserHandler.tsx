@@ -9,13 +9,23 @@ import type { User } from "../types/user.types";
 
 interface AuthUserHandlerProps {
   title: string;
+  sessionKey: string;
+  cookieDomain?: string;
   children: (user: User, loggedIn: boolean, logOutFunction: () => void) => React.ReactNode;
 }
 
-export default function AuthUserHandler({ title, children }: AuthUserHandlerProps): ReactElement {
+export default function AuthUserHandler({
+  title,
+  sessionKey,
+  cookieDomain,
+  children,
+}: AuthUserHandlerProps): ReactElement {
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const authClient = useMemo(() => new AuthClient(), []);
+  const authClient = useMemo(
+    () => new AuthClient({ sessionKey, cookieDomain }),
+    [cookieDomain, sessionKey],
+  );
 
   return (
     <>

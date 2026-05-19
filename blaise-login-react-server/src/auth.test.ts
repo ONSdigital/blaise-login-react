@@ -19,6 +19,7 @@ import type { NextFunction, Request, Response } from "express";
 const mockConfig: AuthConfig = {
   SessionSecret: "super-secret-test-key",
   SessionTimeout: "1h",
+  TokenIssuer: "ons-blaise-v2-test",
   Roles: ["DST", "Admin"],
   BlaiseApiUrl: "localhost:80",
 };
@@ -35,12 +36,16 @@ describe("Auth", () => {
     it("should generate a valid JWT containing the user payload", () => {
       const mockUser = { name: "Bob", role: "DST", serverParks: [], defaultServerPark: "" };
       const token = auth.SignToken(mockUser);
-      const decoded = jwt.verify(token, mockConfig.SessionSecret) as unknown as {
+      const decoded = jwt.verify(token, mockConfig.SessionSecret, {
+        issuer: mockConfig.TokenIssuer,
+      }) as unknown as {
         user: User;
+        iss: string;
         exp: number;
       };
 
       expect(decoded.user).toEqual(mockUser);
+      expect(decoded.iss).toBe(mockConfig.TokenIssuer);
       expect(decoded.exp).toBeDefined();
     });
   });
@@ -55,13 +60,33 @@ describe("Auth", () => {
     });
 
     it("should return false if the token is valid but the user lacks a valid role", () => {
-      const token = jwt.sign({ user: { role: "UnauthorizedRole" } }, mockConfig.SessionSecret);
+      const token = jwt.sign({ user: { role: "UnauthorizedRole" } }, mockConfig.SessionSecret, {
+        issuer: mockConfig.TokenIssuer,
+      });
+
+      expect(auth.ValidateToken(token)).toBe(false);
+    });
+
+    it("should return false if the token issuer does not match", () => {
+      const token = jwt.sign({ user: { role: "DST" } }, mockConfig.SessionSecret, {
+        issuer: "ons-blaise-v2-other",
+      });
+
+      expect(auth.ValidateToken(token)).toBe(false);
+    });
+
+    it("should return false if a verified token does not contain a user payload", () => {
+      const token = jwt.sign({ completelyDifferentData: true }, mockConfig.SessionSecret, {
+        issuer: mockConfig.TokenIssuer,
+      });
 
       expect(auth.ValidateToken(token)).toBe(false);
     });
 
     it("should return true if the token is valid and user has a valid role", () => {
-      const token = jwt.sign({ user: { role: "DST" } }, mockConfig.SessionSecret);
+      const token = jwt.sign({ user: { role: "DST" } }, mockConfig.SessionSecret, {
+        issuer: mockConfig.TokenIssuer,
+      });
 
       expect(auth.ValidateToken(token)).toBe(true);
     });
@@ -118,7 +143,9 @@ describe("Auth", () => {
         serverParks: ["park1"],
         defaultServerPark: "park1",
       };
-      const token = jwt.sign({ user: expectedUser }, mockConfig.SessionSecret);
+      const token = jwt.sign({ user: expectedUser }, mockConfig.SessionSecret, {
+        issuer: mockConfig.TokenIssuer,
+      });
 
       const user = auth.GetUser(token);
 
@@ -126,8 +153,33 @@ describe("Auth", () => {
       expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
+    it("should return a fallback user if the token issuer does not match", () => {
+      const token = jwt.sign(
+        { user: { name: "Alice", role: "DST", serverParks: [], defaultServerPark: "" } },
+        mockConfig.SessionSecret,
+        { issuer: "ons-blaise-v2-other" },
+      );
+
+      const user = auth.GetUser(token);
+
+      expect(user).toEqual({ name: "", role: "", serverParks: [], defaultServerPark: "" });
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Must provide a valid token to get a user");
+    });
+
     it("should return a fallback user if the token is valid but completely missing the 'user' payload", () => {
-      const token = jwt.sign({ completelyDifferentData: true }, mockConfig.SessionSecret);
+      const token = jwt.sign({ completelyDifferentData: true }, mockConfig.SessionSecret, {
+        issuer: mockConfig.TokenIssuer,
+      });
+
+      const user = auth.GetUser(token);
+
+      expect(user).toEqual({ name: "", role: "", serverParks: [], defaultServerPark: "" });
+    });
+
+    it("should return a fallback user if the token contains a falsy user payload", () => {
+      const token = jwt.sign({ user: null }, mockConfig.SessionSecret, {
+        issuer: mockConfig.TokenIssuer,
+      });
 
       const user = auth.GetUser(token);
 
@@ -183,6 +235,7 @@ describe("Auth", () => {
       const validToken = jwt.sign(
         { user: { name: "AdminUser", role: "Admin" } },
         mockConfig.SessionSecret,
+        { issuer: mockConfig.TokenIssuer },
       );
 
       (mockRequest.get as Mock).mockReturnValue(validToken);
@@ -207,6 +260,7 @@ describe("Auth", () => {
       const validToken = jwt.sign(
         { user: { name: "AdminUser", role: "Admin" } },
         mockConfig.SessionSecret,
+        { issuer: mockConfig.TokenIssuer },
       );
 
       (mockRequest.get as Mock).mockReturnValue(validToken);
@@ -225,7 +279,9 @@ describe("Auth", () => {
     });
 
     it("should fallback to 'Unknown User' in audit logs if token is valid but missing a name", async () => {
-      const validToken = jwt.sign({ user: { role: "Admin", name: "" } }, mockConfig.SessionSecret);
+      const validToken = jwt.sign({ user: { role: "Admin", name: "" } }, mockConfig.SessionSecret, {
+        issuer: mockConfig.TokenIssuer,
+      });
 
       (mockRequest.get as Mock).mockReturnValue(validToken);
 

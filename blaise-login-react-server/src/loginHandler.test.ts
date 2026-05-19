@@ -12,6 +12,7 @@ import type { BlaiseApiClient, User } from "blaise-api-node-client";
 const config: AuthConfig = {
   SessionSecret: "fake-secret",
   SessionTimeout: "10m",
+  TokenIssuer: "ons-blaise-v2-test",
   Roles: ["DST", "BDSS", "TO Manager"],
   BlaiseApiUrl: "localhost:80",
 };
@@ -137,6 +138,13 @@ describe("LoginHandler", () => {
       });
     });
 
+    it("should return a 403 if the token is missing or invalid", async () => {
+      const response = await request.get("/api/login/current-user");
+
+      expect(response.status).toEqual(403);
+      expect(response.body).toEqual({ error: "Not authorized" });
+    });
+
     it("should return a 500 if an error occurs parsing the token", async () => {
       vi.spyOn(auth, "GetToken").mockImplementation(() => {
         throw new Error("Token extraction failed");
@@ -169,7 +177,9 @@ describe("LoginHandler", () => {
       expect(mockBlaiseApiClient.validatePassword).toHaveBeenCalledWith("Jake", "2342388");
       expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("Jake");
 
-      const decodedJwt = jwt.verify(response.body.token, config.SessionSecret) as { user: User };
+      const decodedJwt = jwt.verify(response.body.token, config.SessionSecret, {
+        issuer: config.TokenIssuer,
+      }) as { user: User };
 
       expect(decodedJwt.user).toEqual(user);
     });
@@ -295,7 +305,9 @@ describe("LoginHandler", () => {
 
     describe("with a valid token but invalid role", () => {
       it("should return a 403", async () => {
-        const token = jwt.sign({ user: { role: "TO Interviewer" } }, config.SessionSecret);
+        const token = jwt.sign({ user: { role: "TO Interviewer" } }, config.SessionSecret, {
+          issuer: config.TokenIssuer,
+        });
         const response = await request
           .post("/api/login/token/validate")
           .send({ token })
@@ -307,7 +319,9 @@ describe("LoginHandler", () => {
 
     describe("with a valid token and role", () => {
       it("should return a 200", async () => {
-        const token = jwt.sign({ user: { role: "DST" } }, config.SessionSecret);
+        const token = jwt.sign({ user: { role: "DST" } }, config.SessionSecret, {
+          issuer: config.TokenIssuer,
+        });
         const response = await request
           .post("/api/login/token/validate")
           .send({ token })
@@ -317,12 +331,28 @@ describe("LoginHandler", () => {
       });
     });
 
+    describe("with a token from another environment", () => {
+      it("should return a 403", async () => {
+        const token = jwt.sign({ user: { role: "DST" } }, config.SessionSecret, {
+          issuer: "ons-blaise-v2-other",
+        });
+        const response = await request
+          .post("/api/login/token/validate")
+          .send({ token })
+          .set("Content-Type", "application/json");
+
+        expect(response.status).toEqual(403);
+      });
+    });
+
     describe("when an unexpected error occurs", () => {
       it("should return a 500", async () => {
         vi.spyOn(auth, "ValidateToken").mockImplementation(() => {
           throw new Error("Unexpected auth failure");
         });
-        const token = jwt.sign({ user: { role: "DST" } }, config.SessionSecret);
+        const token = jwt.sign({ user: { role: "DST" } }, config.SessionSecret, {
+          issuer: config.TokenIssuer,
+        });
         const response = await request
           .post("/api/login/token/validate")
           .send({ token })
@@ -345,7 +375,20 @@ describe("LoginHandler", () => {
 
     describe("with an invalid jwt auth header", () => {
       it("should return a 403", async () => {
-        const token = jwt.sign({ user: { role: "TO Interviewer" } }, config.SessionSecret);
+        const token = jwt.sign({ user: { role: "TO Interviewer" } }, config.SessionSecret, {
+          issuer: config.TokenIssuer,
+        });
+        const response = await request.get("/authtest").set("authorization", token);
+
+        expect(response.status).toEqual(403);
+      });
+    });
+
+    describe("with a token from another environment", () => {
+      it("should return a 403", async () => {
+        const token = jwt.sign({ user: { role: "DST" } }, config.SessionSecret, {
+          issuer: "ons-blaise-v2-other",
+        });
         const response = await request.get("/authtest").set("authorization", token);
 
         expect(response.status).toEqual(403);
@@ -354,7 +397,12 @@ describe("LoginHandler", () => {
 
     describe("with a valid jwt auth header", () => {
       it("should enter the wrapped function", async () => {
-        const token = jwt.sign({ user: { name: "Benny", role: "DST" } }, config.SessionSecret);
+        const token = auth.SignToken({
+          name: "Benny",
+          role: "DST",
+          serverParks: [],
+          defaultServerPark: "",
+        } as unknown as User);
         const response = await request.get("/authtest").set("Authorization", token);
 
         expect(response.status).toEqual(200);
@@ -375,7 +423,12 @@ describe("LoginHandler", () => {
 
       it("should log message blanking out password", async () => {
         const body = { username: "Benny", password: "super secret" };
-        const token = jwt.sign({ user: { name: "Benny", role: "DST" } }, config.SessionSecret);
+        const token = auth.SignToken({
+          name: "Benny",
+          role: "DST",
+          serverParks: [],
+          defaultServerPark: "",
+        } as unknown as User);
 
         const response = await request.get("/authtest").send(body).set("Authorization", token);
 
@@ -390,7 +443,12 @@ describe("LoginHandler", () => {
 
       it("should log message with both username and role", async () => {
         const body = { username: "Benny", role: "super role" };
-        const token = jwt.sign({ user: { name: "Benny", role: "DST" } }, config.SessionSecret);
+        const token = auth.SignToken({
+          name: "Benny",
+          role: "DST",
+          serverParks: [],
+          defaultServerPark: "",
+        } as unknown as User);
 
         const response = await request.get("/authtest").send(body).set("Authorization", token);
 
@@ -431,10 +489,12 @@ describe("LoginHandler", () => {
     it("GetCurrentUser should extract the first item if token is an array", async () => {
       mockReq = {};
       vi.spyOn(auth, "GetToken").mockReturnValue(["array-token"] as unknown as string);
+      vi.spyOn(auth, "ValidateToken").mockReturnValue(true);
       vi.spyOn(auth, "GetUser").mockReturnValue({ name: "ArrayUser" } as unknown as User);
 
       await directHandler.GetCurrentUser(mockReq as Request, mockRes as ExpressResponse);
 
+      expect(auth.ValidateToken).toHaveBeenCalledWith("array-token");
       expect(auth.GetUser).toHaveBeenCalledWith("array-token");
       expect(mockRes.json).toHaveBeenCalledWith({ name: "ArrayUser" });
     });

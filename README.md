@@ -29,6 +29,7 @@ const blaiseApiClient = new BlaiseApiClient("http://localhost:8081");
 const config: AuthConfig = {
   SessionSecret: process.env.SESSION_SECRET || "fallback-secret",
   SessionTimeout: "12h",
+  TokenIssuer: process.env.PROJECT_ID || "ons-blaise-v2-local",
   Roles: ["DST", "Admin"],
   BlaiseApiUrl: "http://localhost:8081",
 };
@@ -52,13 +53,24 @@ The client module provides the `<Authenticate>` React component. By wrapping thi
 
 ```typescript
 import { ReactElement } from "react";
-import { Authenticate } from "blaise-login-react/blaise-login-react-client";
+import {
+  Authenticate,
+  createSessionKey,
+  normaliseCookieDomain,
+} from "blaise-login-react/blaise-login-react-client";
 import LayoutTemplate from "./Common/components/LayoutTemplate";
 import AppRoutes from "./Common/components/AppRoutes";
 
+const projectId = window.appConfig.projectId;
+const urlDomain = window.appConfig.urlDomain;
+
 export default function App(): ReactElement {
   return (
-    <Authenticate title="Blaise Editing Service">
+    <Authenticate
+      title="Blaise Editing Service"
+      sessionKey={createSessionKey(projectId)}
+      cookieDomain={normaliseCookieDomain(urlDomain)}
+    >
       {(user, loggedIn, logOutFunction) => (
         <LayoutTemplate showSignOutButton={loggedIn} signOut={() => logOutFunction()}>
           <AppRoutes user={user} />
@@ -84,9 +96,19 @@ logOutFunction | Function | A callable utility function to assign to a "Sign Out
 Once authenticated, you can use the `AuthManager` utility to automatically append the user's JWT token to downstream API requests to hit your protected server endpoints.
 
 ```typescript
-import { AuthManager } from "blaise-login-react/blaise-login-react-client";
+import {
+  AuthManager,
+  createSessionKey,
+  normaliseCookieDomain,
+} from "blaise-login-react/blaise-login-react-client";
 
-const authManager = new AuthManager();
+const projectId = window.appConfig.projectId;
+const urlDomain = window.appConfig.urlDomain;
+
+const authManager = new AuthManager({
+  sessionKey: createSessionKey(projectId),
+  cookieDomain: normaliseCookieDomain(urlDomain),
+});
 
 export async function fetchProtectedData() {
   const response = await fetch("/my-protected-endpoint", {
@@ -100,6 +122,33 @@ export async function fetchProtectedData() {
 
   return await response.json();
 }
+```
+
+If you omit `cookieDomain`, the session stays scoped to the current host and will not be shared with sibling subdomains.
+
+### Shared Sign-On Across Services
+
+To support single sign-on across sibling UIs in the same environment, configure the library with one shared session scope per environment.
+
+- Every UI in the same environment must use the same `sessionKey`.
+- Every UI that should share login across sibling subdomains must use the same `cookieDomain`.
+- Every backend in the same environment must use the same `SessionSecret` and `TokenIssuer`.
+- Each service should keep its own `Roles` list so authentication can be shared while authorization stays service-specific.
+
+A good pattern is to use your environment identifier, such as `PROJECT_ID`, for `TokenIssuer` and to derive `sessionKey` with `createSessionKey(PROJECT_ID)`. Use your shared DNS suffix, such as `.social-surveys.gcp.onsdigital.uk`, for `cookieDomain`.
+
+Use different `SessionSecret`, `TokenIssuer`, and `sessionKey` values for each environment so that tokens from one environment are rejected by another.
+
+Deployed services should fail fast if `SessionSecret` is missing. Do not generate a random fallback secret outside local development, or sibling services will stop trusting each other's tokens after a restart.
+
+```typescript
+import { createSessionKey, normaliseCookieDomain } from "blaise-login-react/blaise-login-react-client";
+
+const sharedSessionKey = createSessionKey("ons-blaise-v2-dev-ben1");
+const sharedCookieDomain = normaliseCookieDomain(".social-surveys.gcp.onsdigital.uk");
+
+// every dev-ben1 UI should use these same values
+// every dev-ben1 backend should also share SessionSecret and TokenIssuer
 ```
 
 ## 🧪 Testing & Mocking

@@ -13,7 +13,10 @@ describe("AuthClient - getLoggedInUser", () => {
   let sut: AuthClient;
 
   beforeEach(() => {
-    sut = new AuthClient();
+    sut = new AuthClient({
+      sessionKey: "blaise-user-test",
+      cookieDomain: ".social-surveys.gcp.onsdigital.uk",
+    });
     vi.resetAllMocks();
   });
 
@@ -52,5 +55,10 @@ describe("AuthClient - getLoggedInUser", () => {
 
     expect(clearTokenSpy).toHaveBeenCalled();
     expect(setLoggedIn).toHaveBeenCalledWith(false);
+  });
+
+  it("should expose the inherited session config", () => {
+    expect(sut.sessionKey).toBe("blaise-user-test");
+    expect(sut.cookieDomain).toBe("social-surveys.gcp.onsdigital.uk");
   });
 });

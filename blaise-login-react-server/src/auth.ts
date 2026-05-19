@@ -1,10 +1,14 @@
-import jwt, { type SignOptions } from "jsonwebtoken";
+import jwt, { type JwtPayload, type SignOptions } from "jsonwebtoken";
 
 import { sanitise } from "./sanitise.js";
 
 import type { AuthConfig } from "./auth.types.js";
 import type { User } from "blaise-api-node-client";
 import type { NextFunction, Request, Response } from "express";
+
+interface AuthTokenPayload extends JwtPayload {
+  user?: User;
+}
 
 export class Auth {
   readonly config: AuthConfig;
@@ -13,9 +17,22 @@ export class Auth {
     this.config = config;
   }
 
+  private VerifyToken = (token: string): string | JwtPayload => {
+    return jwt.verify(token, this.config.SessionSecret, {
+      issuer: this.config.TokenIssuer,
+    });
+  };
+
+  private HasUserPayload = (
+    decodedToken: string | JwtPayload,
+  ): decodedToken is AuthTokenPayload & { user: User } => {
+    return typeof decodedToken === "object" && decodedToken !== null && "user" in decodedToken;
+  };
+
   SignToken = (user: User): string => {
     return jwt.sign({ user: user }, this.config.SessionSecret, {
       expiresIn: this.config.SessionTimeout as SignOptions["expiresIn"],
+      issuer: this.config.TokenIssuer,
     });
   };
 
@@ -25,9 +42,9 @@ export class Auth {
     }
 
     try {
-      const decodedToken = jwt.verify(token, this.config.SessionSecret);
+      const decodedToken = this.VerifyToken(token);
 
-      if (typeof decodedToken === "object" && decodedToken !== null && "user" in decodedToken) {
+      if (this.HasUserPayload(decodedToken)) {
         return this.UserHasRole(decodedToken.user as User);
       }
 
@@ -55,9 +72,13 @@ export class Auth {
     }
 
     try {
-      const decodedToken = jwt.verify(token, this.config.SessionSecret) as { user: User };
+      const decodedToken = this.VerifyToken(token);
 
-      return decodedToken?.user || fallbackUser;
+      if (!this.HasUserPayload(decodedToken)) {
+        return fallbackUser;
+      }
+
+      return decodedToken.user || fallbackUser;
     } catch {
       console.error("Must provide a valid token to get a user");
 

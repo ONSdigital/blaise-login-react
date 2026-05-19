@@ -60,6 +60,10 @@ export class LoginHandler {
       const rawToken = this.auth.GetToken(req);
       const token = Array.isArray(rawToken) ? rawToken[0] : (rawToken as string);
 
+      if (!this.auth.ValidateToken(token)) {
+        return res.status(403).json({ error: "Not authorized" });
+      }
+
       const user = this.auth.GetUser(token);
 
       console.log("User from jwt token:", user);

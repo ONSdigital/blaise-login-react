@@ -13,9 +13,16 @@ const { mockLoggedIn, mockGetLoggedInUser } = vi.hoisted(() => {
   };
 });
 
+const authClientConstructorCalls: Array<{ sessionKey: string; cookieDomain?: string }> = [];
+const baseAuthenticateProps = { sessionKey: "blaise-user-ons-blaise-v2-dev-ben1" };
+
 vi.mock("../services/authClient", () => {
   return {
     AuthClient: class {
+      constructor(options: { sessionKey: string; cookieDomain?: string }) {
+        authClientConstructorCalls.push(options);
+      }
+
       loggedIn = mockLoggedIn;
       getLoggedInUser = mockGetLoggedInUser;
     },
@@ -25,6 +32,7 @@ vi.mock("../services/authClient", () => {
 describe("Authenticate", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    authClientConstructorCalls.length = 0;
   });
 
   it("displays login prompt when user is not logged in", async () => {
@@ -32,7 +40,7 @@ describe("Authenticate", () => {
 
     render(
       <BrowserRouter>
-        <Authenticate>{() => <></>}</Authenticate>
+        <Authenticate {...baseAuthenticateProps}>{() => <></>}</Authenticate>
       </BrowserRouter>,
     );
 
@@ -46,7 +54,7 @@ describe("Authenticate", () => {
 
     render(
       <BrowserRouter>
-        <Authenticate>{() => <></>}</Authenticate>
+        <Authenticate {...baseAuthenticateProps}>{() => <></>}</Authenticate>
       </BrowserRouter>,
     );
 
@@ -60,7 +68,12 @@ describe("Authenticate", () => {
 
     render(
       <BrowserRouter>
-        <Authenticate title="This is the title of your application">{() => <></>}</Authenticate>
+        <Authenticate
+          {...baseAuthenticateProps}
+          title="This is the title of your application"
+        >
+          {() => <></>}
+        </Authenticate>
       </BrowserRouter>,
     );
 
@@ -74,7 +87,7 @@ describe("Authenticate", () => {
 
     const { container } = render(
       <BrowserRouter>
-        <Authenticate>{() => <></>}</Authenticate>
+        <Authenticate {...baseAuthenticateProps}>{() => <></>}</Authenticate>
       </BrowserRouter>,
     );
 
@@ -89,7 +102,7 @@ describe("Authenticate", () => {
 
     render(
       <BrowserRouter>
-        <Authenticate>
+        <Authenticate {...baseAuthenticateProps}>
           {(user) => (
             <div data-testid="authenticated">Authenticated content for user {user.name}</div>
           )}
@@ -100,5 +113,27 @@ describe("Authenticate", () => {
     const appView = await screen.findByTestId("authenticated");
 
     expect(appView).toHaveTextContent(`Authenticated content for user ${mockUser.name}`);
+  });
+
+  it("passes the supplied shared session settings to the auth client", async () => {
+    mockLoggedIn.mockResolvedValue(false);
+
+    render(
+      <BrowserRouter>
+        <Authenticate
+          sessionKey="blaise-user-ons-blaise-v2-dev-ben1"
+          cookieDomain=".social-surveys.gcp.onsdigital.uk"
+        >
+          {() => <></>}
+        </Authenticate>
+      </BrowserRouter>,
+    );
+
+    await screen.findByTestId("login-page");
+
+    expect(authClientConstructorCalls).toContainEqual({
+      sessionKey: "blaise-user-ons-blaise-v2-dev-ben1",
+      cookieDomain: ".social-surveys.gcp.onsdigital.uk",
+    });
   });
 });
