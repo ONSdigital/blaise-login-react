@@ -1,16 +1,13 @@
 import { ErrorPanel, type FormField, StyledForm } from "blaise-design-system-react-components";
-import { type ReactElement, useCallback, useState } from "react";
+import { type ReactElement, useState } from "react";
 
 import { authenticateUser } from "../services/user";
 
-import type { AuthManager } from "../services/authManager";
-
 interface LoginFormProps {
-  authManager: AuthManager;
-  setLoggedIn: (loggedIn: boolean) => void;
+  onAuthenticated: (token: string) => Promise<void>;
 }
 
-export function LoginForm({ authManager, setLoggedIn }: LoginFormProps): ReactElement {
+export function LoginForm({ onAuthenticated }: LoginFormProps): ReactElement {
   const [error, setError] = useState<string>("");
 
   const fields: FormField[] = [
@@ -29,34 +26,30 @@ export function LoginForm({ authManager, setLoggedIn }: LoginFormProps): ReactEl
     },
   ];
 
-  const login = useCallback(
-    async (
-      form: Record<string, string>,
-      setSubmitting: (isSubmitting: boolean) => void,
-    ): Promise<void> => {
-      setError("");
+  async function login(
+    form: Record<string, string>,
+    setSubmitting: (isSubmitting: boolean) => void,
+  ): Promise<void> {
+    setError("");
 
-      const loginResult = await authenticateUser(form.Username, form.Password);
+    const loginResult = await authenticateUser(form.Username, form.Password);
 
-      if (!loginResult.authenticated) {
-        if (loginResult.reason === "not-authorized") {
-          setError("You do not have the correct permissions");
-        } else if (loginResult.reason === "request-failed") {
-          setError("Unable to sign in. Please try again.");
-        } else {
-          setError("Incorrect username or password");
-        }
-
-        setSubmitting(false);
-
-        return;
+    if (!loginResult.authenticated) {
+      if (loginResult.reason === "not-authorized") {
+        setError("You do not have the correct permissions");
+      } else if (loginResult.reason === "request-failed") {
+        setError("Unable to sign in. Please try again.");
+      } else {
+        setError("Incorrect username or password");
       }
 
-      authManager.setToken(loginResult.token);
-      setLoggedIn(true);
-    },
-    [authManager, setLoggedIn],
-  );
+      setSubmitting(false);
+
+      return;
+    }
+
+    await onAuthenticated(loginResult.token);
+  }
 
   return (
     <>

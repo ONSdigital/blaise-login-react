@@ -1,7 +1,8 @@
+import type { SignOptions } from "jsonwebtoken";
+
 export interface AuthConfig {
   SessionSecret: string;
-  SessionTimeout: string;
+  SessionTimeout: SignOptions["expiresIn"];
   TokenIssuer: string;
   Roles: string[];
-  BlaiseApiUrl: string;
 }

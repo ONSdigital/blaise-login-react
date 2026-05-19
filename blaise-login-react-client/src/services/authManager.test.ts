@@ -90,19 +90,28 @@ describe("AuthManager", () => {
   });
 
   describe("loggedIn", () => {
-    it("should return false if no token is present", async () => {
-      vi.spyOn(authManager, "getToken").mockReturnValue(null);
-
-      const spy = vi.spyOn(userModule, "validateToken").mockResolvedValue(false);
+    it("should return false if no current user is present", async () => {
+      const spy = vi.spyOn(userModule, "getCurrentUser").mockResolvedValue(null);
 
       const loggedIn = await authManager.loggedIn();
 
       expect(loggedIn).toBe(false);
-      expect(spy).toHaveBeenCalledWith(null);
+      expect(spy).toHaveBeenCalledWith(authManager);
+    });
+
+    it("should return true when the current user is present", async () => {
+      vi.spyOn(userModule, "getCurrentUser").mockResolvedValue({
+        name: "Jake",
+        role: "DST",
+        defaultServerPark: "gusty",
+        serverParks: ["gusty"],
+      });
+
+      await expect(authManager.loggedIn()).resolves.toBe(true);
     });
 
     it("should handle non-error objects in catch", async () => {
-      vi.spyOn(userModule, "validateToken").mockRejectedValue("Random string error");
+      vi.spyOn(userModule, "getCurrentUser").mockRejectedValue("Random string error");
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const loggedIn = await authManager.loggedIn();
@@ -115,8 +124,8 @@ describe("AuthManager", () => {
       consoleSpy.mockRestore();
     });
 
-    it("should catch errors in validateToken and return false", async () => {
-      vi.spyOn(userModule, "validateToken").mockRejectedValue(new Error("API Fail"));
+    it("should catch errors in getCurrentUser and return false", async () => {
+      vi.spyOn(userModule, "getCurrentUser").mockRejectedValue(new Error("API Fail"));
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const loggedIn = await authManager.loggedIn();
@@ -128,7 +137,7 @@ describe("AuthManager", () => {
   });
 
   describe("authHeader", () => {
-    it("should return empty object when no token exists (Line 39)", () => {
+    it("should return empty object when no token exists", () => {
       authManager.clearToken();
 
       expect(authManager.authHeader()).toEqual({});

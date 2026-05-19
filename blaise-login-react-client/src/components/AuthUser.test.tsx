@@ -1,10 +1,10 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import { isValidElement } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import * as asyncHook from "../hooks/useAsyncRequest";
-import { type AuthClient } from "../services/authClient";
-
 import AuthUser from "./AuthUser";
+
+const loginFormProps: Array<{ onAuthenticated: (token: string) => Promise<void> }> = [];
 
 vi.mock("./LayoutTemplate", () => ({
   default: ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -16,27 +16,26 @@ vi.mock("./LayoutTemplate", () => ({
 }));
 
 vi.mock("./LoginForm", () => ({
-  LoginForm: () => <div data-testid="login-form">Login Form</div>,
+  LoginForm: (props: { onAuthenticated: (token: string) => Promise<void> }) => {
+    loginFormProps.push(props);
+
+    return <div data-testid="login-form">Login Form</div>;
+  },
 }));
 
 describe("AuthUser", () => {
-  const mockSetLoggedIn = vi.fn();
-  const mockAuthClient = {
-    loggedIn: vi.fn(),
-  } as unknown as AuthClient;
+  const onAuthenticated = vi.fn().mockResolvedValue(undefined);
 
   beforeEach(() => {
     vi.clearAllMocks();
+    loginFormProps.length = 0;
   });
 
-  it("displays layout and login form when async state is 'succeeded'", () => {
-    vi.spyOn(asyncHook, "useAsyncRequest").mockReturnValue({ state: "succeeded", data: undefined });
-
+  it("displays the layout, prompt, and login form", () => {
     render(
       <AuthUser
         title="Sign In"
-        authClient={mockAuthClient}
-        setLoggedIn={mockSetLoggedIn}
+        onAuthenticated={onAuthenticated}
       />,
     );
 
@@ -44,28 +43,13 @@ describe("AuthUser", () => {
     expect(screen.getByText("Sign In")).toBeInTheDocument();
     expect(screen.getByText("Enter your Blaise username and password")).toBeInTheDocument();
     expect(screen.getByTestId("login-form")).toBeInTheDocument();
+    expect(loginFormProps[0]?.onAuthenticated).toBe(onAuthenticated);
   });
 
-  it("calls checkAuthStatus and updates loggedIn state", async () => {
-    vi.spyOn(asyncHook, "useAsyncRequest").mockImplementation((fn) => {
-      fn();
+  it("returns a valid layout element when called directly", () => {
+    const element = AuthUser({ title: "Sign In", onAuthenticated });
 
-      return { state: "loading" };
-    });
-
-    (mockAuthClient.loggedIn as ReturnType<typeof vi.fn>).mockResolvedValue(true);
-
-    render(
-      <AuthUser
-        title="Sign In"
-        authClient={mockAuthClient}
-        setLoggedIn={mockSetLoggedIn}
-      />,
-    );
-
-    await waitFor(() => {
-      expect(mockAuthClient.loggedIn).toHaveBeenCalled();
-      expect(mockSetLoggedIn).toHaveBeenCalledWith(true);
-    });
+    expect(isValidElement(element)).toBe(true);
+    expect(element.props.title).toBe("Sign In");
   });
 });

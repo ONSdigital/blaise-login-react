@@ -2,8 +2,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { AuthManager } from "../services/authManager";
-
 import { LoginForm } from "./LoginForm";
 
 vi.mock("blaise-design-system-react-components", () => ({
@@ -13,7 +11,7 @@ vi.mock("blaise-design-system-react-components", () => ({
     onSubmitFunction,
     submitLabel,
   }: {
-    fields: Array<{ name: string; id?: string; type: string; initial_value: string }>;
+    fields: Array<{ name: string; id?: string; type: string; initialValue: string }>;
     onSubmitFunction: (
       values: Record<string, string>,
       setSubmitting: (isSubmitting: boolean) => void,
@@ -43,7 +41,7 @@ vi.mock("blaise-design-system-react-components", () => ({
               id={inputId}
               name={field.name}
               type={field.type}
-              defaultValue={field.initial_value}
+              defaultValue={field.initialValue}
             />
           </label>
         );
@@ -54,12 +52,12 @@ vi.mock("blaise-design-system-react-components", () => ({
 }));
 
 describe("LoginForm", () => {
-  const mockSetLoggedIn = vi.fn();
-  const authManager = new AuthManager({ sessionKey: "blaise-user-test" });
+  const onAuthenticated = vi.fn().mockResolvedValue(undefined);
   const mockFetch = vi.fn();
 
   beforeEach(() => {
-    mockSetLoggedIn.mockClear();
+    onAuthenticated.mockClear();
+    onAuthenticated.mockResolvedValue(undefined);
     vi.stubGlobal("fetch", mockFetch);
   });
 
@@ -68,12 +66,7 @@ describe("LoginForm", () => {
   });
 
   it("renders the sign in form", async () => {
-    render(
-      <LoginForm
-        authManager={authManager}
-        setLoggedIn={mockSetLoggedIn}
-      />,
-    );
+    render(<LoginForm onAuthenticated={onAuthenticated} />);
 
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
@@ -89,19 +82,14 @@ describe("LoginForm", () => {
         status: 401,
       });
 
-      render(
-        <LoginForm
-          authManager={authManager}
-          setLoggedIn={mockSetLoggedIn}
-        />,
-      );
+      render(<LoginForm onAuthenticated={onAuthenticated} />);
 
       await user.type(screen.getByLabelText(/username/i), "test");
       await user.type(screen.getByLabelText(/password/i), "password");
       await user.click(screen.getByRole("button", { name: /sign in/i }));
 
       expect(await screen.findByText(/incorrect username or password/i)).toBeVisible();
-      expect(mockSetLoggedIn).not.toHaveBeenCalled();
+      expect(onAuthenticated).not.toHaveBeenCalled();
       expect(mockFetch).toHaveBeenCalledTimes(1);
       expect(mockFetch).toHaveBeenCalledWith("/api/login", {
         method: "POST",
@@ -115,19 +103,14 @@ describe("LoginForm", () => {
 
       mockFetch.mockResolvedValueOnce({ ok: false, status: 403 });
 
-      render(
-        <LoginForm
-          authManager={authManager}
-          setLoggedIn={mockSetLoggedIn}
-        />,
-      );
+      render(<LoginForm onAuthenticated={onAuthenticated} />);
 
       await user.type(screen.getByLabelText(/username/i), "test");
       await user.type(screen.getByLabelText(/password/i), "password");
       await user.click(screen.getByRole("button", { name: /sign in/i }));
 
       expect(await screen.findByText(/do not have the correct permissions/i)).toBeVisible();
-      expect(mockSetLoggedIn).not.toHaveBeenCalled();
+      expect(onAuthenticated).not.toHaveBeenCalled();
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
 
@@ -136,43 +119,30 @@ describe("LoginForm", () => {
 
       mockFetch.mockRejectedValueOnce(new Error("Network failure"));
 
-      render(
-        <LoginForm
-          authManager={authManager}
-          setLoggedIn={mockSetLoggedIn}
-        />,
-      );
+      render(<LoginForm onAuthenticated={onAuthenticated} />);
 
       await user.type(screen.getByLabelText(/username/i), "test");
       await user.type(screen.getByLabelText(/password/i), "password");
       await user.click(screen.getByRole("button", { name: /sign in/i }));
 
       expect(await screen.findByText(/unable to sign in\. please try again\./i)).toBeVisible();
-      expect(mockSetLoggedIn).not.toHaveBeenCalled();
+      expect(onAuthenticated).not.toHaveBeenCalled();
     });
   });
 
   describe("when authentication succeeds", () => {
-    it("calls setLoggedIn(true) after successful login", async () => {
+    it("calls onAuthenticated with the returned token", async () => {
       const user = userEvent.setup();
 
       mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ token: "fake-jwt" }) });
 
-      const setTokenSpy = vi.spyOn(authManager, "setToken").mockImplementation(() => {});
-
-      render(
-        <LoginForm
-          authManager={authManager}
-          setLoggedIn={mockSetLoggedIn}
-        />,
-      );
+      render(<LoginForm onAuthenticated={onAuthenticated} />);
 
       await user.type(screen.getByLabelText(/username/i), "test");
       await user.type(screen.getByLabelText(/password/i), "password");
       await user.click(screen.getByRole("button", { name: /sign in/i }));
 
-      expect(mockSetLoggedIn).toHaveBeenCalledWith(true);
-      expect(setTokenSpy).toHaveBeenCalledWith("fake-jwt");
+      expect(onAuthenticated).toHaveBeenCalledWith("fake-jwt");
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
   });

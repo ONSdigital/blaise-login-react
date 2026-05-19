@@ -9,7 +9,7 @@ vi.mock("./user");
 
 const mockGetCurrentUser = getCurrentUser as Mock;
 
-describe("AuthClient - getLoggedInUser", () => {
+describe("AuthClient", () => {
   let sut: AuthClient;
 
   beforeEach(() => {
@@ -29,32 +29,26 @@ describe("AuthClient - getLoggedInUser", () => {
     expect(mockGetCurrentUser).toHaveBeenCalledWith(sut);
   });
 
-  it("should return an empty user object and log an error if getCurrentUser fails", async () => {
-    const expectedFallbackUser = { name: "", role: "", serverParks: [""], defaultServerPark: "" };
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-    mockGetCurrentUser.mockRejectedValue(new Error("Network failure"));
+  it("should return null when the API reports no logged in user", async () => {
+    mockGetCurrentUser.mockResolvedValue(null);
 
     const user = await sut.getLoggedInUser();
 
-    expect(user).toEqual(expectedFallbackUser);
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "Unable to retrieve logged in user:",
-      expect.any(Error),
-    );
-
-    consoleSpy.mockRestore();
+    expect(user).toBeNull();
   });
 
-  it("should clear the token and set logged in to false when logOut is called", () => {
-    const clearTokenSpy = vi.spyOn(sut, "clearToken");
-    const setLoggedIn = vi.fn();
+  it("should propagate errors from getCurrentUser", async () => {
+    mockGetCurrentUser.mockRejectedValue(new Error("Network failure"));
 
-    sut.logOut(setLoggedIn);
+    await expect(sut.getLoggedInUser()).rejects.toThrow("Network failure");
+  });
+
+  it("should clear the token when logOut is called", () => {
+    const clearTokenSpy = vi.spyOn(sut, "clearToken");
+
+    sut.logOut();
 
     expect(clearTokenSpy).toHaveBeenCalled();
-    expect(setLoggedIn).toHaveBeenCalledWith(false);
   });
 
   it("should expose the inherited session config", () => {

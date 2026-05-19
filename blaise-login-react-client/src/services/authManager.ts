@@ -1,6 +1,6 @@
 import Cookies, { type CookieSetOptions } from "universal-cookie";
 
-import { validateToken } from "./user";
+import { getCurrentUser } from "./user";
 
 const sessionKeyPrefix = "blaise-user";
 
@@ -38,7 +38,7 @@ export function normaliseCookieDomain(cookieDomain: string): string {
 }
 
 export class AuthManager {
-  cookies: Cookies = new Cookies();
+  readonly cookies: Cookies = new Cookies();
   readonly sessionKey: string;
   readonly cookieDomain?: string;
 
@@ -64,7 +64,8 @@ export class AuthManager {
 
   public loggedIn = async (): Promise<boolean> => {
     try {
-      return await validateToken(this.getToken());
+      // Changed: reuse the current-user endpoint so logged-in checks do not require a separate validation request.
+      return (await getCurrentUser(this)) !== null;
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
 

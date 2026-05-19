@@ -1,26 +1,15 @@
 import { AuthManager } from "./authManager";
 import { getCurrentUser } from "./user";
 
-import type { AuthManagerOptions } from "./authManager";
 import type { User } from "../types/user.types";
 
 export class AuthClient extends AuthManager {
-  constructor(options: AuthManagerOptions) {
-    super(options);
-  }
-
-  public logOut = (setLoggedIn: (loggedIn: boolean) => void): void => {
+  public logOut = (): void => {
     this.clearToken();
-    setLoggedIn(false);
   };
 
-  public getLoggedInUser = async (): Promise<User> => {
-    try {
-      return await getCurrentUser(this);
-    } catch (error: unknown) {
-      console.error("Unable to retrieve logged in user:", error);
-
-      return { name: "", role: "", serverParks: [""], defaultServerPark: "" };
-    }
+  // Changed: let current-user failures bubble to the UI so callers can distinguish a real error from a signed-out session.
+  public getLoggedInUser = (): Promise<User | null> => {
+    return getCurrentUser(this);
   };
 }

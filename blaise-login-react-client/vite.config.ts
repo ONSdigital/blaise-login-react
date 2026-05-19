@@ -1,3 +1,4 @@
+import { tmpdir } from "os";
 import { resolve } from "path";
 
 import react from "@vitejs/plugin-react";
@@ -37,8 +38,15 @@ export default defineConfig({
     clearMocks: true,
     coverage: {
       provider: "v8",
-      reporter: ["text", "json", "html"],
+      reporter: ["text"],
+      reportsDirectory: resolve(tmpdir(), `blaise-login-react-client-coverage-${process.pid}`),
       include: ["src/**/*.{ts,tsx}"],
+      thresholds: {
+        branches: 100,
+        functions: 100,
+        lines: 100,
+        statements: 100,
+      },
       exclude: [
         "src/**/*.mock.ts",
         "src/**/*.test.*",

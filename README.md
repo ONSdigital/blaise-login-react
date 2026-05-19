@@ -31,7 +31,6 @@ const config: AuthConfig = {
   SessionTimeout: "12h",
   TokenIssuer: process.env.PROJECT_ID || "ons-blaise-v2-local",
   Roles: ["DST", "Admin"],
-  BlaiseApiUrl: "http://localhost:8081",
 };
 
 const auth = new Auth(config);
@@ -40,7 +39,7 @@ const auth = new Auth(config);
 server.use("/", newLoginHandler(auth, blaiseApiClient));
 
 // use the auth middleware to securely protect specific api routes
-server.get("/my-protected-endpoint", auth.Middleware, async (req: Request, res: Response) => {
+server.get("/my-protected-endpoint", auth.middleware, async (req: Request, res: Response) => {
   res.status(200).json("Hello, securely authenticated world!");
 });
 ```
@@ -228,9 +227,9 @@ yarn lint
 Can also be run for client and server from the root:
 
 ```shell
-yarn build:all
-yarn test:all
-yarn lint:all
+yarn build
+yarn test
+yarn lint
 ```
 
 ### Dependency Management

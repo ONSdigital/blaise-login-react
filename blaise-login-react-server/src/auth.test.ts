@@ -1,28 +1,31 @@
-import jwt from "jsonwebtoken";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  type Mock,
-  type MockInstance,
-  vi,
-} from "vitest";
+import jwt, { type JwtPayload } from "jsonwebtoken";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { Auth } from "./auth.js";
+import { Auth, type AuthenticatedResponseLocals } from "./auth.js";
 
 import type { AuthConfig } from "./auth.types.js";
 import type { User } from "blaise-api-node-client";
 import type { NextFunction, Request, Response } from "express";
 
-const mockConfig: AuthConfig = {
+const mockConfig = {
   SessionSecret: "super-secret-test-key",
   SessionTimeout: "1h",
   TokenIssuer: "ons-blaise-v2-test",
   Roles: ["DST", "Admin"],
-  BlaiseApiUrl: "localhost:80",
-};
+} satisfies AuthConfig;
+
+const allowedUser = {
+  name: "Bob",
+  role: "DST",
+  serverParks: [],
+  defaultServerPark: "",
+} satisfies User;
+
+function hasDecodedUserPayload(
+  decoded: string | JwtPayload,
+): decoded is JwtPayload & { user: User } {
+  return typeof decoded === "object" && decoded !== null && "user" in decoded;
+}
 
 describe("Auth", () => {
   let auth: Auth;
@@ -32,47 +35,50 @@ describe("Auth", () => {
     vi.clearAllMocks();
   });
 
-  describe("SignToken", () => {
+  describe("signToken", () => {
     it("should generate a valid JWT containing the user payload", () => {
-      const mockUser = { name: "Bob", role: "DST", serverParks: [], defaultServerPark: "" };
-      const token = auth.SignToken(mockUser);
+      const token = auth.signToken(allowedUser);
       const decoded = jwt.verify(token, mockConfig.SessionSecret, {
         issuer: mockConfig.TokenIssuer,
-      }) as unknown as {
-        user: User;
-        iss: string;
-        exp: number;
-      };
+      });
 
-      expect(decoded.user).toEqual(mockUser);
+      expect(hasDecodedUserPayload(decoded)).toBe(true);
+
+      if (!hasDecodedUserPayload(decoded)) {
+        throw new Error("Expected a JWT payload with a user");
+      }
+
+      expect(decoded.user).toEqual(allowedUser);
       expect(decoded.iss).toBe(mockConfig.TokenIssuer);
       expect(decoded.exp).toBeDefined();
     });
   });
 
-  describe("ValidateToken", () => {
+  describe("validateToken", () => {
     it("should return false if token is undefined", () => {
-      expect(auth.ValidateToken(undefined)).toBe(false);
+      expect(auth.validateToken(undefined)).toBe(false);
     });
 
     it("should return false if token is invalid or tampered with", () => {
-      expect(auth.ValidateToken("invalid.token.here")).toBe(false);
+      expect(auth.validateToken("invalid.token.here")).toBe(false);
     });
 
     it("should return false if the token is valid but the user lacks a valid role", () => {
-      const token = jwt.sign({ user: { role: "UnauthorizedRole" } }, mockConfig.SessionSecret, {
-        issuer: mockConfig.TokenIssuer,
-      });
+      const token = jwt.sign(
+        { user: { ...allowedUser, role: "UnauthorizedRole" } },
+        mockConfig.SessionSecret,
+        { issuer: mockConfig.TokenIssuer },
+      );
 
-      expect(auth.ValidateToken(token)).toBe(false);
+      expect(auth.validateToken(token)).toBe(false);
     });
 
     it("should return false if the token issuer does not match", () => {
-      const token = jwt.sign({ user: { role: "DST" } }, mockConfig.SessionSecret, {
+      const token = jwt.sign({ user: allowedUser }, mockConfig.SessionSecret, {
         issuer: "ons-blaise-v2-other",
       });
 
-      expect(auth.ValidateToken(token)).toBe(false);
+      expect(auth.validateToken(token)).toBe(false);
     });
 
     it("should return false if a verified token does not contain a user payload", () => {
@@ -80,129 +86,107 @@ describe("Auth", () => {
         issuer: mockConfig.TokenIssuer,
       });
 
-      expect(auth.ValidateToken(token)).toBe(false);
+      expect(auth.validateToken(token)).toBe(false);
     });
 
-    it("should return true if the token is valid and user has a valid role", () => {
+    it("should return false if a verified token contains an incomplete user payload", () => {
       const token = jwt.sign({ user: { role: "DST" } }, mockConfig.SessionSecret, {
         issuer: mockConfig.TokenIssuer,
       });
 
-      expect(auth.ValidateToken(token)).toBe(true);
-    });
-  });
-
-  describe("UserHasRole", () => {
-    it("should return false if user object is malformed or missing role", () => {
-      expect(auth.UserHasRole({} as unknown as User)).toBe(false);
-      expect(auth.UserHasRole(null as unknown as User)).toBe(false);
+      expect(auth.validateToken(token)).toBe(false);
     });
 
-    it("should return false if user role is not in the configured list", () => {
-      const user = { name: "Bob", role: "Guest", serverParks: [], defaultServerPark: "" };
-
-      expect(auth.UserHasRole(user)).toBe(false);
-    });
-
-    it("should return true if user role is in the configured list", () => {
-      const user = { name: "Bob", role: "Admin", serverParks: [], defaultServerPark: "" };
-
-      expect(auth.UserHasRole(user)).toBe(true);
-    });
-  });
-
-  describe("GetUser", () => {
-    let consoleErrorSpy: MockInstance;
-
-    beforeEach(() => {
-      consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    });
-
-    afterEach(() => {
-      consoleErrorSpy.mockRestore();
-    });
-
-    it("should return a fallback user and log an error if token is undefined", () => {
-      const user = auth.GetUser(undefined);
-
-      expect(user).toEqual({ name: "", role: "", serverParks: [], defaultServerPark: "" });
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Must provide a token to get a user");
-    });
-
-    it("should return a fallback user and log an error if token is invalid", () => {
-      const user = auth.GetUser("bad.token");
-
-      expect(user).toEqual({ name: "", role: "", serverParks: [], defaultServerPark: "" });
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Must provide a valid token to get a user");
-    });
-
-    it("should extract and return the user object from a valid token", () => {
-      const expectedUser = {
-        name: "Alice",
-        role: "DST",
-        serverParks: ["park1"],
-        defaultServerPark: "park1",
-      };
-      const token = jwt.sign({ user: expectedUser }, mockConfig.SessionSecret, {
+    it("should return true if the token is valid and user has a valid role", () => {
+      const token = jwt.sign({ user: allowedUser }, mockConfig.SessionSecret, {
         issuer: mockConfig.TokenIssuer,
       });
 
-      const user = auth.GetUser(token);
+      expect(auth.validateToken(token)).toBe(true);
+    });
+  });
 
-      expect(user).toEqual(expectedUser);
-      expect(consoleErrorSpy).not.toHaveBeenCalled();
+  describe("userHasRole", () => {
+    it("should return false if the user is missing or malformed", () => {
+      expect(auth.userHasRole(undefined)).toBe(false);
+      expect(auth.userHasRole(null)).toBe(false);
     });
 
-    it("should return a fallback user if the token issuer does not match", () => {
-      const token = jwt.sign(
-        { user: { name: "Alice", role: "DST", serverParks: [], defaultServerPark: "" } },
-        mockConfig.SessionSecret,
-        { issuer: "ons-blaise-v2-other" },
-      );
-
-      const user = auth.GetUser(token);
-
-      expect(user).toEqual({ name: "", role: "", serverParks: [], defaultServerPark: "" });
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Must provide a valid token to get a user");
+    it("should return false if user role is not in the configured list", () => {
+      expect(auth.userHasRole({ role: "Guest" })).toBe(false);
     });
 
-    it("should return a fallback user if the token is valid but completely missing the 'user' payload", () => {
+    it("should return true if user role is in the configured list", () => {
+      expect(auth.userHasRole({ role: "Admin" })).toBe(true);
+    });
+  });
+
+  describe("getUser", () => {
+    it("should return null if token is undefined", () => {
+      expect(auth.getUser(undefined)).toBeNull();
+    });
+
+    it("should return null if token is invalid", () => {
+      expect(auth.getUser("bad.token")).toBeNull();
+    });
+
+    it("should extract and return the user object from a valid token", () => {
+      const token = jwt.sign({ user: allowedUser }, mockConfig.SessionSecret, {
+        issuer: mockConfig.TokenIssuer,
+      });
+
+      expect(auth.getUser(token)).toEqual(allowedUser);
+    });
+
+    it("should return null if the token issuer does not match", () => {
+      const token = jwt.sign({ user: allowedUser }, mockConfig.SessionSecret, {
+        issuer: "ons-blaise-v2-other",
+      });
+
+      expect(auth.getUser(token)).toBeNull();
+    });
+
+    it("should return null if the token is valid but completely missing the user payload", () => {
       const token = jwt.sign({ completelyDifferentData: true }, mockConfig.SessionSecret, {
         issuer: mockConfig.TokenIssuer,
       });
 
-      const user = auth.GetUser(token);
-
-      expect(user).toEqual({ name: "", role: "", serverParks: [], defaultServerPark: "" });
+      expect(auth.getUser(token)).toBeNull();
     });
 
-    it("should return a fallback user if the token contains a falsy user payload", () => {
-      const token = jwt.sign({ user: null }, mockConfig.SessionSecret, {
+    it("should return null if the token contains a malformed user payload", () => {
+      const token = jwt.sign({ user: { role: "DST" } }, mockConfig.SessionSecret, {
         issuer: mockConfig.TokenIssuer,
       });
 
-      const user = auth.GetUser(token);
+      expect(auth.getUser(token)).toBeNull();
+    });
 
-      expect(user).toEqual({ name: "", role: "", serverParks: [], defaultServerPark: "" });
+    it("should return null if the token user does not have a permitted role", () => {
+      const token = jwt.sign(
+        { user: { ...allowedUser, role: "UnauthorizedRole" } },
+        mockConfig.SessionSecret,
+        { issuer: mockConfig.TokenIssuer },
+      );
+
+      expect(auth.getUser(token)).toBeNull();
     });
   });
 
-  describe("GetToken", () => {
+  describe("getToken", () => {
     it("should return the authorization header from the request", () => {
       const mockRequest = {
         get: vi.fn().mockReturnValue("Bearer my-token"),
       } as unknown as Request;
 
-      const token = auth.GetToken(mockRequest);
-
+      expect(auth.getToken(mockRequest)).toBe("Bearer my-token");
       expect(mockRequest.get).toHaveBeenCalledWith("authorization");
-      expect(token).toBe("Bearer my-token");
     });
   });
 
-  describe("Middleware", () => {
+  describe("middleware", () => {
     let mockRequest: Partial<Request>;
-    let mockResponse: Partial<Response>;
+    let mockResponse: Partial<Response<Record<string, never>, AuthenticatedResponseLocals>>;
     let mockNext: NextFunction;
 
     beforeEach(() => {
@@ -216,36 +200,40 @@ describe("Auth", () => {
       mockResponse = {
         status: vi.fn().mockReturnThis(),
         json: vi.fn(),
-        setHeader: vi.fn(),
+        locals: {},
       };
       mockNext = vi.fn();
     });
 
     it("should return 403 if token validation fails", async () => {
-      (mockRequest.get as Mock).mockReturnValue("bad-token");
+      mockRequest.get = vi.fn().mockReturnValue("bad-token");
 
-      await auth.Middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      await auth.middleware(
+        mockRequest as Request,
+        mockResponse as Response<Record<string, never>, AuthenticatedResponseLocals>,
+        mockNext,
+      );
 
       expect(mockResponse.status).toHaveBeenCalledWith(403);
-      expect(mockResponse.json).toHaveBeenCalled();
+      expect(mockResponse.json).toHaveBeenCalledWith({});
       expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it("should attach user to body and headers, log the audit, and call next() on success", async () => {
-      const validToken = jwt.sign(
-        { user: { name: "AdminUser", role: "Admin" } },
-        mockConfig.SessionSecret,
-        { issuer: mockConfig.TokenIssuer },
-      );
+    it("should attach user to response locals, log the audit, and call next() on success", async () => {
+      const adminUser = { ...allowedUser, name: "AdminUser", role: "Admin" } satisfies User;
 
-      (mockRequest.get as Mock).mockReturnValue(validToken);
+      mockRequest.get = vi.fn().mockReturnValue(auth.signToken(adminUser));
 
       const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
-      await auth.Middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      await auth.middleware(
+        mockRequest as Request,
+        mockResponse as Response<Record<string, never>, AuthenticatedResponseLocals>,
+        mockNext,
+      );
 
-      expect(mockResponse.setHeader).toHaveBeenCalledWith("currentlyloggedinuser", "AdminUser");
-      expect(mockRequest.body.currentlyloggedinuser).toBe("AdminUser");
+      expect(mockResponse.locals?.authenticatedUser).toEqual(adminUser);
+      expect(mockRequest.body).toEqual({});
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining(
           "AUDIT_LOG: AdminUser is making the following request: POST /api/data http://localhost with body: {}",
@@ -256,44 +244,63 @@ describe("Auth", () => {
       consoleSpy.mockRestore();
     });
 
-    it("should sanitise passwords in the audit log payload", async () => {
-      const validToken = jwt.sign(
-        { user: { name: "AdminUser", role: "Admin" } },
-        mockConfig.SessionSecret,
-        { issuer: mockConfig.TokenIssuer },
-      );
-
-      (mockRequest.get as Mock).mockReturnValue(validToken);
-      mockRequest.body = { username: "AdminUser", password: "cleartext-password" };
+    it("should sanitise passwords and tokens in the audit log payload", async () => {
+      mockRequest.get = vi.fn().mockReturnValue(auth.signToken(allowedUser));
+      mockRequest.body = {
+        username: "Bob",
+        password: "cleartext-password",
+        token: "secret-token",
+      };
 
       const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
-      await auth.Middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      await auth.middleware(
+        mockRequest as Request,
+        mockResponse as Response<Record<string, never>, AuthenticatedResponseLocals>,
+        mockNext,
+      );
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('{"username":"AdminUser","password":"***"}'),
+        expect.stringContaining('{"username":"Bob","password":"***","token":"***"}'),
       );
-      expect(mockNext).toHaveBeenCalled();
 
       consoleSpy.mockRestore();
     });
 
-    it("should fallback to 'Unknown User' in audit logs if token is valid but missing a name", async () => {
-      const validToken = jwt.sign({ user: { role: "Admin", name: "" } }, mockConfig.SessionSecret, {
-        issuer: mockConfig.TokenIssuer,
-      });
+    it("should fallback to Unknown User in audit logs when the authenticated user name is blank", async () => {
+      const blankNameUser = { ...allowedUser, name: "" } satisfies User;
 
-      (mockRequest.get as Mock).mockReturnValue(validToken);
+      mockRequest.get = vi.fn().mockReturnValue(auth.signToken(blankNameUser));
 
       const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
-      await auth.Middleware(mockRequest as Request, mockResponse as Response, mockNext);
+      await auth.middleware(
+        mockRequest as Request,
+        mockResponse as Response<Record<string, never>, AuthenticatedResponseLocals>,
+        mockNext,
+      );
 
+      expect(mockResponse.locals?.authenticatedUser).toEqual(blankNameUser);
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining("AUDIT_LOG: Unknown User is making the following request:"),
       );
-      expect(mockResponse.setHeader).not.toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should log an empty audit body when the request body is not an object", async () => {
+      mockRequest.get = vi.fn().mockReturnValue(auth.signToken(allowedUser));
+      mockRequest.body = undefined;
+
+      const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
+
+      await auth.middleware(
+        mockRequest as Request,
+        mockResponse as Response<Record<string, never>, AuthenticatedResponseLocals>,
+        mockNext,
+      );
+
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("with body: {}"));
 
       consoleSpy.mockRestore();
     });

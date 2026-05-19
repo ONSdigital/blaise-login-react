@@ -1,5 +1,4 @@
 import { Footer, Header, NotProductionWarning } from "blaise-design-system-react-components";
-import { useMemo } from "react";
 
 const CONTENT_MIN_HEIGHT = {
   minHeight: "67vh",
@@ -17,7 +16,7 @@ function isDevelopmentEnvironment(): boolean {
 }
 
 export default function LayoutTemplate({ title, children }: LayoutTemplateProps) {
-  const showWarning = useMemo(() => isDevelopmentEnvironment(), []);
+  const showWarning = isDevelopmentEnvironment();
 
   return (
     <div data-testid="login-page">

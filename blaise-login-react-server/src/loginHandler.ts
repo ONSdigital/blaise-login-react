@@ -1,7 +1,7 @@
 import { type BlaiseApiClient } from "blaise-api-node-client";
 import express, { type Request, type Response, type Router } from "express";
 
-import { type Auth } from "./auth.js";
+import { type Auth, type AuthenticatedResponseLocals } from "./auth.js";
 import { sanitise } from "./sanitise.js";
 
 function getStringValue(value: unknown): string | undefined {
@@ -15,14 +15,16 @@ function getStringValue(value: unknown): string | undefined {
 export function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): Router {
   const router = express.Router();
 
-  router.use(express.json());
+  // Changed: apply a small JSON body limit at the router boundary to reduce avoidable request-body abuse.
+  router.use(express.json({ limit: "10kb" }));
 
   const loginHandler = new LoginHandler(auth, blaiseApiClient);
 
-  router.get("/api/login/users/:username", loginHandler.GetUser);
-  router.get("/api/login/current-user", loginHandler.GetCurrentUser);
-  router.post("/api/login", loginHandler.Login);
-  router.post("/api/login/token/validate", loginHandler.ValidateToken);
+  // Changed: protect user lookup routes at registration time so handlers stay focused on their own responsibility.
+  router.get("/api/login/users/:username", auth.middleware, loginHandler.getUser);
+  router.get("/api/login/current-user", auth.middleware, loginHandler.getCurrentUser);
+  router.post("/api/login", loginHandler.login);
+  router.post("/api/login/token/validate", loginHandler.validateToken);
 
   return router;
 }
@@ -34,9 +36,13 @@ export class LoginHandler {
   constructor(auth: Auth, blaiseApiClient: BlaiseApiClient) {
     this.auth = auth;
     this.blaiseApiClient = blaiseApiClient;
+    this.getCurrentUser = this.getCurrentUser.bind(this);
+    this.getUser = this.getUser.bind(this);
+    this.login = this.login.bind(this);
+    this.validateToken = this.validateToken.bind(this);
   }
 
-  GetUser = async (req: Request, res: Response): Promise<Response> => {
+  async getUser(req: Request, res: Response): Promise<Response> {
     try {
       const username = getStringValue(req.params.username);
 
@@ -44,7 +50,6 @@ export class LoginHandler {
         return res.status(400).json({ error: "Username not provided" });
       }
 
-      console.log("Getting user:", sanitise(username));
       const user = await this.blaiseApiClient.getUser(username);
 
       return res.status(200).json(user);
@@ -53,33 +58,25 @@ export class LoginHandler {
 
       return res.status(500).json({ error: "Internal server error" });
     }
-  };
+  }
 
-  GetCurrentUser = async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const rawToken = this.auth.GetToken(req);
-      const token = Array.isArray(rawToken) ? rawToken[0] : (rawToken as string);
+  getCurrentUser(
+    _req: Request,
+    res: Response<unknown, AuthenticatedResponseLocals>,
+  ): Promise<Response> {
+    const authenticatedUser = res.locals.authenticatedUser;
 
-      if (!this.auth.ValidateToken(token)) {
-        return res.status(403).json({ error: "Not authorized" });
-      }
+    if (!authenticatedUser) {
+      console.error("Authenticated route executed without an authenticated user");
 
-      const user = this.auth.GetUser(token);
-
-      console.log("User from jwt token:", user);
-
-      return res.status(200).json(user);
-    } catch (error) {
-      console.error("Error getting current user:", error);
-
-      return res.status(500).json({ error: "Internal server error" });
+      return Promise.resolve(res.status(500).json({ error: "Internal server error" }));
     }
-  };
 
-  Login = async (req: Request, res: Response): Promise<Response> => {
+    return Promise.resolve(res.status(200).json(authenticatedUser));
+  }
+
+  async login(req: Request, res: Response): Promise<Response> {
     try {
-      console.log("Authenticating user");
-
       const username = getStringValue(req.body?.username);
       const password = getStringValue(req.body?.password);
 
@@ -97,19 +94,19 @@ export class LoginHandler {
 
       const user = await this.blaiseApiClient.getUser(username);
 
-      if (!this.auth.UserHasRole(user)) {
+      if (!this.auth.userHasRole(user)) {
         return res.status(403).json({ error: "Not authorized" });
       }
 
-      return res.status(200).json({ token: this.auth.SignToken(user) });
+      return res.status(200).json({ token: this.auth.signToken(user) });
     } catch (error) {
       console.error("Error authenticating user:", error);
 
       return res.status(500).json({ error: "Internal server error" });
     }
-  };
+  }
 
-  ValidateToken = async (req: Request, res: Response): Promise<Response> => {
+  async validateToken(req: Request, res: Response): Promise<Response> {
     try {
       const token = getStringValue(req.body?.token);
 
@@ -117,7 +114,7 @@ export class LoginHandler {
         return res.sendStatus(403);
       }
 
-      if (this.auth.ValidateToken(token)) {
+      if (this.auth.validateToken(token)) {
         return res.sendStatus(200);
       }
 
@@ -127,5 +124,5 @@ export class LoginHandler {
 
       return res.sendStatus(500);
     }
-  };
+  }
 }

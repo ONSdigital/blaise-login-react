@@ -1,4 +1,4 @@
-import jwt, { type JwtPayload, type SignOptions } from "jsonwebtoken";
+import jwt, { type JwtPayload } from "jsonwebtoken";
 
 import { sanitise } from "./sanitise.js";
 
@@ -6,8 +6,47 @@ import type { AuthConfig } from "./auth.types.js";
 import type { User } from "blaise-api-node-client";
 import type { NextFunction, Request, Response } from "express";
 
+interface AuthenticatedResponseLocals {
+  authenticatedUser?: User;
+}
+
 interface AuthTokenPayload extends JwtPayload {
-  user?: User;
+  user: User;
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+function isUser(value: unknown): value is User {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const candidate = value as Record<string, unknown>;
+
+  return (
+    typeof candidate.name === "string" &&
+    typeof candidate.role === "string" &&
+    typeof candidate.defaultServerPark === "string" &&
+    isStringArray(candidate.serverParks)
+  );
+}
+
+function redactAuditBody(body: unknown): string {
+  if (typeof body !== "object" || body === null || Array.isArray(body)) {
+    return JSON.stringify({});
+  }
+
+  const auditBody = { ...body } as Record<string, unknown>;
+
+  for (const key of ["password", "token", "authorization"]) {
+    if (key in auditBody) {
+      auditBody[key] = "***";
+    }
+  }
+
+  return JSON.stringify(auditBody);
 }
 
 export class Auth {
@@ -15,119 +54,81 @@ export class Auth {
 
   constructor(config: AuthConfig) {
     this.config = config;
+    this.middleware = this.middleware.bind(this);
   }
 
-  private VerifyToken = (token: string): string | JwtPayload => {
+  private verifyToken(token: string): string | JwtPayload {
     return jwt.verify(token, this.config.SessionSecret, {
       issuer: this.config.TokenIssuer,
     });
-  };
+  }
 
-  private HasUserPayload = (
-    decodedToken: string | JwtPayload,
-  ): decodedToken is AuthTokenPayload & { user: User } => {
-    return typeof decodedToken === "object" && decodedToken !== null && "user" in decodedToken;
-  };
+  private hasUserPayload(decodedToken: string | JwtPayload): decodedToken is AuthTokenPayload {
+    return typeof decodedToken === "object" && decodedToken !== null && isUser(decodedToken.user);
+  }
 
-  SignToken = (user: User): string => {
+  signToken(user: User): string {
     return jwt.sign({ user: user }, this.config.SessionSecret, {
-      expiresIn: this.config.SessionTimeout as SignOptions["expiresIn"],
+      expiresIn: this.config.SessionTimeout,
       issuer: this.config.TokenIssuer,
     });
-  };
+  }
 
-  ValidateToken = (token: string | undefined): boolean => {
+  validateToken(token: string | undefined): boolean {
+    return this.getUser(token) !== null;
+  }
+
+  userHasRole(user: Pick<User, "role"> | null | undefined): boolean {
+    return typeof user?.role === "string" && this.config.Roles.includes(user.role);
+  }
+
+  getUser(token: string | undefined): User | null {
     if (!token) {
-      return false;
+      return null;
     }
 
     try {
-      const decodedToken = this.VerifyToken(token);
+      const decodedToken = this.verifyToken(token);
 
-      if (this.HasUserPayload(decodedToken)) {
-        return this.UserHasRole(decodedToken.user as User);
+      if (!this.hasUserPayload(decodedToken) || !this.userHasRole(decodedToken.user)) {
+        return null;
       }
 
-      return false;
+      return decodedToken.user;
     } catch {
-      return false;
+      return null;
     }
-  };
+  }
 
-  UserHasRole = (user: User): boolean => {
-    if (!user || !user.role) {
-      return false;
-    }
-
-    return this.config.Roles.includes(user.role as string);
-  };
-
-  GetUser = (token: string | undefined): User => {
-    const fallbackUser: User = { name: "", role: "", serverParks: [], defaultServerPark: "" };
-
-    if (!token) {
-      console.error("Must provide a token to get a user");
-
-      return fallbackUser;
-    }
-
-    try {
-      const decodedToken = this.VerifyToken(token);
-
-      if (!this.HasUserPayload(decodedToken)) {
-        return fallbackUser;
-      }
-
-      return decodedToken.user || fallbackUser;
-    } catch {
-      console.error("Must provide a valid token to get a user");
-
-      return fallbackUser;
-    }
-  };
-
-  GetToken = (request: Request): string | undefined => {
+  getToken(request: Request): string | undefined {
     return request.get("authorization");
-  };
+  }
 
-  Middleware = async (
+  // Changed: keep authenticated identity in response locals so middleware does not rewrite untrusted request bodies.
+  async middleware(
     request: Request,
-    response: Response,
+    response: Response<Record<string, never>, AuthenticatedResponseLocals>,
     next: NextFunction,
-  ): Promise<Response | void> => {
-    const token = this.GetToken(request);
+  ): Promise<Response | void> {
+    const authenticatedUser = this.getUser(this.getToken(request));
 
-    if (!this.ValidateToken(token)) {
-      return response.status(403).json();
+    if (!authenticatedUser) {
+      return response.status(403).json({});
     }
 
-    const currentlyloggedinuser = this.GetUser(token)?.name || "Unknown User";
-
-    const body = { ...request.body };
-
-    if (body.password) {
-      body.password = "***";
-    }
-
-    const sanitisedBody = JSON.stringify(body);
+    response.locals.authenticatedUser = authenticatedUser;
 
     const referer = sanitise(request.headers.referer, "unknown-referer");
     const safeUrl = sanitise(request.originalUrl, "unknown-url");
     const safeMethod = sanitise(request.method, "unknown-method");
-    const safeUser = sanitise(currentlyloggedinuser, "Unknown User");
+    const safeUser = sanitise(authenticatedUser.name, "Unknown User");
 
     console.log(
-      `AUDIT_LOG: ${safeUser} is making the following request: ${safeMethod} ${safeUrl} ${referer} with body: ${sanitisedBody}`,
+      `AUDIT_LOG: ${safeUser} is making the following request: ${safeMethod} ${safeUrl} ${referer} with body: ${redactAuditBody(request.body)}`,
     );
 
-    if (currentlyloggedinuser !== "Unknown User") {
-      response.setHeader("currentlyloggedinuser", currentlyloggedinuser);
-
-      if (typeof request.body === "object" && request.body !== null) {
-        request.body.currentlyloggedinuser = currentlyloggedinuser;
-      }
-    }
-
     next();
-  };
+  }
 }
+
+export type { AuthenticatedResponseLocals };

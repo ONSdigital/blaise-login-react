@@ -19,40 +19,129 @@ describe("userService", () => {
     it("returns the user details", async () => {
       const authManager = new AuthManager(authManagerOptions);
 
-      vi.spyOn(authManager, "authHeader").mockReturnValue({ Authorization: "Bearer token" });
+      vi.spyOn(authManager, "authHeader").mockReturnValue({ authorization: "Bearer token" });
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          name: "Jake",
+          role: "DST",
+          defaultServerPark: "gusty",
+          serverParks: ["gusty"],
+        }),
+      });
+
+      expect(await getCurrentUser(authManager)).toEqual({
+        name: "Jake",
+        role: "DST",
+        defaultServerPark: "gusty",
+        serverParks: ["gusty"],
+      });
+      expect(mockFetch).toHaveBeenCalledWith("/api/login/current-user", expect.any(Object));
+    });
+
+    it("returns null for a 403 response", async () => {
+      const authManager = new AuthManager(authManagerOptions);
+
+      vi.spyOn(authManager, "authHeader").mockReturnValue({ authorization: "Bearer token" });
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 403, statusText: "Forbidden" });
+
+      await expect(getCurrentUser(authManager)).resolves.toBeNull();
+    });
+
+    it("throws if the response is not ok", async () => {
+      const authManager = new AuthManager(authManagerOptions);
+
+      vi.spyOn(authManager, "authHeader").mockReturnValue({ authorization: "Bearer token" });
+      mockFetch.mockResolvedValueOnce({ ok: false, statusText: "Unauthorized" });
+      await expect(getCurrentUser(authManager)).rejects.toThrow(
+        "Failed to fetch current user: Unauthorized",
+      );
+    });
+
+    it("throws if the response body is malformed", async () => {
+      const authManager = new AuthManager(authManagerOptions);
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ role: "test" }),
       });
 
-      expect(await getCurrentUser(authManager)).toEqual({ role: "test" });
-      expect(mockFetch).toHaveBeenCalledWith("/api/login/current-user", expect.any(Object));
+      await expect(getCurrentUser(authManager)).rejects.toThrow(
+        "Current user response was malformed",
+      );
     });
 
-    it("throws if the response is not ok", async () => {
+    it("throws if the response body is null", async () => {
       const authManager = new AuthManager(authManagerOptions);
 
-      vi.spyOn(authManager, "authHeader").mockReturnValue({ Authorization: "Bearer token" });
-      mockFetch.mockResolvedValueOnce({ ok: false, statusText: "Unauthorized" });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => null,
+      });
+
       await expect(getCurrentUser(authManager)).rejects.toThrow(
-        "Failed to fetch current user: Unauthorized",
+        "Current user response was malformed",
+      );
+    });
+
+    it("throws if the response body has invalid server parks", async () => {
+      const authManager = new AuthManager(authManagerOptions);
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          name: "Jake",
+          role: "DST",
+          defaultServerPark: "gusty",
+          serverParks: [123],
+        }),
+      });
+
+      await expect(getCurrentUser(authManager)).rejects.toThrow(
+        "Current user response was malformed",
       );
     });
   });
 
   describe("getUser", () => {
     it("returns user details on success", async () => {
+      const authManager = new AuthManager(authManagerOptions);
+
+      vi.spyOn(authManager, "authHeader").mockReturnValue({ authorization: "Bearer token" });
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ role: "test" }),
+        json: async () => ({
+          name: "Bob",
+          role: "DST",
+          defaultServerPark: "gusty",
+          serverParks: ["gusty"],
+        }),
       });
 
-      expect(await getUser("bob")).toEqual({ role: "test" });
+      expect(await getUser("bob", authManager)).toEqual({
+        name: "Bob",
+        role: "DST",
+        defaultServerPark: "gusty",
+        serverParks: ["gusty"],
+      });
+      expect(mockFetch).toHaveBeenCalledWith("/api/login/users/bob", {
+        method: "GET",
+        headers: { authorization: "Bearer token" },
+      });
     });
 
     it("returns undefined when the API call fails", async () => {
       mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
+
+      expect(await getUser("bob")).toBeUndefined();
+    });
+
+    it("returns undefined when the response body is malformed", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ role: "test" }),
+      });
 
       expect(await getUser("bob")).toBeUndefined();
     });
@@ -138,6 +227,23 @@ describe("userService", () => {
       spy.mockRestore();
     });
 
+    it("returns request-failed if the login response token is not a string", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ token: 123 }),
+      });
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await authenticateUser("bob", "password");
+
+      expect(result).toEqual({ authenticated: false, reason: "request-failed" });
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining("Login response did not include a token"),
+      );
+
+      spy.mockRestore();
+    });
+
     it("returns request-failed on unexpected HTTP errors", async () => {
       mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
       const spy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -153,6 +259,13 @@ describe("userService", () => {
   });
 
   describe("validateToken", () => {
+    it("returns false when no token is provided", async () => {
+      const result = await validateToken(null);
+
+      expect(result).toBe(false);
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
     it("returns true for a valid token", async () => {
       mockFetch.mockResolvedValueOnce({ ok: true, status: 200 });
 
