@@ -2719,11 +2719,11 @@ __metadata:
 
 "blaise-api-node-client@git+https://github.com/ONSdigital/blaise-api-node-client.git#BLAIS5-5177":
   version: 1.0.0
-  resolution: "blaise-api-node-client@https://github.com/ONSdigital/blaise-api-node-client.git#commit=785840a44de4a275628e9359bfb0a3d5a56903e9"
+  resolution: "blaise-api-node-client@https://github.com/ONSdigital/blaise-api-node-client.git#commit=f458aa6cfa3fe219d942cbd3335c867c8556c897"
   dependencies:
     axios: "npm:^1.16.1"
     blaise-iap-node-provider: "git+https://github.com/ONSdigital/blaise-iap-node-provider.git#BLAIS5-5177"
-  checksum: 10c0/003e106bdd112723e0f70dd02d4c9ddd07bb47a2721d070fc08dbb63a70ef9d49078107d25db677b0c930b44054bbf47730fa880a28543276ba4768b04f94594
+  checksum: 10c0/071b51641e6ff98c7d7e1ee8dc0a5a18eae9bd22dec75c0fd3b27ea9106c9ae6433431a1569444ec27de23712368e121766a55e328a31ba8162c6f18fa536a2c
   languageName: node
   linkType: hard
 
@@ -2743,11 +2743,10 @@ __metadata:
 
 "blaise-iap-node-provider@git+https://github.com/ONSdigital/blaise-iap-node-provider.git#BLAIS5-5177":
   version: 1.0.0
-  resolution: "blaise-iap-node-provider@https://github.com/ONSdigital/blaise-iap-node-provider.git#commit=e0a2736b641194e9b905c1caf5f9b28deeb0f837"
+  resolution: "blaise-iap-node-provider@https://github.com/ONSdigital/blaise-iap-node-provider.git#commit=56d9e0840639f823bc810780bd1eb42f87c99634"
   dependencies:
     google-auth-library: "npm:^10.6.2"
-    jsonwebtoken: "npm:^9.0.3"
-  checksum: 10c0/d50bc412328bc3110f5fdc8ee993fdb60e223c3dfd75f4833e1423d2c468a91ee0ccb832fb3fdb98b2cd051d7956654de366a86b97872a21035ff0fd24493470
+  checksum: 10c0/704f488d394a7f6a92f5455a8b47c3a70da201db6ac066c183ffa2707cc2469cd15096f685405ab91f8e2d9ad641370fd47cdd91fdf734847c9e054939a7d232
   languageName: node
   linkType: hard
 
