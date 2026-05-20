@@ -29,7 +29,7 @@ vi.mock("blaise-design-system-react-components", () => ({
   ),
 }));
 
-vi.mock("./AuthUser", () => ({
+vi.mock("./LoginView", () => ({
   default: ({
     title,
     onAuthenticated,

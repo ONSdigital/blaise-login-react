@@ -3,8 +3,8 @@ import { type ReactElement, type ReactNode, useEffect, useState } from "react";
 
 import { AuthClient } from "../services/authClient";
 
-import AuthUser from "./AuthUser";
 import LayoutTemplate from "./LayoutTemplate";
+import LoginView from "./LoginView";
 
 import type { User } from "../types/user.types";
 
@@ -20,10 +20,6 @@ type AuthState =
   | { state: "error"; message: string }
   | { state: "loading" }
   | { state: "unauthenticated" };
-
-function buildAuthClient(sessionKey: string, cookieDomain?: string): AuthClient {
-  return new AuthClient({ sessionKey, cookieDomain });
-}
 
 function getAuthErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : "Unable to check sign in status";
@@ -45,7 +41,7 @@ export default function AuthUserHandler({
       setAuthState({ state: "loading" });
 
       try {
-        const user = await buildAuthClient(sessionKey, cookieDomain).getLoggedInUser();
+        const user = await new AuthClient({ sessionKey, cookieDomain }).getLoggedInUser();
 
         if (cancelled) {
           return;
@@ -69,7 +65,7 @@ export default function AuthUserHandler({
   }, [cookieDomain, sessionKey]);
 
   async function handleAuthenticated(token: string): Promise<void> {
-    const authClient = buildAuthClient(sessionKey, cookieDomain);
+    const authClient = new AuthClient({ sessionKey, cookieDomain });
 
     authClient.setToken(token);
 
@@ -91,7 +87,7 @@ export default function AuthUserHandler({
   }
 
   function handleLogOut(): void {
-    buildAuthClient(sessionKey, cookieDomain).logOut();
+    new AuthClient({ sessionKey, cookieDomain }).logOut();
     setAuthState({ state: "unauthenticated" });
   }
 
@@ -116,7 +112,7 @@ export default function AuthUserHandler({
   }
 
   return (
-    <AuthUser
+    <LoginView
       title={title}
       onAuthenticated={handleAuthenticated}
     />

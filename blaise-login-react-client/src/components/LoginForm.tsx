@@ -7,40 +7,43 @@ interface LoginFormProps {
   onAuthenticated: (token: string) => Promise<void>;
 }
 
-export function LoginForm({ onAuthenticated }: LoginFormProps): ReactElement {
-  const [error, setError] = useState<string>("");
+const LOGIN_FIELDS = [
+  {
+    name: "Username",
+    id: "username",
+    description: "Your Blaise username",
+    type: "text",
+    initialValue: "",
+  },
+  {
+    name: "Password",
+    description: "Your Blaise password",
+    type: "password",
+    initialValue: "",
+  },
+] satisfies FormField[];
 
-  const fields: FormField[] = [
-    {
-      name: "Username",
-      id: "username",
-      description: "Your Blaise username",
-      type: "text",
-      initialValue: "",
-    },
-    {
-      name: "Password",
-      description: "Your Blaise password",
-      type: "password",
-      initialValue: "",
-    },
-  ];
+export function LoginForm({ onAuthenticated }: LoginFormProps): ReactElement {
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function login(
     form: Record<string, string>,
     setSubmitting: (isSubmitting: boolean) => void,
   ): Promise<void> {
-    setError("");
+    setErrorMessage("");
 
     const loginResult = await authenticateUser(form.Username, form.Password);
 
     if (!loginResult.authenticated) {
-      if (loginResult.reason === "not-authorized") {
-        setError("You do not have the correct permissions");
-      } else if (loginResult.reason === "request-failed") {
-        setError("Unable to sign in. Please try again.");
-      } else {
-        setError("Incorrect username or password");
+      switch (loginResult.reason) {
+        case "not-authorized":
+          setErrorMessage("You do not have the correct permissions");
+          break;
+        case "request-failed":
+          setErrorMessage("Unable to sign in. Please try again.");
+          break;
+        default:
+          setErrorMessage("Incorrect username or password");
       }
 
       setSubmitting(false);
@@ -55,10 +58,10 @@ export function LoginForm({ onAuthenticated }: LoginFormProps): ReactElement {
     <>
       <h1 className="ons-u-mt-m">Sign in</h1>
 
-      {error && <ErrorPanel text={error} />}
+      {errorMessage && <ErrorPanel text={errorMessage} />}
 
       <StyledForm
-        fields={fields}
+        fields={LOGIN_FIELDS}
         onSubmitFunction={login}
         submitLabel="Sign in"
       />

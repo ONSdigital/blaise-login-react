@@ -49,20 +49,19 @@ export class AuthManager {
       : undefined;
   }
 
-  public getToken = (): string | null => {
+  public getToken(): string | null {
     return this.cookies.get(this.sessionKey);
-  };
+  }
 
-  public setToken = (token: string | null): void => {
+  public setToken(token: string | null): void {
     this.cookies.set(this.sessionKey, token, this.cookieSettings());
-  };
+  }
 
-  public clearToken = (): void => {
-    this.setToken(null);
+  public clearToken(): void {
     this.cookies.remove(this.sessionKey, this.cookieSettings());
-  };
+  }
 
-  public loggedIn = async (): Promise<boolean> => {
+  public async loggedIn(): Promise<boolean> {
     try {
       // Changed: reuse the current-user endpoint so logged-in checks do not require a separate validation request.
       return (await getCurrentUser(this)) !== null;
@@ -73,9 +72,9 @@ export class AuthManager {
 
       return false;
     }
-  };
+  }
 
-  public authHeader = (): Record<string, string> => {
+  public authHeader(): Record<string, string> {
     const token = this.getToken();
 
     if (!token) {
@@ -83,11 +82,11 @@ export class AuthManager {
     }
 
     return {
-      authorization: token,
+      authorization: `Bearer ${token}`,
     };
-  };
+  }
 
-  public cookieSettings = (): CookieSetOptions => {
+  public cookieSettings(): CookieSetOptions {
     const secure = typeof window !== "undefined" && window.location.protocol === "https:";
 
     const settings: CookieSetOptions = {
@@ -102,5 +101,5 @@ export class AuthManager {
     }
 
     return settings;
-  };
+  }
 }

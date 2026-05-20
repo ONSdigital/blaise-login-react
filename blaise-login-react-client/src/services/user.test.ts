@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthManager } from "./authManager";
-import { authenticateUser, getCurrentUser, getUser, validateToken } from "./user";
+import { authenticateUser, getCurrentUser } from "./user";
 
 describe("userService", () => {
   const mockFetch = vi.fn();
@@ -102,53 +102,18 @@ describe("userService", () => {
         "Current user response was malformed",
       );
     });
-  });
 
-  describe("getUser", () => {
-    it("returns user details on success", async () => {
+    it("throws if the response body is an array", async () => {
       const authManager = new AuthManager(authManagerOptions);
 
-      vi.spyOn(authManager, "authHeader").mockReturnValue({ authorization: "Bearer token" });
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({
-          name: "Bob",
-          role: "DST",
-          defaultServerPark: "gusty",
-          serverParks: ["gusty"],
-        }),
+        json: async () => ["not", "a", "user"],
       });
 
-      expect(await getUser("bob", authManager)).toEqual({
-        name: "Bob",
-        role: "DST",
-        defaultServerPark: "gusty",
-        serverParks: ["gusty"],
-      });
-      expect(mockFetch).toHaveBeenCalledWith("/api/login/users/bob", {
-        method: "GET",
-        headers: { authorization: "Bearer token" },
-      });
-    });
-
-    it("returns undefined when the API call fails", async () => {
-      mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
-
-      expect(await getUser("bob")).toBeUndefined();
-    });
-
-    it("returns undefined when the response body is malformed", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ role: "test" }),
-      });
-
-      expect(await getUser("bob")).toBeUndefined();
-    });
-
-    it("returns undefined when fetch throws (network error)", async () => {
-      mockFetch.mockRejectedValueOnce(new Error("Network error"));
-      expect(await getUser("bob")).toBeUndefined();
+      await expect(getCurrentUser(authManager)).rejects.toThrow(
+        "Current user response was malformed",
+      );
     });
   });
 
@@ -244,6 +209,23 @@ describe("userService", () => {
       spy.mockRestore();
     });
 
+    it("returns request-failed if the login response body is an array", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ["token"],
+      });
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await authenticateUser("bob", "password");
+
+      expect(result).toEqual({ authenticated: false, reason: "request-failed" });
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining("Login response did not include a token"),
+      );
+
+      spy.mockRestore();
+    });
+
     it("returns request-failed on unexpected HTTP errors", async () => {
       mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
       const spy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -255,38 +237,6 @@ describe("userService", () => {
       expect(spy).toHaveBeenCalledWith(expect.stringContaining("HTTP 500"));
 
       spy.mockRestore();
-    });
-  });
-
-  describe("validateToken", () => {
-    it("returns false when no token is provided", async () => {
-      const result = await validateToken(null);
-
-      expect(result).toBe(false);
-      expect(mockFetch).not.toHaveBeenCalled();
-    });
-
-    it("returns true for a valid token", async () => {
-      mockFetch.mockResolvedValueOnce({ ok: true, status: 200 });
-
-      const result = await validateToken("valid-token");
-
-      expect(result).toBe(true);
-    });
-
-    it("returns false for an invalid token", async () => {
-      mockFetch.mockResolvedValueOnce({ ok: false, status: 403 });
-
-      const result = await validateToken("invalid-token");
-
-      expect(result).toBe(false);
-    });
-
-    it("returns false when fetch throws (network error)", async () => {
-      mockFetch.mockRejectedValueOnce(new Error("Network error"));
-      const result = await validateToken("any-token");
-
-      expect(result).toBe(false);
     });
   });
 });

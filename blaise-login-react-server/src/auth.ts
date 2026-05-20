@@ -14,43 +14,74 @@ interface AuthTokenPayload extends JwtPayload {
   user: User;
 }
 
+const redactedAuditKeys = new Set([
+  "apikey",
+  "api-key",
+  "api_key",
+  "authorization",
+  "cookie",
+  "password",
+  "secret",
+  "session",
+  "set-cookie",
+  "token",
+]);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
 function isUser(value: unknown): value is User {
-  if (typeof value !== "object" || value === null) {
+  if (!isRecord(value)) {
     return false;
   }
 
-  const candidate = value as Record<string, unknown>;
-
   return (
-    typeof candidate.name === "string" &&
-    typeof candidate.role === "string" &&
-    typeof candidate.defaultServerPark === "string" &&
-    isStringArray(candidate.serverParks)
+    typeof value.name === "string" &&
+    typeof value.role === "string" &&
+    typeof value.defaultServerPark === "string" &&
+    isStringArray(value.serverParks)
   );
 }
 
+function redactAuditValue(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map((item) => redactAuditValue(item));
+  }
+
+  if (!isRecord(value)) {
+    return value;
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, entryValue]) => {
+      if (redactedAuditKeys.has(key.toLowerCase())) {
+        return [key, "***"];
+      }
+
+      return [key, redactAuditValue(entryValue)];
+    }),
+  );
+}
+
+function extractToken(authorizationHeader: string | undefined): string | undefined {
+  return authorizationHeader?.replace(/^Bearer\s+/i, "").trim() || undefined;
+}
+
 function redactAuditBody(body: unknown): string {
-  if (typeof body !== "object" || body === null || Array.isArray(body)) {
+  if (!isRecord(body)) {
     return JSON.stringify({});
   }
 
-  const auditBody = { ...body } as Record<string, unknown>;
-
-  for (const key of ["password", "token", "authorization"]) {
-    if (key in auditBody) {
-      auditBody[key] = "***";
-    }
-  }
-
-  return JSON.stringify(auditBody);
+  return JSON.stringify(redactAuditValue(body));
 }
 
 export class Auth {
-  readonly config: AuthConfig;
+  private readonly config: AuthConfig;
 
   constructor(config: AuthConfig) {
     this.config = config;
@@ -65,6 +96,21 @@ export class Auth {
 
   private hasUserPayload(decodedToken: string | JwtPayload): decodedToken is AuthTokenPayload {
     return typeof decodedToken === "object" && decodedToken !== null && isUser(decodedToken.user);
+  }
+
+  private authenticatedUserFor(request: Request): User | null {
+    return this.getUser(this.getToken(request));
+  }
+
+  private logAuthenticatedRequest(request: Request, authenticatedUser: User): void {
+    const referer = sanitise(request.headers.referer, "unknown-referer");
+    const safeUrl = sanitise(request.originalUrl, "unknown-url");
+    const safeMethod = sanitise(request.method, "unknown-method");
+    const safeUser = sanitise(authenticatedUser.name, "Unknown User");
+
+    console.log(
+      `AUDIT_LOG: ${safeUser} is making the following request: ${safeMethod} ${safeUrl} ${referer} with body: ${redactAuditBody(request.body)}`,
+    );
   }
 
   signToken(user: User): string {
@@ -83,12 +129,14 @@ export class Auth {
   }
 
   getUser(token: string | undefined): User | null {
-    if (!token) {
+    const authToken = extractToken(token);
+
+    if (!authToken) {
       return null;
     }
 
     try {
-      const decodedToken = this.verifyToken(token);
+      const decodedToken = this.verifyToken(authToken);
 
       if (!this.hasUserPayload(decodedToken) || !this.userHasRole(decodedToken.user)) {
         return null;
@@ -101,31 +149,23 @@ export class Auth {
   }
 
   getToken(request: Request): string | undefined {
-    return request.get("authorization");
+    return extractToken(request.get("authorization"));
   }
 
   // Changed: keep authenticated identity in response locals so middleware does not rewrite untrusted request bodies.
-  async middleware(
+  middleware(
     request: Request,
     response: Response<Record<string, never>, AuthenticatedResponseLocals>,
     next: NextFunction,
-  ): Promise<Response | void> {
-    const authenticatedUser = this.getUser(this.getToken(request));
+  ): Response | void {
+    const authenticatedUser = this.authenticatedUserFor(request);
 
     if (!authenticatedUser) {
       return response.status(403).json({});
     }
 
     response.locals.authenticatedUser = authenticatedUser;
-
-    const referer = sanitise(request.headers.referer, "unknown-referer");
-    const safeUrl = sanitise(request.originalUrl, "unknown-url");
-    const safeMethod = sanitise(request.method, "unknown-method");
-    const safeUser = sanitise(authenticatedUser.name, "Unknown User");
-
-    console.log(
-      `AUDIT_LOG: ${safeUser} is making the following request: ${safeMethod} ${safeUrl} ${referer} with body: ${redactAuditBody(request.body)}`,
-    );
+    this.logAuthenticatedRequest(request, authenticatedUser);
 
     next();
   }

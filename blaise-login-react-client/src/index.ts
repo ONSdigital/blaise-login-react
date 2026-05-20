@@ -6,7 +6,7 @@ export { AuthClient } from "./services/authClient";
 
 export { AuthManager, createSessionKey, normaliseCookieDomain } from "./services/authManager";
 
-export { authenticateUser, getUser, getCurrentUser, validateToken } from "./services/user";
+export { authenticateUser, getCurrentUser } from "./services/user";
 
 export type { AuthManagerOptions } from "./services/authManager";
 

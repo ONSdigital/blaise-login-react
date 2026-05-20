@@ -1,12 +1,13 @@
 import { Footer, Header, NotProductionWarning } from "blaise-design-system-react-components";
+import { type CSSProperties, type ReactNode } from "react";
 
 const CONTENT_MIN_HEIGHT = {
   minHeight: "67vh",
-};
+} satisfies CSSProperties;
 
 interface LayoutTemplateProps {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 function isDevelopmentEnvironment(): boolean {

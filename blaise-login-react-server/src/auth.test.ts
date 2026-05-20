@@ -27,6 +27,12 @@ function hasDecodedUserPayload(
   return typeof decoded === "object" && decoded !== null && "user" in decoded;
 }
 
+function expectDecodedUserPayload(
+  decoded: string | JwtPayload,
+): asserts decoded is JwtPayload & { user: User } {
+  expect(hasDecodedUserPayload(decoded)).toBe(true);
+}
+
 describe("Auth", () => {
   let auth: Auth;
 
@@ -42,11 +48,7 @@ describe("Auth", () => {
         issuer: mockConfig.TokenIssuer,
       });
 
-      expect(hasDecodedUserPayload(decoded)).toBe(true);
-
-      if (!hasDecodedUserPayload(decoded)) {
-        throw new Error("Expected a JWT payload with a user");
-      }
+      expectDecodedUserPayload(decoded);
 
       expect(decoded.user).toEqual(allowedUser);
       expect(decoded.iss).toBe(mockConfig.TokenIssuer);
@@ -138,6 +140,14 @@ describe("Auth", () => {
       expect(auth.getUser(token)).toEqual(allowedUser);
     });
 
+    it("should extract and return the user object from a bearer token", () => {
+      const token = jwt.sign({ user: allowedUser }, mockConfig.SessionSecret, {
+        issuer: mockConfig.TokenIssuer,
+      });
+
+      expect(auth.getUser(`Bearer ${token}`)).toEqual(allowedUser);
+    });
+
     it("should return null if the token issuer does not match", () => {
       const token = jwt.sign({ user: allowedUser }, mockConfig.SessionSecret, {
         issuer: "ons-blaise-v2-other",
@@ -174,12 +184,21 @@ describe("Auth", () => {
   });
 
   describe("getToken", () => {
-    it("should return the authorization header from the request", () => {
+    it("should return the token from a bearer authorization header", () => {
       const mockRequest = {
         get: vi.fn().mockReturnValue("Bearer my-token"),
       } as unknown as Request;
 
-      expect(auth.getToken(mockRequest)).toBe("Bearer my-token");
+      expect(auth.getToken(mockRequest)).toBe("my-token");
+      expect(mockRequest.get).toHaveBeenCalledWith("authorization");
+    });
+
+    it("should return a raw token unchanged", () => {
+      const mockRequest = {
+        get: vi.fn().mockReturnValue("my-token"),
+      } as unknown as Request;
+
+      expect(auth.getToken(mockRequest)).toBe("my-token");
       expect(mockRequest.get).toHaveBeenCalledWith("authorization");
     });
   });
@@ -267,6 +286,33 @@ describe("Auth", () => {
       consoleSpy.mockRestore();
     });
 
+    it("should recursively sanitise nested secrets in the audit log payload", async () => {
+      mockRequest.get = vi.fn().mockReturnValue(auth.signToken(allowedUser));
+      mockRequest.body = {
+        username: "Bob",
+        nested: {
+          Authorization: "Bearer secret-token",
+          credentials: [{ apiKey: "secret-api-key", username: "Nested User" }],
+        },
+      };
+
+      const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
+
+      await auth.middleware(
+        mockRequest as Request,
+        mockResponse as Response<Record<string, never>, AuthenticatedResponseLocals>,
+        mockNext,
+      );
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          '{"username":"Bob","nested":{"Authorization":"***","credentials":[{"apiKey":"***","username":"Nested User"}]}}',
+        ),
+      );
+
+      consoleSpy.mockRestore();
+    });
+
     it("should fallback to Unknown User in audit logs when the authenticated user name is blank", async () => {
       const blankNameUser = { ...allowedUser, name: "" } satisfies User;
 
@@ -291,6 +337,23 @@ describe("Auth", () => {
     it("should log an empty audit body when the request body is not an object", async () => {
       mockRequest.get = vi.fn().mockReturnValue(auth.signToken(allowedUser));
       mockRequest.body = undefined;
+
+      const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
+
+      await auth.middleware(
+        mockRequest as Request,
+        mockResponse as Response<Record<string, never>, AuthenticatedResponseLocals>,
+        mockNext,
+      );
+
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("with body: {}"));
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should log an empty audit body when the request body is an array", async () => {
+      mockRequest.get = vi.fn().mockReturnValue(auth.signToken(allowedUser));
+      mockRequest.body = ["unexpected", "array"];
 
       const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 

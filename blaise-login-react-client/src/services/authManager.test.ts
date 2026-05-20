@@ -146,7 +146,7 @@ describe("AuthManager", () => {
     it("should return authorization header when token exists", () => {
       authManager.setToken("mock-token");
 
-      expect(authManager.authHeader()).toEqual({ authorization: "mock-token" });
+      expect(authManager.authHeader()).toEqual({ authorization: "Bearer mock-token" });
     });
   });
 

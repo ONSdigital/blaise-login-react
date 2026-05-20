@@ -21,15 +21,30 @@ The server module provides an Express handler and authentication middleware to p
 ```typescript
 import express, { Request, Response } from "express";
 import BlaiseApiClient from "blaise-api-node-client";
-import { Auth, newLoginHandler, type AuthConfig } from "blaise-login-react/blaise-login-react-server";
+import {
+  Auth,
+  newLoginHandler,
+  type AuthConfig,
+} from "blaise-login-react/blaise-login-react-server";
 
 const server = express();
 const blaiseApiClient = new BlaiseApiClient("http://localhost:8081");
 
+const sessionSecret = process.env.SESSION_SECRET;
+const projectId = process.env.PROJECT_ID;
+
+if (!sessionSecret) {
+  throw new Error("SESSION_SECRET must be set");
+}
+
+if (!projectId) {
+  throw new Error("PROJECT_ID must be set");
+}
+
 const config: AuthConfig = {
-  SessionSecret: process.env.SESSION_SECRET || "fallback-secret",
+  SessionSecret: sessionSecret,
   SessionTimeout: "12h",
-  TokenIssuer: process.env.PROJECT_ID || "ons-blaise-v2-local",
+  TokenIssuer: projectId,
   Roles: ["DST", "Admin"],
 };
 
@@ -39,9 +54,13 @@ const auth = new Auth(config);
 server.use("/", newLoginHandler(auth, blaiseApiClient));
 
 // use the auth middleware to securely protect specific api routes
-server.get("/my-protected-endpoint", auth.middleware, async (req: Request, res: Response) => {
-  res.status(200).json("Hello, securely authenticated world!");
-});
+server.get(
+  "/my-protected-endpoint",
+  auth.middleware,
+  async (req: Request, res: Response) => {
+    res.status(200).json("Hello, securely authenticated world!");
+  },
+);
 ```
 
 ### 💻 Client-Side Implementation
@@ -82,13 +101,13 @@ export default function App(): ReactElement {
 
 #### Authenticate Render Props
 
-The component utilizes the "render props" pattern to pass the following authentication state down to your application:
+The component utilises the "render props" pattern to pass the following authentication state down to your application:
 
 | Parameter | Type | Description |
-| --- | --- | --- |
-user | Object | Contains user information properties: `name` (string), `role` (string), `serverParks` (string array), `defaultServerPark` (string). |
-loggedIn | Boolean | Evaluates to `true` if a user is currently authenticated with a valid session token. |
-logOutFunction | Function | A callable utility function to assign to a "Sign Out" button or link. |
+| --- | ---  | --- |
+| user | Object | Contains user information properties: `name` (string), `role` (string), `serverParks` (string array), `defaultServerPark` (string). |
+| loggedIn | Boolean | Evaluates to `true` if a user is currently authenticated with a valid session token. |
+| logOutFunction | Function | A callable utility function to assign to a "Sign Out" button or link. |
 
 #### Downstream API Requests
 
@@ -112,7 +131,7 @@ const authManager = new AuthManager({
 export async function fetchProtectedData() {
   const response = await fetch("/my-protected-endpoint", {
     method: "GET",
-    headers: authManager.authHeader(), 
+    headers: authManager.authHeader(),
   });
 
   if (!response.ok) {
@@ -124,6 +143,10 @@ export async function fetchProtectedData() {
 ```
 
 If you omit `cookieDomain`, the session stays scoped to the current host and will not be shared with sibling subdomains.
+
+#### Security Note: Browser-Readable Token
+
+The current client implementation stores the JWT in a cookie that is readable by browser JavaScript and then forwards that token in the `Authorization` header for protected requests. This is not an HttpOnly session-cookie model.
 
 ### Shared Sign-On Across Services
 
@@ -141,10 +164,15 @@ Use different `SessionSecret`, `TokenIssuer`, and `sessionKey` values for each e
 Deployed services should fail fast if `SessionSecret` is missing. Do not generate a random fallback secret outside local development, or sibling services will stop trusting each other's tokens after a restart.
 
 ```typescript
-import { createSessionKey, normaliseCookieDomain } from "blaise-login-react/blaise-login-react-client";
+import {
+  createSessionKey,
+  normaliseCookieDomain,
+} from "blaise-login-react/blaise-login-react-client";
 
 const sharedSessionKey = createSessionKey("ons-blaise-v2-dev-ben1");
-const sharedCookieDomain = normaliseCookieDomain(".social-surveys.gcp.onsdigital.uk");
+const sharedCookieDomain = normaliseCookieDomain(
+  ".social-surveys.gcp.onsdigital.uk",
+);
 
 // every dev-ben1 UI should use these same values
 // every dev-ben1 backend should also share SessionSecret and TokenIssuer
@@ -152,20 +180,14 @@ const sharedCookieDomain = normaliseCookieDomain(".social-surveys.gcp.onsdigital
 
 ## 🧪 Testing & Mocking
 
-The client module exports a`<MockAuthenticate>` component to simulate user interactions without triggering real network requests. You can instruct it to render in a logged-in or logged-out state.
+The simplest way to test authenticated UI is to mock the auth boundary and return a fixed user.
 
 At the top of your Vitest/Jest file:
 
 ```typescript
 import { vi } from "vitest";
-import { Authenticate } from "blaise-login-react/blaise-login-react-client";
+import type { ReactNode } from "react";
 
-// intercept the real component and replace its render method with the mock
-vi.mock("blaise-login-react/blaise-login-react-client");
-const { MockAuthenticate } = vi.requireActual("blaise-login-react/blaise-login-react-client");
-Authenticate.prototype.render = MockAuthenticate.prototype.render;
-
-// define the simulated user state
 const mockUser = {
   name: "Jake Bullet",
   role: "Manager",
@@ -173,14 +195,14 @@ const mockUser = {
   defaultServerPark: "gusty",
 };
 
-// apply the state before rendering your component in the test
-
-// logged in:
-MockAuthenticate.OverrideReturnValues(mockUser, true); 
-
-// logged out:
-MockAuthenticate.OverrideReturnValues(mockUser, false);
+vi.mock("blaise-login-react/blaise-login-react-client", async () => ({
+  Authenticate: ({ children }: { children: (user: typeof mockUser, loggedIn: boolean, logOutFunction: () => void) => ReactNode }) => (
+    <>{children(mockUser, true, vi.fn())}</>
+  ),
+}));
 ```
+
+That keeps component tests focused on your UI instead of the networked login flow.
 
 ## 🛠️ Development
 

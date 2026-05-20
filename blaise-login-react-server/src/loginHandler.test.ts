@@ -36,6 +36,12 @@ function hasDecodedUserPayload(
   return typeof decoded === "object" && decoded !== null && "user" in decoded;
 }
 
+function expectDecodedUserPayload(
+  decoded: string | JwtPayload,
+): asserts decoded is JwtPayload & { user: User } {
+  expect(hasDecodedUserPayload(decoded)).toBe(true);
+}
+
 function createAuthorisationToken(user: User = allowedUser): string {
   return auth.signToken(user);
 }
@@ -69,78 +75,6 @@ describe("LoginHandler", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-  });
-
-  describe("getUser", () => {
-    it("should return a 403 when the request is not authenticated", async () => {
-      const response = await request.get("/api/login/users/bob");
-
-      expect(response.status).toEqual(403);
-      expect(mockBlaiseApiClient.getUser).not.toHaveBeenCalled();
-    });
-
-    it("should return a 200 and the user details", async () => {
-      mockBlaiseApiClient.getUser.mockResolvedValue(allowedUser);
-
-      const response = await request
-        .get("/api/login/users/bob")
-        .set("authorization", createAuthorisationToken());
-
-      expect(response.status).toEqual(200);
-      expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("bob");
-      expect(response.body).toEqual(allowedUser);
-    });
-
-    it("should return a 400 if the username parameter is invalid", async () => {
-      const handler = new LoginHandler(auth, mockBlaiseApiClient as unknown as BlaiseApiClient);
-
-      const mockReq = {
-        params: { username: [] },
-      } as unknown as Request;
-
-      const mockRes = {
-        status: vi.fn().mockReturnThis(),
-        json: vi.fn().mockReturnThis(),
-      } as unknown as ExpressResponse;
-
-      await handler.getUser(mockReq, mockRes);
-
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: "Username not provided" });
-    });
-
-    it("should return unknown in logs if sanitise is called with a non-string", async () => {
-      const handler = new LoginHandler(auth, mockBlaiseApiClient as unknown as BlaiseApiClient);
-      const apiError = new Error("API Failure");
-
-      mockBlaiseApiClient.getUser.mockRejectedValue(apiError);
-
-      const mockReq = {
-        params: { username: ["valid-string", "poison"] },
-      } as unknown as Request;
-
-      const mockRes = {
-        status: vi.fn().mockReturnThis(),
-        json: vi.fn().mockReturnThis(),
-      } as unknown as ExpressResponse;
-
-      await handler.getUser(mockReq, mockRes);
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Error fetching user:", "unknown", apiError);
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-    });
-
-    it("should return a 500 if the api client throws an error", async () => {
-      mockBlaiseApiClient.getUser.mockRejectedValue(new Error("API Client Error"));
-
-      const response = await request
-        .get("/api/login/users/bob")
-        .set("authorization", createAuthorisationToken());
-
-      expect(response.status).toEqual(500);
-      expect(response.body).toEqual({ error: "Internal server error" });
-      expect(consoleErrorSpy).toHaveBeenCalled();
-    });
   });
 
   describe("getCurrentUser", () => {
@@ -195,11 +129,7 @@ describe("LoginHandler", () => {
         issuer: config.TokenIssuer,
       });
 
-      expect(hasDecodedUserPayload(decodedJwt)).toBe(true);
-
-      if (!hasDecodedUserPayload(decodedJwt)) {
-        throw new Error("Expected a JWT payload with a user");
-      }
+      expectDecodedUserPayload(decodedJwt);
 
       expect(decodedJwt.user).toEqual(allowedUser);
     });
@@ -283,92 +213,21 @@ describe("LoginHandler", () => {
     });
   });
 
-  describe("validateToken", () => {
-    it("should return a 403 when no token is supplied", async () => {
-      const response = await request
-        .post("/api/login/token/validate")
-        .send({})
-        .set("Content-Type", "application/json");
+  describe("removed endpoints", () => {
+    it("should return 404 for the removed direct user lookup endpoint", async () => {
+      const response = await request.get("/api/login/users/bob");
 
-      expect(response.status).toEqual(403);
+      expect(response.status).toEqual(404);
+      expect(mockBlaiseApiClient.getUser).not.toHaveBeenCalled();
     });
 
-    it("should return a 403 for an invalid token", async () => {
+    it("should return 404 for the removed token validation endpoint", async () => {
       const response = await request
         .post("/api/login/token/validate")
-        .send({ token: "not a token and that" })
+        .send({ token: createAuthorisationToken() })
         .set("Content-Type", "application/json");
 
-      expect(response.status).toEqual(403);
-    });
-
-    it("should return a 403 for a token with no role", async () => {
-      const token = jwt.sign(
-        { user: { name: "Jake", serverParks: [], defaultServerPark: "" } },
-        config.SessionSecret,
-        { issuer: config.TokenIssuer },
-      );
-      const response = await request
-        .post("/api/login/token/validate")
-        .send({ token })
-        .set("Content-Type", "application/json");
-
-      expect(response.status).toEqual(403);
-    });
-
-    it("should return a 403 for a token with an invalid role", async () => {
-      const token = jwt.sign(
-        { user: { ...allowedUser, role: "TO Interviewer" } },
-        config.SessionSecret,
-        { issuer: config.TokenIssuer },
-      );
-      const response = await request
-        .post("/api/login/token/validate")
-        .send({ token })
-        .set("Content-Type", "application/json");
-
-      expect(response.status).toEqual(403);
-    });
-
-    it("should return a 200 for a valid token", async () => {
-      const token = jwt.sign({ user: allowedUser }, config.SessionSecret, {
-        issuer: config.TokenIssuer,
-      });
-      const response = await request
-        .post("/api/login/token/validate")
-        .send({ token })
-        .set("Content-Type", "application/json");
-
-      expect(response.status).toEqual(200);
-    });
-
-    it("should return a 403 for a token from another environment", async () => {
-      const token = jwt.sign({ user: allowedUser }, config.SessionSecret, {
-        issuer: "ons-blaise-v2-other",
-      });
-      const response = await request
-        .post("/api/login/token/validate")
-        .send({ token })
-        .set("Content-Type", "application/json");
-
-      expect(response.status).toEqual(403);
-    });
-
-    it("should return a 500 when an unexpected error occurs", async () => {
-      vi.spyOn(auth, "validateToken").mockImplementation(() => {
-        throw new Error("Unexpected auth failure");
-      });
-
-      const token = jwt.sign({ user: allowedUser }, config.SessionSecret, {
-        issuer: config.TokenIssuer,
-      });
-      const response = await request
-        .post("/api/login/token/validate")
-        .send({ token })
-        .set("Content-Type", "application/json");
-
-      expect(response.status).toEqual(500);
-      expect(consoleErrorSpy).toHaveBeenCalled();
+      expect(response.status).toEqual(404);
     });
   });
 
@@ -473,17 +332,7 @@ describe("LoginHandler", () => {
       mockRes = {
         status: vi.fn().mockReturnThis() as unknown as ExpressResponse["status"],
         json: vi.fn() as unknown as ExpressResponse["json"],
-        sendStatus: vi.fn() as unknown as ExpressResponse["sendStatus"],
       };
-    });
-
-    it("getUser should extract the first item if username is an array", async () => {
-      mockReq = { params: { username: ["array-user", "other"] } } as unknown as Request;
-      mockBlaiseApiClient.getUser.mockResolvedValue(allowedUser);
-
-      await directHandler.getUser(mockReq as Request, mockRes as ExpressResponse);
-
-      expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("array-user");
     });
 
     it("getCurrentUser should return the authenticated user from response locals", async () => {
@@ -511,14 +360,22 @@ describe("LoginHandler", () => {
       expect(mockBlaiseApiClient.getUser).toHaveBeenCalledWith("Jake");
     });
 
-    it("validateToken should extract the first item if token is an array", async () => {
-      mockReq = { body: { token: ["array-token"] } };
-      vi.spyOn(auth, "validateToken").mockReturnValue(true);
+    it("login should reject array values whose first item is not a string", async () => {
+      mockReq = {
+        body: {
+          username: [123, "Jake"],
+          password: [false, "2342388"],
+        },
+      };
 
-      await directHandler.validateToken(mockReq as Request, mockRes as ExpressResponse);
+      await directHandler.login(mockReq as Request, mockRes as ExpressResponse);
 
-      expect(auth.validateToken).toHaveBeenCalledWith("array-token");
-      expect(mockRes.sendStatus).toHaveBeenCalledWith(200);
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        error: "Username or password has not been supplied",
+      });
+      expect(mockBlaiseApiClient.validatePassword).not.toHaveBeenCalled();
+      expect(mockBlaiseApiClient.getUser).not.toHaveBeenCalled();
     });
   });
 });

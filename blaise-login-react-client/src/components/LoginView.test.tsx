@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { isValidElement } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import AuthUser from "./AuthUser";
+import LoginView from "./LoginView";
 
 const loginFormProps: Array<{ onAuthenticated: (token: string) => Promise<void> }> = [];
 
@@ -23,7 +23,7 @@ vi.mock("./LoginForm", () => ({
   },
 }));
 
-describe("AuthUser", () => {
+describe("LoginView", () => {
   const onAuthenticated = vi.fn().mockResolvedValue(undefined);
 
   beforeEach(() => {
@@ -33,7 +33,7 @@ describe("AuthUser", () => {
 
   it("displays the layout, prompt, and login form", () => {
     render(
-      <AuthUser
+      <LoginView
         title="Sign In"
         onAuthenticated={onAuthenticated}
       />,
@@ -47,7 +47,7 @@ describe("AuthUser", () => {
   });
 
   it("returns a valid layout element when called directly", () => {
-    const element = AuthUser({ title: "Sign In", onAuthenticated });
+    const element = LoginView({ title: "Sign In", onAuthenticated });
 
     expect(isValidElement(element)).toBe(true);
     expect(element.props.title).toBe("Sign In");
