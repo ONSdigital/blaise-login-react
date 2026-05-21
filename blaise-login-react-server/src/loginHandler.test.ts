@@ -378,4 +378,25 @@ describe("LoginHandler", () => {
       expect(mockBlaiseApiClient.getUser).not.toHaveBeenCalled();
     });
   });
+
+  describe("rate limiting", () => {
+    it("should return 429 after exceeding 10 login attempts within the window", async () => {
+      const rateLimitedApp = newServer();
+      const rateLimitedRequest = supertest(rateLimitedApp);
+      const body = { username: "Jake", password: "wrong-password" };
+
+      mockBlaiseApiClient.validatePassword.mockResolvedValue(false);
+
+      for (let i = 0; i < 10; i++) {
+        const response = await rateLimitedRequest.post("/api/login").send(body);
+
+        expect(response.status).toEqual(401);
+      }
+
+      const response = await rateLimitedRequest.post("/api/login").send(body);
+
+      expect(response.status).toEqual(429);
+      expect(response.body).toEqual({ error: "Too many login attempts, please try again later" });
+    });
+  });
 });

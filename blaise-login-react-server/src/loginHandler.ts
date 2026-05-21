@@ -1,5 +1,6 @@
 import { type BlaiseApiClient } from "blaise-api-node-client";
 import express, { type Request, type Response, type Router } from "express";
+import rateLimit from "express-rate-limit";
 
 import { type Auth, type AuthenticatedResponseLocals } from "./auth.js";
 import { sanitise } from "./sanitise.js";
@@ -18,11 +19,19 @@ export function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): R
   // Changed: apply a small JSON body limit at the router boundary to reduce avoidable request-body abuse.
   router.use(express.json({ limit: "10kb" }));
 
+  const loginRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: { error: "Too many login attempts, please try again later" },
+  });
+
   const loginHandler = new LoginHandler(auth, blaiseApiClient);
 
   // Changed: keep only the live auth flow endpoints used by the client.
   router.get("/api/login/current-user", auth.middleware, loginHandler.getCurrentUser);
-  router.post("/api/login", loginHandler.login);
+  router.post("/api/login", loginRateLimiter, loginHandler.login);
 
   return router;
 }

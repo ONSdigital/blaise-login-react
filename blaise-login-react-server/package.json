@@ -36,6 +36,7 @@
   "dependencies": {
     "blaise-api-node-client": "git+https://github.com/ONSdigital/blaise-api-node-client.git#BLAIS5-5177",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
     "jsonwebtoken": "^9.0.3"
   },
   "devDependencies": {
