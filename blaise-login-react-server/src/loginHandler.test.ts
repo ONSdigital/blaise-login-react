@@ -51,13 +51,6 @@ function newServer(): Express {
   const loginHandler = newLoginHandler(auth, mockBlaiseApiClient as unknown as BlaiseApiClient);
 
   server.use(loginHandler);
-  server.get(
-    "/authtest",
-    auth.middleware,
-    async function (_request: Request, response: ExpressResponse) {
-      response.status(200).json("Hello, world!");
-    },
-  );
 
   return server;
 }
@@ -233,7 +226,7 @@ describe("LoginHandler", () => {
 
   describe("middleware", () => {
     it("should return a 403 with no auth header", async () => {
-      const response = await request.get("/authtest");
+      const response = await request.get("/api/login/current-user");
 
       expect(response.status).toEqual(403);
     });
@@ -244,7 +237,7 @@ describe("LoginHandler", () => {
         config.SessionSecret,
         { issuer: config.TokenIssuer },
       );
-      const response = await request.get("/authtest").set("authorization", token);
+      const response = await request.get("/api/login/current-user").set("authorization", token);
 
       expect(response.status).toEqual(403);
     });
@@ -253,22 +246,18 @@ describe("LoginHandler", () => {
       const token = jwt.sign({ user: allowedUser }, config.SessionSecret, {
         issuer: "ons-blaise-v2-other",
       });
-      const response = await request.get("/authtest").set("authorization", token);
+      const response = await request.get("/api/login/current-user").set("authorization", token);
 
       expect(response.status).toEqual(403);
     });
 
     it("should enter the wrapped function with a valid jwt auth header", async () => {
-      const token = auth.signToken({
-        name: "Benny",
-        role: "DST",
-        serverParks: [],
-        defaultServerPark: "",
-      });
-      const response = await request.get("/authtest").set("Authorization", token);
+      const bennysUser = { name: "Benny", role: "DST", serverParks: [], defaultServerPark: "" };
+      const token = auth.signToken(bennysUser);
+      const response = await request.get("/api/login/current-user").set("Authorization", token);
 
       expect(response.status).toEqual(200);
-      expect(response.body).toEqual("Hello, world!");
+      expect(response.body).toEqual(bennysUser);
     });
 
     describe("Audit Logging", () => {
@@ -291,12 +280,15 @@ describe("LoginHandler", () => {
           defaultServerPark: "",
         });
 
-        const response = await request.get("/authtest").send(body).set("Authorization", token);
+        const response = await request
+          .get("/api/login/current-user")
+          .send(body)
+          .set("Authorization", token);
 
         expect(response.status).toEqual(200);
         expect(consoleSpy).toHaveBeenCalledWith(
           expect.stringContaining(
-            'AUDIT_LOG: Benny is making the following request: GET /authtest unknown-referer with body: {"username":"Benny","password":"***"}',
+            'AUDIT_LOG: Benny is making the following request: GET /api/login/current-user unknown-referer with body: {"username":"Benny","password":"***"}',
           ),
         );
       });
@@ -310,12 +302,15 @@ describe("LoginHandler", () => {
           defaultServerPark: "",
         });
 
-        const response = await request.get("/authtest").send(body).set("Authorization", token);
+        const response = await request
+          .get("/api/login/current-user")
+          .send(body)
+          .set("Authorization", token);
 
         expect(response.status).toEqual(200);
         expect(consoleSpy).toHaveBeenCalledWith(
           expect.stringContaining(
-            'AUDIT_LOG: Benny is making the following request: GET /authtest unknown-referer with body: {"username":"Benny","role":"super role"}',
+            'AUDIT_LOG: Benny is making the following request: GET /api/login/current-user unknown-referer with body: {"username":"Benny","role":"super role"}',
           ),
         );
       });
