@@ -16,7 +16,6 @@ function getStringValue(value: unknown): string | undefined {
 export function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): Router {
   const router = express.Router();
 
-  // Changed: apply a small JSON body limit at the router boundary to reduce avoidable request-body abuse.
   router.use(express.json({ limit: "10kb" }));
 
   const loginRateLimiter = rateLimit({
@@ -27,10 +26,22 @@ export function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): R
     message: { error: "Too many login attempts, please try again later" },
   });
 
+  const currentUserRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: { error: "Too many requests, please try again later" },
+  });
+
   const loginHandler = new LoginHandler(auth, blaiseApiClient);
 
-  // Changed: keep only the live auth flow endpoints used by the client.
-  router.get("/api/login/current-user", auth.middleware, loginHandler.getCurrentUser);
+  router.get(
+    "/api/login/current-user",
+    currentUserRateLimiter,
+    auth.middleware,
+    loginHandler.getCurrentUser,
+  );
   router.post("/api/login", loginRateLimiter, loginHandler.login);
 
   return router;

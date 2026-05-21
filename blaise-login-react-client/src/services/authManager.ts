@@ -63,7 +63,6 @@ export class AuthManager {
 
   public async loggedIn(): Promise<boolean> {
     try {
-      // Changed: reuse the current-user endpoint so logged-in checks do not require a separate validation request.
       return (await getCurrentUser(this)) !== null;
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);

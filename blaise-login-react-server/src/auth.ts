@@ -152,7 +152,6 @@ export class Auth {
     return extractToken(request.get("authorization"));
   }
 
-  // Changed: keep authenticated identity in response locals so middleware does not rewrite untrusted request bodies.
   middleware(
     request: Request,
     response: Response<Record<string, never>, AuthenticatedResponseLocals>,

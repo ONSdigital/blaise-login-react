@@ -155,13 +155,7 @@ To support single sign-on across sibling UIs in the same environment, configure 
 - Every UI in the same environment must use the same `sessionKey`.
 - Every UI that should share login across sibling subdomains must use the same `cookieDomain`.
 - Every backend in the same environment must use the same `SessionSecret` and `TokenIssuer`.
-- Each service should keep its own `Roles` list so authentication can be shared while authorization stays service-specific.
-
-A good pattern is to use your environment identifier, such as `PROJECT_ID`, for `TokenIssuer` and to derive `sessionKey` with `createSessionKey(PROJECT_ID)`. Use your shared DNS suffix, such as `.social-surveys.gcp.onsdigital.uk`, for `cookieDomain`.
-
-Use different `SessionSecret`, `TokenIssuer`, and `sessionKey` values for each environment so that tokens from one environment are rejected by another.
-
-Deployed services should fail fast if `SessionSecret` is missing. Do not generate a random fallback secret outside local development, or sibling services will stop trusting each other's tokens after a restart.
+- Each service should keep its own `Roles` list so authentication can be shared while authorisation stays service-specific.
 
 ```typescript
 import {
@@ -169,13 +163,10 @@ import {
   normaliseCookieDomain,
 } from "blaise-login-react/blaise-login-react-client";
 
-const sharedSessionKey = createSessionKey("ons-blaise-v2-dev-ben1");
+const sharedSessionKey = createSessionKey("ons-blaise-v2-dev-sandbox123");
 const sharedCookieDomain = normaliseCookieDomain(
   ".social-surveys.gcp.onsdigital.uk",
 );
-
-// every dev-ben1 UI should use these same values
-// every dev-ben1 backend should also share SessionSecret and TokenIssuer
 ```
 
 ## 🧪 Testing & Mocking

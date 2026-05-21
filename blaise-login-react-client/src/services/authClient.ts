@@ -8,7 +8,6 @@ export class AuthClient extends AuthManager {
     this.clearToken();
   }
 
-  // Changed: let current-user failures bubble to the UI so callers can distinguish a real error from a signed-out session.
   public getLoggedInUser(): Promise<User | null> {
     return getCurrentUser(this);
   }

@@ -38,7 +38,6 @@ export async function getCurrentUser(authManager: AuthManager): Promise<User | n
     headers: authManager.authHeader(),
   });
 
-  // Changed: treat 403 as an unauthenticated session so callers can use one current-user request for both auth and data.
   if (response.status === 403) {
     return null;
   }

@@ -36,7 +36,6 @@ export default function AuthUserHandler({
   useEffect(() => {
     let cancelled = false;
 
-    // Changed: load the current user once per shared session config so the UI uses one source of truth instead of separate validation and user fetch requests.
     async function loadCurrentUser(): Promise<void> {
       setAuthState({ state: "loading" });
 
