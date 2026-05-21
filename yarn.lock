@@ -2717,11 +2717,11 @@ __metadata:
 
 "blaise-api-node-client@git+https://github.com/ONSdigital/blaise-api-node-client.git#BLAIS5-5177":
   version: 1.0.0
-  resolution: "blaise-api-node-client@https://github.com/ONSdigital/blaise-api-node-client.git#commit=ccb986d2b2b0857ffb2ccaa89984649da474a270"
+  resolution: "blaise-api-node-client@https://github.com/ONSdigital/blaise-api-node-client.git#commit=122a3bd521998ec55a26665c44309632d55579c5"
   dependencies:
     axios: "npm:^1.16.1"
     blaise-iap-node-provider: "git+https://github.com/ONSdigital/blaise-iap-node-provider.git#BLAIS5-5177"
-  checksum: 10c0/071b51641e6ff98c7d7e1ee8dc0a5a18eae9bd22dec75c0fd3b27ea9106c9ae6433431a1569444ec27de23712368e121766a55e328a31ba8162c6f18fa536a2c
+  checksum: 10c0/8cae6ab27654727075f7ba64b25d25ff5f531769ff6c472452afc3abb42435538de7814d96345485aebe056671da6c87fff7ae9a0cd0006ab3fbc3dd9b6d4e19
   languageName: node
   linkType: hard
 
@@ -5881,11 +5881,11 @@ __metadata:
   linkType: hard
 
 "semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.7.1, semver@npm:^7.7.2, semver@npm:^7.7.3, semver@npm:^7.7.4":
-  version: 7.8.0
-  resolution: "semver@npm:7.8.0"
+  version: 7.8.1
+  resolution: "semver@npm:7.8.1"
   bin:
     semver: bin/semver.js
-  checksum: 10c0/8f096ca9b80ffd47b308d03f9ce8c873e27e2983f36023c559cdc92c51e8433fc23ebbfe57ec9623fc155636a6961ee989501099841ae4bb1babc8d2b3f048cd
+  checksum: 10c0/92d6871d6347e1f99d0ba396a70f2545ccf2a032cda3d378fa0699edf7506b5c6d266aed55c8b88e72bd91a30d2351e4f39db479375374430fcdc4b58f4e3c1a
   languageName: node
   linkType: hard
 
