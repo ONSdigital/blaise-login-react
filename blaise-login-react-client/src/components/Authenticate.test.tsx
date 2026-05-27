@@ -1,132 +1,81 @@
-import {
-  RenderResult, act, render,
-} from "@testing-library/react";
-import Authenticate from "./Authenticate";
-import  AuthenticationApi from "../client/AuthenticationApi";
-import React from "react";
-import { BrowserRouter } from "react-router-dom";
-import userMockObject from "../mockObjects/mockUserObject";
+import { render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-let view:RenderResult;
+import { mockUser } from "../mocks/user.mock";
 
-// create mocks
-jest.mock("../client/AuthenticationApi");
-const mockLoggedIn = jest.fn();
-const mockLoggedInUser = jest.fn();
-AuthenticationApi.prototype.loggedIn = mockLoggedIn;
-AuthenticationApi.prototype.getLoggedInUser = mockLoggedInUser;
+import { Authenticate } from "./Authenticate";
 
-describe("Renders the correct screen depending if the user has recently logged in", () => {
-  
-    it("Should display a message asking the user to enter their Blaise user credentials if they are not logged in", async () => {
-      // arrange
-      mockLoggedIn.mockImplementation(() => Promise.resolve(false));
-  
-      // act
-      await act(async () => {
-        view = render(
-        <BrowserRouter>
-        <Authenticate>
-        {() => (
-          <></>
-        )}
-        </Authenticate>
-        </BrowserRouter>
-        );
-      });
-  
-      // assert
-      const contentView = view.getByTestId("login-page-content");
-      expect(contentView).toHaveTextContent("Enter your Blaise username and password");
+const authUserHandlerCalls: Array<{
+  children: (
+    user: typeof mockUser,
+    loggedIn: boolean,
+    logOutFunction: () => void,
+  ) => React.ReactNode;
+  cookieDomain?: string;
+  sessionKey: string;
+  title: string;
+}> = [];
+
+vi.mock("./AuthUserHandler", () => ({
+  default: (props: {
+    children: (
+      user: typeof mockUser,
+      loggedIn: boolean,
+      logOutFunction: () => void,
+    ) => React.ReactNode;
+    cookieDomain?: string;
+    sessionKey: string;
+    title: string;
+  }) => {
+    authUserHandlerCalls.push(props);
+
+    return <div data-testid="auth-user-handler">{props.children(mockUser, true, vi.fn())}</div>;
+  },
+}));
+
+describe("Authenticate", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    authUserHandlerCalls.length = 0;
+  });
+
+  it("uses the default title when none is supplied", () => {
+    render(
+      <Authenticate sessionKey="blaise-user-ons-blaise-v2-dev-ben1">{() => <></>}</Authenticate>,
+    );
+
+    expect(authUserHandlerCalls[0]?.title).toBe("Blaise login");
+  });
+
+  it("passes the supplied props through to AuthUserHandler", () => {
+    render(
+      <Authenticate
+        sessionKey="blaise-user-ons-blaise-v2-dev-ben1"
+        cookieDomain=".social-surveys.gcp.onsdigital.uk"
+        title="This is the title of your application"
+      >
+        {() => <></>}
+      </Authenticate>,
+    );
+
+    expect(authUserHandlerCalls[0]).toMatchObject({
+      sessionKey: "blaise-user-ons-blaise-v2-dev-ben1",
+      cookieDomain: ".social-surveys.gcp.onsdigital.uk",
+      title: "This is the title of your application",
     });
+  });
 
-    it("Should display a default title if one is not supplied and they are not logged in", async () => {
-      // arrange
-      mockLoggedIn.mockImplementation(() => Promise.resolve(false));
-  
-      // act
-      await act(async () => {
-        view = render(
-        <BrowserRouter>
-        <Authenticate>
-        {() => (
-          <></>
-        )}
-        </Authenticate>
-        </BrowserRouter>
-        );
-      });
-  
-      // assert
-      const headerView = view.getByTestId("login-page");
-      expect(headerView).toHaveTextContent("Blaise login");
-    });    
-
-    it("Should display the title if one  not supplied and they are not logged in", async () => {
-      // arrange
-      mockLoggedIn.mockImplementation(() => Promise.resolve(false));
-  
-      // act
-      await act(async () => {
-        view = render(
-        <BrowserRouter>
-        <Authenticate title="This is the title of your application">
-        {() => (
-          <></>
-        )}
-        </Authenticate>
-        </BrowserRouter>
-        );
-      });
-  
-      // assert
-      const headerView = view.getByTestId("login-page");
-      expect(headerView).toHaveTextContent("This is the title of your application");
-    });       
-
-    it("Should render the login page correctly", async () => {
-      // arrange
-      mockLoggedIn.mockImplementation(() => Promise.resolve(false));
-  
-      // act
-      await act(async () => {
-        view = render(
-        <BrowserRouter>
-        <Authenticate>
-        {() => (
-           <></>
-        )}
-        </Authenticate>
-        </BrowserRouter>
-        );
-      });
-  
-      // assert
-      expect(view).toMatchSnapshot();
-    });
-
-    it("Should display the authenticated content if the user is already logged in",  async () => {
-      // arrange
-      const user = userMockObject;
-      mockLoggedIn.mockImplementation(() => Promise.resolve(true));
-      mockLoggedInUser.mockImplementation(() => Promise.resolve(user));
-  
-      // act
-      await act(async () => {
-        view = render(
-        <BrowserRouter>
-        <Authenticate>
+  it("renders children through AuthUserHandler", async () => {
+    render(
+      <Authenticate sessionKey="blaise-user-ons-blaise-v2-dev-ben1">
         {(user) => (
-           <div data-testid="authenticated">
-            Authenticated content for user {user.name}</div>
+          <div data-testid="authenticated">Authenticated content for user {user.name}</div>
         )}
-        </Authenticate>
-        </BrowserRouter>
-        );
-      });
-  
-      // assert
-      const appView = view.getByTestId("authenticated");
-      expect(appView).toHaveTextContent(`Authenticated content for user ${user.name}`);
-    });    
+      </Authenticate>,
+    );
+
+    const appView = await screen.findByTestId("authenticated");
+
+    expect(appView).toHaveTextContent(`Authenticated content for user ${mockUser.name}`);
+  });
 });

@@ -1,0 +1,37 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.6 [39m[90m/mnt/d/work/code/blaise-login-react/blaise-login-react-client[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32m✓[39m src/services/user.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 38[2mms[22m[39m
+ [32m✓[39m src/components/Authenticate.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 67[2mms[22m[39m
+ [32m✓[39m src/components/LayoutTemplate.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 90[2mms[22m[39m
+[90mstderr[2m | src/components/LoginForm.test.tsx[2m > [22m[2mLoginForm[2m > [22m[2mwhen authentication fails[2m > [22m[2mdisplays a generic error when the request fails unexpectedly
+[22m[39mFailed to authenticate user: Network failure
+
+ [32m✓[39m src/services/authManager.test.ts [2m([22m[2m22 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m src/components/LoginForm.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 830[2mms[22m[39m
+ [32m✓[39m src/components/AuthUserHandler.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 388[2mms[22m[39m
+ [32m✓[39m src/services/authClient.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m src/components/AuthUser.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 55[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[32m73 passed[39m[22m[90m (73)[39m
+[2m   Start at [22m 23:35:47
+[2m   Duration [22m 31.74s[2m (transform 2.24s, setup 18.28s, import 28.98s, tests 1.53s, environment 130.75s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |     100 |      100 |     100 |     100 |                   
+ components        |     100 |      100 |     100 |     100 |                   
+  AuthUser.tsx     |     100 |      100 |     100 |     100 |                   
+  ...erHandler.tsx |     100 |      100 |     100 |     100 |                   
+  Authenticate.tsx |     100 |      100 |     100 |     100 |                   
+  ...tTemplate.tsx |     100 |      100 |     100 |     100 |                   
+  LoginForm.tsx    |     100 |      100 |     100 |     100 |                   
+ services          |     100 |      100 |     100 |     100 |                   
+  authClient.ts    |     100 |      100 |     100 |     100 |                   
+  authManager.ts   |     100 |      100 |     100 |     100 |                   
+  user.ts          |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------

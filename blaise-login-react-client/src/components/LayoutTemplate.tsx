@@ -1,34 +1,49 @@
 import { Footer, Header, NotProductionWarning } from "blaise-design-system-react-components";
-import React from "react";
+import { type CSSProperties, type ReactNode } from "react";
 
-const divStyle = {
-  minHeight: "calc(67vh)",
-};
+const CONTENT_MIN_HEIGHT = {
+  minHeight: "67vh",
+} satisfies CSSProperties;
 
 interface LayoutTemplateProps {
-  title: string
-  children: React.ReactNode;
+  title: string;
+  children: ReactNode;
 }
 
-function isProduction(hostname: string): boolean {
-  return hostname.endsWith(".blaise.gcp.onsdigital.uk");
+function isDevelopmentEnvironment(): boolean {
+  if (typeof window === "undefined") return false;
+
+  return !window.location.hostname.endsWith(".blaise.gcp.onsdigital.uk");
 }
 
-export default function LayoutTemplate({ title, children}: LayoutTemplateProps) {
+export default function LayoutTemplate({ title, children }: LayoutTemplateProps) {
+  const showWarning = isDevelopmentEnvironment();
+
   return (
+    <div data-testid="login-page">
+      <a
+        className="ons-skip-to-content ons-u-fs-r--b"
+        href="#main-content"
+      >
+        Skip to content
+      </a>
 
-    <>
-      <div data-testid="login-page">
-        <a className="ons-skip-link" href="#main-content">Skip to content</a>
-            {
-                isProduction(window.location.hostname) ? <></> : <NotProductionWarning />
-            }        
-        <Header title={title} noSave/>  
-        <div style={divStyle} className="ons-page__container ons-container" data-testid="login-page-content">
-          {children}
-        </div>
-        <Footer />
+      {showWarning && <NotProductionWarning />}
+
+      <Header
+        title={title}
+        noSave
+      />
+
+      <div
+        style={CONTENT_MIN_HEIGHT}
+        className="ons-page__container ons-container"
+        data-testid="login-page-content"
+      >
+        {children}
       </div>
-    </>
+
+      <Footer />
+    </div>
   );
 }
