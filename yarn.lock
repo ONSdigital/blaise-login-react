@@ -2722,33 +2722,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"blaise-api-node-client@git+https://github.com/ONSdigital/blaise-api-node-client.git#BLAIS5-5177":
+"blaise-api-node-client@git+https://github.com/ONSdigital/blaise-api-node-client.git#v3.0.0":
   version: 1.0.0
-  resolution: "blaise-api-node-client@https://github.com/ONSdigital/blaise-api-node-client.git#commit=122a3bd521998ec55a26665c44309632d55579c5"
+  resolution: "blaise-api-node-client@https://github.com/ONSdigital/blaise-api-node-client.git#commit=fb6a64a695ad2512f126b8392d101d201b0f5990"
   dependencies:
     axios: "npm:^1.16.1"
-    blaise-iap-node-provider: "git+https://github.com/ONSdigital/blaise-iap-node-provider.git#BLAIS5-5177"
-  checksum: 10c0/8cae6ab27654727075f7ba64b25d25ff5f531769ff6c472452afc3abb42435538de7814d96345485aebe056671da6c87fff7ae9a0cd0006ab3fbc3dd9b6d4e19
+    blaise-iap-node-provider: "git+https://github.com/ONSdigital/blaise-iap-node-provider.git#v3.0.0"
+  checksum: 10c0/900485e6f75f234b17d1819cf87081059d89032815eb53121cae0497505cf1894ac9c546a23666521b6f2e140c692c9c1ed8f517bdeb966207e89c558de81a4c
   languageName: node
   linkType: hard
 
-"blaise-design-system-react-components@git+https://github.com/ONSdigital/blaise-design-system-react-components.git#BLAIS5-5177":
+"blaise-design-system-react-components@git+https://github.com/ONSdigital/blaise-design-system-react-components.git#v2.0.0":
   version: 1.0.0
-  resolution: "blaise-design-system-react-components@https://github.com/ONSdigital/blaise-design-system-react-components.git#commit=81aa8731d622d9bca4b0366dd053a92d819068e9"
+  resolution: "blaise-design-system-react-components@https://github.com/ONSdigital/blaise-design-system-react-components.git#commit=32018f21c6ea388412c232800b305e277506b159"
   peerDependencies:
     formik: ">=2.4.0"
     react: ^19.0.0
     react-dom: ^19.0.0
-  checksum: 10c0/3c45b0fee020704de7f94299a9c82185740cca475b2b8028b04a5e21698257ee4ebaead457e347293f86b2a5bddb09f4a1100fc0ffd03a1185211a541f2aa090
+  checksum: 10c0/4f7fe4c73457b744b36070fdfcf42911de5334df4cdab9ce54b398e5852800e99e169d7354ab59263bc69aadb693f1d9282aff1e5404e430a3841476a9acd8ca
   languageName: node
   linkType: hard
 
-"blaise-iap-node-provider@git+https://github.com/ONSdigital/blaise-iap-node-provider.git#BLAIS5-5177":
+"blaise-iap-node-provider@git+https://github.com/ONSdigital/blaise-iap-node-provider.git#v3.0.0":
   version: 1.0.0
-  resolution: "blaise-iap-node-provider@https://github.com/ONSdigital/blaise-iap-node-provider.git#commit=e58a98ca4a4ac383e942ab698db6c4f1e9678d41"
+  resolution: "blaise-iap-node-provider@https://github.com/ONSdigital/blaise-iap-node-provider.git#commit=f5ff927c1db5ff539a772ebc0802cc519c52de3d"
   dependencies:
     google-auth-library: "npm:^10.6.2"
-  checksum: 10c0/704f488d394a7f6a92f5455a8b47c3a70da201db6ac066c183ffa2707cc2469cd15096f685405ab91f8e2d9ad641370fd47cdd91fdf734847c9e054939a7d232
+  checksum: 10c0/d414e550159dfa7d6740b7efb4112f7789173d53af0f9d50f3bd53a7a047106dafa71ea7111ec3f6b287fa88126fcc7dc3892b95e6d707a94544c0e51c06aa2d
   languageName: node
   linkType: hard
 
@@ -2768,7 +2768,7 @@ __metadata:
     "@types/react-dom": "npm:^19.2.3"
     "@vitejs/plugin-react": "npm:^6.0.2"
     "@vitest/coverage-v8": "npm:^4.1.7"
-    blaise-design-system-react-components: "git+https://github.com/ONSdigital/blaise-design-system-react-components.git#BLAIS5-5177"
+    blaise-design-system-react-components: "git+https://github.com/ONSdigital/blaise-design-system-react-components.git#v2.0.0"
     cspell: "npm:^10.0.0"
     eslint: "npm:^10.4.0"
     eslint-config-prettier: "npm:^10.1.8"
@@ -2808,7 +2808,7 @@ __metadata:
     "@types/node": "npm:^25.9.1"
     "@types/supertest": "npm:^7.2.0"
     "@vitest/coverage-v8": "npm:^4.1.7"
-    blaise-api-node-client: "git+https://github.com/ONSdigital/blaise-api-node-client.git#BLAIS5-5177"
+    blaise-api-node-client: "git+https://github.com/ONSdigital/blaise-api-node-client.git#v3.0.0"
     cspell: "npm:^10.0.0"
     eslint: "npm:^10.4.0"
     eslint-config-prettier: "npm:^10.1.8"

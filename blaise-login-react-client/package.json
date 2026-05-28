@@ -39,7 +39,7 @@
     "react-dom": "^19.0.0"
   },
   "dependencies": {
-    "blaise-design-system-react-components": "git+https://github.com/ONSdigital/blaise-design-system-react-components.git#BLAIS5-5177",
+    "blaise-design-system-react-components": "git+https://github.com/ONSdigital/blaise-design-system-react-components.git#v2.0.0",
     "universal-cookie": "^8.1.2"
   },
   "devDependencies": {
