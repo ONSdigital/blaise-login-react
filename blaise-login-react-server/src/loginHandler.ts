@@ -19,15 +19,24 @@ export function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): R
   router.use(express.json({ limit: "10kb" }));
 
   const loginRateLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
+    windowMs: 5 * 60 * 1000,
     limit: 10,
     standardHeaders: "draft-8",
     legacyHeaders: false,
     message: { error: "Too many login attempts, please try again later" },
+    keyGenerator: (req: Request) => {
+      const username = req.body?.username;
+      if (typeof username === "string" && username.trim()) {
+        return username.trim().toLowerCase();
+      }
+      const forwarded = req.headers["x-forwarded-for"];
+      const clientIp = typeof forwarded === "string" ? forwarded.split(",")[0].trim() : req.ip;
+      return clientIp ?? "unknown";
+    },
   });
 
   const currentUserRateLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
+    windowMs: 5 * 60 * 1000,
     limit: 100,
     standardHeaders: "draft-8",
     legacyHeaders: false,
