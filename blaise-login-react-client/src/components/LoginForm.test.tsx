@@ -128,6 +128,23 @@ describe("LoginForm", () => {
       expect(await screen.findByText(/unable to sign in\. please try again\./i)).toBeVisible();
       expect(onAuthenticated).not.toHaveBeenCalled();
     });
+
+    it("displays a rate limit error when too many attempts are made", async () => {
+      const user = userEvent.setup();
+
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 429 });
+
+      render(<LoginForm onAuthenticated={onAuthenticated} />);
+
+      await user.type(screen.getByLabelText(/username/i), "test");
+      await user.type(screen.getByLabelText(/password/i), "password");
+      await user.click(screen.getByRole("button", { name: /sign in/i }));
+
+      expect(
+        await screen.findByText(/too many login attempts, please try again later/i),
+      ).toBeVisible();
+      expect(onAuthenticated).not.toHaveBeenCalled();
+    });
   });
 
   describe("when authentication succeeds", () => {

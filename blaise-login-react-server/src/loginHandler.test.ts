@@ -4,7 +4,7 @@ import supertest from "supertest";
 import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
 import { Auth, type AuthenticatedResponseLocals } from "./auth.js";
-import { LoginHandler, newLoginHandler } from "./loginHandler.js";
+import { LoginHandler, loginKeyGenerator, newLoginHandler } from "./loginHandler.js";
 
 import type { AuthConfig } from "./auth.types.js";
 import type { BlaiseApiClient, User } from "blaise-api-node-client";
@@ -392,6 +392,82 @@ describe("LoginHandler", () => {
 
       expect(response.status).toEqual(429);
       expect(response.body).toEqual({ error: "Too many login attempts, please try again later" });
+    });
+
+    it("should fall back to x-forwarded-for IP when username is not provided", async () => {
+      const rateLimitedApp = newServer();
+      const rateLimitedRequest = supertest(rateLimitedApp);
+
+      for (let i = 0; i < 10; i++) {
+        await rateLimitedRequest
+          .post("/api/login")
+          .set("x-forwarded-for", "1.2.3.4")
+          .send({ password: "password" });
+      }
+
+      const response = await rateLimitedRequest
+        .post("/api/login")
+        .set("x-forwarded-for", "1.2.3.4")
+        .send({ password: "password" });
+
+      expect(response.status).toEqual(429);
+
+      // Different IP should not be rate limited
+      const differentIpResponse = await rateLimitedRequest
+        .post("/api/login")
+        .set("x-forwarded-for", "5.6.7.8")
+        .send({ password: "password" });
+
+      expect(differentIpResponse.status).toEqual(400);
+    });
+
+    it("should fall back to req.ip when username and x-forwarded-for are absent", async () => {
+      const rateLimitedApp = newServer();
+      const rateLimitedRequest = supertest(rateLimitedApp);
+
+      for (let i = 0; i < 10; i++) {
+        await rateLimitedRequest.post("/api/login").send({ password: "password" });
+      }
+
+      const response = await rateLimitedRequest.post("/api/login").send({ password: "password" });
+
+      expect(response.status).toEqual(429);
+    });
+  });
+
+  describe("loginKeyGenerator", () => {
+    it("should return the lowercase trimmed username when provided", () => {
+      const req = { body: { username: "  Jake  " }, headers: {} } as unknown as Request;
+
+      expect(loginKeyGenerator(req)).toEqual("jake");
+    });
+
+    it("should return the first IP from x-forwarded-for when username is absent", () => {
+      const req = {
+        body: {},
+        headers: { "x-forwarded-for": "1.2.3.4, 5.6.7.8" },
+        ip: "127.0.0.1",
+      } as unknown as Request;
+
+      expect(loginKeyGenerator(req)).toEqual("1.2.3.4");
+    });
+
+    it("should return req.ip when username and x-forwarded-for are absent", () => {
+      const req = { body: {}, headers: {}, ip: "192.168.1.1" } as unknown as Request;
+
+      expect(loginKeyGenerator(req)).toEqual("192.168.1.1");
+    });
+
+    it("should return 'unknown' when username, x-forwarded-for, and req.ip are all absent", () => {
+      const req = { body: {}, headers: {}, ip: undefined } as unknown as Request;
+
+      expect(loginKeyGenerator(req)).toEqual("unknown");
+    });
+
+    it("should fall back to IP when username is an empty string", () => {
+      const req = { body: { username: "   " }, headers: {}, ip: "10.0.0.1" } as unknown as Request;
+
+      expect(loginKeyGenerator(req)).toEqual("10.0.0.1");
     });
   });
 });

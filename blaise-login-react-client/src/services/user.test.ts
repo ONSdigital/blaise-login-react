@@ -168,6 +168,15 @@ describe("userService", () => {
       });
     });
 
+    it("returns rate-limited on a 429 response", async () => {
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 429 });
+
+      expect(await authenticateUser("bob", "password")).toEqual({
+        authenticated: false,
+        reason: "rate-limited",
+      });
+    });
+
     it("returns request-failed and logs error on network failure", async () => {
       mockFetch.mockRejectedValueOnce(new Error("Network fail"));
       const spy = vi.spyOn(console, "error").mockImplementation(() => {});

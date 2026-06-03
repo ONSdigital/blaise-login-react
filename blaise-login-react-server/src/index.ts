@@ -1,4 +1,4 @@
-export { newLoginHandler, LoginHandler } from "./loginHandler.js";
+export { loginKeyGenerator, newLoginHandler, LoginHandler } from "./loginHandler.js";
 
 export { Auth } from "./auth.js";
 

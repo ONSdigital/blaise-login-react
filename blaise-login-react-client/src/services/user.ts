@@ -1,7 +1,11 @@
 import type { AuthManager } from "./authManager";
 import type { User } from "../types/user.types";
 
-export type LoginFailureReason = "invalid-credentials" | "not-authorized" | "request-failed";
+export type LoginFailureReason =
+  | "invalid-credentials"
+  | "not-authorized"
+  | "rate-limited"
+  | "request-failed";
 
 export type LoginResult =
   | { authenticated: true; token: string }
@@ -90,6 +94,10 @@ export async function authenticateUser(username: string, password: string): Prom
 
   if (response.status === 403) {
     return { authenticated: false, reason: "not-authorized" };
+  }
+
+  if (response.status === 429) {
+    return { authenticated: false, reason: "rate-limited" };
   }
 
   console.error(`Failed to authenticate user: HTTP ${response.status}`);

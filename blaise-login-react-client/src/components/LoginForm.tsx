@@ -39,6 +39,9 @@ export function LoginForm({ onAuthenticated }: LoginFormProps): ReactElement {
         case "not-authorized":
           setErrorMessage("You do not have the correct permissions");
           break;
+        case "rate-limited":
+          setErrorMessage("Too many login attempts, please try again later");
+          break;
         case "request-failed":
           setErrorMessage("Unable to sign in. Please try again.");
           break;

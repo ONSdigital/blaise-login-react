@@ -13,6 +13,19 @@ function getStringValue(value: unknown): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
+export function loginKeyGenerator(req: Request): string {
+  const username = req.body?.username;
+
+  if (typeof username === "string" && username.trim()) {
+    return username.trim().toLowerCase();
+  }
+
+  const forwarded = req.headers["x-forwarded-for"];
+  const clientIp = typeof forwarded === "string" ? forwarded.split(",")[0].trim() : req.ip;
+
+  return clientIp ?? "unknown";
+}
+
 export function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): Router {
   const router = express.Router();
 
@@ -24,15 +37,8 @@ export function newLoginHandler(auth: Auth, blaiseApiClient: BlaiseApiClient): R
     standardHeaders: "draft-8",
     legacyHeaders: false,
     message: { error: "Too many login attempts, please try again later" },
-    keyGenerator: (req: Request) => {
-      const username = req.body?.username;
-      if (typeof username === "string" && username.trim()) {
-        return username.trim().toLowerCase();
-      }
-      const forwarded = req.headers["x-forwarded-for"];
-      const clientIp = typeof forwarded === "string" ? forwarded.split(",")[0].trim() : req.ip;
-      return clientIp ?? "unknown";
-    },
+    validate: { keyGeneratorIpFallback: false },
+    keyGenerator: loginKeyGenerator,
   });
 
   const currentUserRateLimiter = rateLimit({
