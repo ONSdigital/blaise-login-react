@@ -75,7 +75,7 @@ describe("LoginHandler", () => {
       const currentUser = { ...allowedUser, name: "test" } satisfies User;
       const token = auth.signToken(currentUser);
 
-      const response = await request.get("/api/login/current-user").set("authorization", token);
+      const response = await request.get("/api/login/current-user").set("authorization", `Bearer ${token}`);
 
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(currentUser);
@@ -237,7 +237,7 @@ describe("LoginHandler", () => {
         config.SessionSecret,
         { issuer: config.TokenIssuer },
       );
-      const response = await request.get("/api/login/current-user").set("authorization", token);
+      const response = await request.get("/api/login/current-user").set("authorization", `Bearer ${token}`);
 
       expect(response.status).toEqual(403);
     });
@@ -246,7 +246,7 @@ describe("LoginHandler", () => {
       const token = jwt.sign({ user: allowedUser }, config.SessionSecret, {
         issuer: "ons-blaise-v2-other",
       });
-      const response = await request.get("/api/login/current-user").set("authorization", token);
+      const response = await request.get("/api/login/current-user").set("authorization", `Bearer ${token}`);
 
       expect(response.status).toEqual(403);
     });
@@ -254,7 +254,7 @@ describe("LoginHandler", () => {
     it("should enter the wrapped function with a valid jwt auth header", async () => {
       const bennysUser = { name: "Benny", role: "DST", serverParks: [], defaultServerPark: "" };
       const token = auth.signToken(bennysUser);
-      const response = await request.get("/api/login/current-user").set("Authorization", token);
+      const response = await request.get("/api/login/current-user").set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toEqual(200);
       expect(response.body).toEqual(bennysUser);
@@ -283,7 +283,7 @@ describe("LoginHandler", () => {
         const response = await request
           .get("/api/login/current-user")
           .send(body)
-          .set("Authorization", token);
+          .set("Authorization", `Bearer ${token}`);
 
         expect(response.status).toEqual(200);
         expect(consoleSpy).toHaveBeenCalledWith(
@@ -305,7 +305,7 @@ describe("LoginHandler", () => {
         const response = await request
           .get("/api/login/current-user")
           .send(body)
-          .set("Authorization", token);
+          .set("Authorization", `Bearer ${token}`);
 
         expect(response.status).toEqual(200);
         expect(consoleSpy).toHaveBeenCalledWith(
