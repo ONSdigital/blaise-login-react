@@ -69,7 +69,19 @@ function redactAuditValue(value: unknown): unknown {
 }
 
 function extractToken(authorizationHeader: string | undefined): string | undefined {
-  return authorizationHeader?.replace(/^Bearer\s+/i, "").trim() || undefined;
+  if (!authorizationHeader) {
+    return undefined;
+  }
+
+  // JWT tokens must be sent with Bearer schema: "Authorization: Bearer <token>"
+  // Reject schema-less tokens for explicit contract enforcement
+  const bearerMatch = authorizationHeader.match(/^Bearer\s+(.+)$/i);
+
+  if (!bearerMatch || !bearerMatch[1]) {
+    return undefined;
+  }
+
+  return bearerMatch[1].trim();
 }
 
 function redactAuditBody(body: unknown): string {
