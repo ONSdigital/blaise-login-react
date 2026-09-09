@@ -69,7 +69,31 @@ function redactAuditValue(value: unknown): unknown {
 }
 
 function extractToken(authorizationHeader: string | undefined): string | undefined {
-  return authorizationHeader?.replace(/^Bearer\s+/i, "").trim() || undefined;
+  if (!authorizationHeader) {
+    return undefined;
+  }
+
+  // Strip Bearer prefix if present (case-insensitive)
+  const match = authorizationHeader.match(/^bearer\s+(.+)$/i);
+
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+
+  // For backward compatibility: accept raw tokens when called from getUser
+  // HTTP layer (getToken) enforces strict Bearer requirement via validateBearerFormat
+  return authorizationHeader.trim() || undefined;
+}
+
+function validateBearerFormat(authorizationHeader: string | undefined): boolean {
+  if (!authorizationHeader) {
+    return false;
+  }
+
+  // Strict validation: must have Bearer prefix
+  const bearerMatch = authorizationHeader.match(/^Bearer\s+(.+)$/i);
+
+  return !!(bearerMatch && bearerMatch[1]);
 }
 
 function redactAuditBody(body: unknown): string {
@@ -149,7 +173,14 @@ export class Auth {
   }
 
   getToken(request: Request): string | undefined {
-    return extractToken(request.get("authorization"));
+    const authHeader = request.get("authorization");
+
+    // HTTP routes enforce strict Bearer schema requirement
+    if (!validateBearerFormat(authHeader)) {
+      return undefined;
+    }
+
+    return extractToken(authHeader);
   }
 
   middleware(
