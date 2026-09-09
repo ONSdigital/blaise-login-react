@@ -197,6 +197,11 @@ describe("Auth", () => {
 
       expect(auth.getUser(token)).toBeNull();
     });
+
+    it("should return null if the token is only whitespace", () => {
+      expect(auth.getUser("   ")).toBeNull();
+      expect(auth.getUser("Bearer ")).toBeNull();
+    });
   });
 
   describe("getToken", () => {
